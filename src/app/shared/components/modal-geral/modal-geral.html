@@ -1,0 +1,29 @@
+<div class="modal fade" [id]="id" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ titulo }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li *ngFor="let item of itensFiltrados">
+            {{ item.nome || item }}
+            <button type="button" (click)="onSelecionar(item)">Selecionar</button>
+          </li>
+        </ul>
+
+        <h6>Selecionados:</h6>
+        <ul>
+          <li *ngFor="let item of itensSelecionados">
+            {{ item.nome || item }}
+            <button type="button" (click)="onRemover(item)">Remover</button>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="onSalvar()" data-bs-dismiss="modal">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>

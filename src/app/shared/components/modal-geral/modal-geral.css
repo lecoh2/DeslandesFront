@@ -1,0 +1,43 @@
+.logo-container {
+  position: relative;
+  display: inline-block;
+  opacity: 0;
+  transform: scale(0.5) rotate(-10deg);
+  animation: logoIntro 1.5s ease-out forwards;
+
+  width: fit-content;
+  height: fit-content;
+
+  /* fundo transparente */
+  background: transparent;
+  overflow: hidden;
+
+  /* remove margens/paddings extras */
+  margin: 0;
+  padding: 0;
+}
+
+.logo-container .logo {
+  display: block;
+  height: auto;
+  margin: 0; /* remove margem da própria imagem */
+  padding: 0;
+}
+
+.logo-container.pequena .logo { width: 80px; }
+.logo-container.media .logo { width: 120px; }
+.logo-container.grande .logo { width: 200px; }
+
+/* remove fundo branco do body ou container pai */
+body, html {
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+}
+
+/* Animação de entrada */
+@keyframes logoIntro {
+  0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+  50% { opacity: 1; transform: scale(1.1) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
