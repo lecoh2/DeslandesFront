@@ -1,0 +1,20 @@
+/* Garante que o body e html ocupem a altura toda */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Faz o sidebar ocupar 100% da tela */
+#sidebar {
+  height: 100vh; /* 100% da altura da tela */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Garante que o conteúdo interno também se expanda */
+.sidebar-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

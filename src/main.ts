@@ -3,7 +3,7 @@ import { appConfig } from './app/app.config';
 import { App } from './app/app';
 
 // Import só o jQuery para garantir acesso a $
-//import 'jquery';
+import 'jquery';
 
 declare var $: any; // declare globalmente
 
@@ -11,7 +11,7 @@ function configurarDataTablesPadrao() {
   if ($ && $.fn && $.fn.dataTable) {
     $.extend(true, $.fn.dataTable.defaults, {
       language: {
-        url: 'assets/appprocon/datatable/datatable-ptbr.json'
+        url: 'assets/appdeslandes/datatable/datatable-ptbr.json'
       },
       responsive: true
     });

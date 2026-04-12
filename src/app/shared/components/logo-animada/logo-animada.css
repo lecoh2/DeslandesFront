@@ -29,11 +29,6 @@
 .logo-container.grande .logo { width: 200px; }
 
 /* remove fundo branco do body ou container pai */
-body, html {
-  background: transparent !important;
-  margin: 0;
-  padding: 0;
-}
 
 /* Animação de entrada */
 @keyframes logoIntro {

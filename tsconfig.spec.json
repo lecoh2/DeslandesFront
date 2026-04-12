@@ -10,5 +10,5 @@
   },
   "include": [
     "src/**/*.ts"
-  ]
+, "src/app/core/models/enums/perfil/perfilEnum.ts", "src/app/modules/admin/components/pessoa/editar-pessoa-fisica/editar-pessoa-fisica.ts", "src/app/modules/admin/components/pessoa/editar-pessoa-juridica/editar-pessoa-juridica.ts", "src/app/core/interceptors"  ]
 }

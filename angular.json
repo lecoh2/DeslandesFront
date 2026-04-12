@@ -15,18 +15,22 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+        "assets": [
+  {
+    "glob": "**/*",
+    "input": "public"
+  },
+  "src/assets"
+],
             "styles": [
-              "src/styles.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+             "src/custom-theme.scss",
+              "src/assets/appdeslandes/css/app.css"
+              
+          
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+               "src/assets/appdeslandes/js/settings.js",
+              "src/assets/appdeslandes/js/app.js"
             ],
             "server": "src/main.server.ts",
             "outputMode": "server",

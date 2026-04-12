@@ -1,54 +1,53 @@
-// src/app/shared/shared.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-/*import { BarrasComponent } from './components/graficos/reclamacao/barras.component';
-import { GraficoAtendimentoComponent } from './components/graficos/atendimento/grafico-atendimento.component';
-import { GraficoAudienciaComponent } from './components/graficos/audiencia/grafico-audiencia.component';
-import { GraficoReclamacaoPizzaComponent } from './components/graficos/reclamacao-pizza/grafico-reclamacao-pizza.component';
-import { GraficoPaBarrasComponent } from './components/graficos/pa/grafico-pa-barras.component';
-import { GraficoNotificacaoComponent } from './components/graficos/notificacao/grafico-notificacao.component';
-import { GraficoUsuarioAtendimentoComponent } from './components/graficos/usuarios/grafico-usuario-atendimento.component';
-import { GraficoUsuarioAtendimentoAnualComponent } from './components/graficos/usuarios/grafico-anual/grafico-usuario-atendimento-anual.component';*/
 import { NgxPaginationModule } from 'ngx-pagination';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+
+// 👇 IMPORTAR ISSO
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
+
 import { Spinner } from './components/spinner/spinner';
 import { SpinnerConsulta } from './components/spinnerconsulta/spinnercontulta.';
 import { Alerts } from './components/alerts/alerts';
 import { LogoAnimada } from './components/logo-animada/logo-animada';
-
+import { TextoDeslandesAnimado } from './components/texto-deslandes-animado/texto-deslandes-animado';
+import { ModalGeral } from './components/modal-geral/modal-geral';
 
 @NgModule({
   declarations: [
-     Spinner,
+    Spinner,
     SpinnerConsulta,
-    Alertst,
     LogoAnimada,
-    TextoCnpi,
+    Alerts,
+    TextoDeslandesAnimado,
     ModalGeral
-
   ],
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    NgxPaginationModule,
+    MatPaginatorModule,
+    MatTableModule,
+
+    // 👇 ADICIONA AQUI
+    NgxMaskDirective,
+    NgxMaskPipe
+  ],
   exports: [
     Spinner,
     SpinnerConsulta,
     Alerts,
     LogoAnimada,
-    TextoCnpiAnimado,
+    TextoDeslandesAnimado,
     ModalGeral,
-  /*  BarrasComponent,
-    GraficoAtendimentoComponent,
-    GraficoAudienciaComponent,
-    GraficoReclamacaoPizzaComponent,
-    GraficoPaBarrasComponent,
-    GraficoNotificacaoComponent,
-    GraficoUsuarioAtendimentoComponent,
-    GraficoUsuarioAtendimentoAnualComponent,*/
+
     NgxPaginationModule,
     MatPaginatorModule,
-    MatTableModule
+    MatTableModule,
 
+    // 👇 EXPORTA TAMBÉM (IMPORTANTE!)
+    NgxMaskDirective,
+    NgxMaskPipe
   ]
 })
-export class SharedModule { }
+export class SharedModule {}

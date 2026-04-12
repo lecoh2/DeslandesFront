@@ -7,18 +7,22 @@
       </div>
       <div class="modal-body">
         <ul>
-          <li *ngFor="let item of itensFiltrados">
-            {{ item.nome || item }}
-            <button type="button" (click)="onSelecionar(item)">Selecionar</button>
-          </li>
+          @for (item of itensFiltrados; track item) {
+            <li>
+              {{ item.nome || item }}
+              <button type="button" (click)="onSelecionar(item)">Selecionar</button>
+            </li>
+          }
         </ul>
 
         <h6>Selecionados:</h6>
         <ul>
-          <li *ngFor="let item of itensSelecionados">
-            {{ item.nome || item }}
-            <button type="button" (click)="onRemover(item)">Remover</button>
-          </li>
+          @for (item of itensSelecionados; track item) {
+            <li>
+              {{ item.nome || item }}
+              <button type="button" (click)="onRemover(item)">Remover</button>
+            </li>
+          }
         </ul>
       </div>
       <div class="modal-footer">

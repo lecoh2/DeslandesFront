@@ -1,0 +1,43 @@
+import { RouterModule, Routes } from "@angular/router";
+import { PainelPrincipal } from "./components/painel-principal/painel-principal";
+import { NgModule } from "@angular/core";
+
+
+//import { EditarTipoTriagemComponent } from "./components/tipo-triagem/editar-tipo-triagem/editar-tipo-triagem.component";
+import { AuthGuard } from "../../core/guards/auth.guard";
+import { NivelGuard } from "../../core/guards/nivel.guard";
+import { AdminLayout } from "./layouts/layouts/admin-layout/admin-layout";
+import { CadastrarPessoas } from "./components/pessoa/cadastrar-pessoa/cadastrar-pessoas";
+//import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
+
+
+export const routes: Routes = [
+    {
+        path: '',
+        component: AdminLayout,
+        children: [
+
+            {
+                path: 'painel-principal',
+                component: PainelPrincipal,
+                canActivate: [AuthGuard] // apenas logado
+            },
+               //pessoas
+            {
+                path: 'cadastrar-pessoas',
+                component: CadastrarPessoas,
+              //  canActivate: [AuthGuard, NivelGuard],
+                //data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
+            
+
+            { path: '', redirectTo: 'painel-principal', pathMatch: 'full' }
+        ]
+    }
+];
+@NgModule({
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
+})
+export class AdminRoutingModule { }

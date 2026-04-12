@@ -1,5 +1,5 @@
-import { GrupoNiveisRequest } from "../grupo-niveis/grupo-niveis-request";
-import { GrupoSetoresRequest } from "../grupo-setores/grupo-setores-request";
+//import { GrupoNiveisRequest } from "../grupo-niveis/grupo-niveis-request";
+//import { GrupoSetoresRequest } from "../grupo-setores/grupo-setores-request";
 
 
 export interface EditarUsuarioRequest {
@@ -7,7 +7,7 @@ export interface EditarUsuarioRequest {
     login?: string;
     senha?: string;
     idPessoa?: string;
-    grupoSetores?: GrupoSetoresRequest[];
-    grupoNiveis?: GrupoNiveisRequest[];
+  //  grupoSetores?: GrupoSetoresRequest[];
+   // grupoNiveis?: GrupoNiveisRequest[];
     //pessoa?: ConsultarPessoaRequest[];
 }

@@ -17589,8 +17589,8 @@ html[data-layout=boxed] .wrapper {
     font-family: Font Awesome\ 6 Brands;
     font-style: normal;
     font-weight: 400;
-src: url("/assets/appprocon/fonts/fa-brands-400.woff2") format("woff2"),
-       url("/assets/appprocon/fonts/fa-brands-400.ttf") format("truetype");
+src: url("/assets/appdeslandes/fonts/fa-brands-400.woff2") format("woff2"),
+       url("/assets/appdeslandes/fonts/fa-brands-400.ttf") format("truetype");
 }
 
 .fa-brands,
@@ -26164,8 +26164,8 @@ src: url("/assets/appprocon/fonts/fa-brands-400.woff2") format("woff2"),
     font-family: Font Awesome\ 6 Free;
     font-style: normal;
     font-weight: 400;
-   src: url("/assets/appprcon/fonts/fa-regular-400.woff2") format("woff2"),
-     url("/assets/appprocon/fonts/fa-regular-400.ttf") format("truetype");
+   src: url("/assets/appdeslandes/fonts/fa-regular-400.woff2") format("woff2"),
+     url("/assets/appdeslandes/fonts/fa-regular-400.ttf") format("truetype");
 }
 
 .fa-regular,
@@ -26190,8 +26190,8 @@ src: url("/assets/appprocon/fonts/fa-brands-400.woff2") format("woff2"),
   font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 900;
-  src: url("/assets/appprocon/fonts/fa-solid-900.woff2") format("woff2"),
-       url("/assets/appprocon/fonts/fa-solid-900.ttf") format("truetype");
+  src: url("/assets/appdeslandes/fonts/fa-solid-900.woff2") format("woff2"),
+       url("/assets/appdeslandes/fonts/fa-solid-900.ttf") format("truetype");
 }
 
 .fa-solid,

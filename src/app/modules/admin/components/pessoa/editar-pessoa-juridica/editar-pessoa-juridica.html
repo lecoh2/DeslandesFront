@@ -1,0 +1,357 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">Cadastro de Pessoas</h1>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title">Edição Pessoa Juridica</h5>
+          <h6 class="card-subtitle text-muted">Formulário para editção</h6>
+          <button class="btn btn-light bg-white" type="button" data-bs-toggle="modal" data-bs-target="#modalHistorico"
+            (click)="abrirModalHistorico()">
+            <i class="fas fa-history me-1"></i> Ver histórico
+          </button>
+
+
+          <!-- Modal de Histórico da Triagem -->
+          <div class="modal fade" id="modalHistorico" tabindex="-1" aria-labelledby="modalHistoricoLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalHistoricoLabel">
+
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                  <ng-container *ngIf="historicoPessoa.length > 0; else semHistorico">
+                    <div *ngFor="let item of historicoPessoa" class="border rounded p-3 mb-3">
+                      <dl class="row">
+                        <dt class="col-sm-3">Nome:</dt>
+                        <dd class="col-sm-9">{{ item.nomePessoa }}</dd>
+
+                        <dt class="col-sm-3">CNPJ:</dt>
+                        <dd class="col-sm-9">{{ item.cnpjPessoa }}</dd>
+
+                        <dt class="col-sm-3">Inscrição Municipal:</dt>
+                        <dd class="col-sm-9">{{ item.dadosDepoisObj?.InscricaoMunicipal ||
+                          item.dadosAntesObj?.InscricaoMunicipal || 'Não informado' }}</dd>
+
+                        <dt class="col-sm-3">Inscrição Estadual:</dt>
+                        <dd class="col-sm-9">{{ item.dadosDepoisObj?.InscricaoEstadual ||
+                          item.dadosAntesObj?.InscricaoEstadual || 'Não informado' }}</dd>
+
+
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">{{ item.emailPessoa }}</dd>
+
+                        <dt class="col-sm-3">Usuário que fez a edição:</dt>
+                        <dd class="col-sm-9">{{ item.nomeUsuario }}</dd>
+
+                        <dt class="col-sm-3">Data da edição:</dt>
+                        <dd class="col-sm-9">{{ item.dataAlteracao | date:'dd/MM/yyyy HH:mm' }}</dd>
+
+
+                        <dt class="col-sm-3">Motivo da Edição:</dt>
+                        <dd class="col-sm-9">{{ item.observacoes || 'Não informado' }}</dd>
+                      </dl>
+
+
+
+
+
+                      <div class="row">
+                        <!-- Dados Antes -->
+                        <div class="col-md-6">
+                          <h6>Dados Antes</h6>
+                          <table class="table table-sm table-bordered">
+                            <tbody>
+                              <tr>
+                                <th>Nome</th>
+                                <td>{{ item.dadosAntesObj?.Nome || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>CPF</th>
+                                <td>{{ item.dadosAntesObj?.Cnpj || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>Inscricao Municipal</th>
+                                <td>{{ item.dadosAntesObj?.InscricaoMunicipal || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>Inscricao Estadual</th>
+                                <td>{{ item.dadosAntesObj?.InscricaoEstadual || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>Email</th>
+                                <td>{{ item.dadosAntesObj?.Email || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>Telefone</th>
+                                <td>{{ item.dadosAntesObj?.Telefone || 'Não informado' }}</td>
+                              </tr>
+
+
+                              <tr>
+                                <th>Endereço</th>
+                                <td>
+                                  {{ item.dadosAntesObj?.Endereco?.Logradouro || '' }},
+                                  {{ item.dadosAntesObj?.Endereco?.Numero || '' }} -
+                                  {{ item.dadosAntesObj?.Endereco?.Bairro || '' }},
+                                  {{ item.dadosAntesObj?.Endereco?.Localidade || '' }} -
+                                  {{ item.dadosAntesObj?.Endereco?.Uf || '' }},
+                                  CEP: {{ item.dadosAntesObj?.Endereco?.Cep || '' }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>Data de Atualização</th>
+                                <td>
+                                  {{ item.dadosAntesObj?.DTAtualizacao ? (item.dadosAntesObj?.DTAtualizacao | date:
+                                  'dd/MM/yyyy HH:mm') : 'Não informado' }}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <!-- Dados Depois -->
+                        <div class="col-md-6">
+                          <h6>Dados Depois</h6>
+                          <table class="table table-sm table-bordered">
+                            <tbody>
+                              <tr>
+                                <th>Nome</th>
+                                <td>{{ item.dadosDepoisObj?.Nome || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>CPF</th>
+                                <td>{{ item.dadosDepoisObj?.Cnpj || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>Inscricao Municial</th>
+                                <td>{{ item.dadosDepoisObj?.InscricaoMunicipal || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>Inscricao Estadual</th>
+                                <td>{{ item.dadosDepoisObj?.InscricaoEstadual || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>Email</th>
+                                <td>{{ item.dadosDepoisObj?.Email || 'Não informado' }}</td>
+                              </tr>
+                              <tr>
+                                <th>Telefone</th>
+                                <td>{{ item.dadosDepoisObj?.Telefone || 'Não informado' }}</td>
+                              </tr>
+
+                              <tr>
+                                <th>Endereço</th>
+                                <td>
+                                  {{ item.dadosDepoisObj?.Endereco?.Logradouro || '' }},
+                                  {{ item.dadosDepoisObj?.Endereco?.Numero || '' }} -
+                                  {{ item.dadosDepoisObj?.Endereco?.Bairro || '' }},
+                                  {{ item.dadosDepoisObj?.Endereco?.Localidade || '' }} -
+                                  {{ item.dadosDepoisObj?.Endereco?.Uf || '' }},
+                                  CEP: {{ item.dadosDepoisObj?.Endereco?.Cep || '' }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>Data de Atualização</th>
+                                <td>
+                                  {{ item.dadosDepoisObj?.DTAtualizacao ? (item.dadosDepoisObj?.DTAtualizacao | date:
+                                  'dd/MM/yyyy HH:mm') : 'Não informado' }}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+
+                  <ng-template #semHistorico>
+                    <div class="alert alert-warning">Nenhum histórico encontrado.</div>
+                  </ng-template>
+
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mt-3">
+            <!-- Spinner alinhado à esquerda -->
+            <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..." class="d-inline-block">
+            </app-spinner>
+
+            <!-- Alertas ocupando 100% da largura -->
+            <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+              [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+            </app-alerts>
+
+            <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+              [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+            </app-alerts>
+            <app-alerts *ngIf="mensagemAviso.length > 0" [icone]="'fas fa-exclamation-triangle'" [titulo]="'Aviso'"
+              [tipo]="'warning'" [mensagens]="mensagemAviso">
+            </app-alerts>
+
+          </div>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <div class="row">
+              <!-- Nome, Telefone e Email -->
+              <div class=" mb-3 col-md-4 align-items-end">
+
+                <label class="form-label">Razão Social</label>
+                <input type="text" class="form-control" formControlName="nome" placeholder="Informe o nome" />
+                <div class="text-danger" *ngIf="form.get('nome')?.touched && form.get('nome')?.hasError('required')">
+                  O nome é obrigatório.
+                </div>
+              </div>
+
+              <div class="mb-3 col-md-4">
+                <label class="form-label">Telefone(s) <small class="form-text text-muted">permitido 3
+                    telefones seperado
+                    por ponto e vírgula (;)</small></label>
+                <input type="text" class="form-control" formControlName="telefone" (blur)="formatarLimitarTelefones()"
+                  placeholder="(00) 00000-0000; (00) 00000-0000; (00) 00000-0000" />
+
+
+
+                <div class="text-danger"
+                  *ngIf="form.get('telefone')?.touched && form.get('telefone')?.hasError('required')">
+                  O telefone é obrigatório.
+                </div>
+              </div>
+
+
+
+              <div class="mb-3 col-md-4">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" formControlName="email" placeholder="Informe o email" />
+                <div class="text-danger" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('required')">
+                  Email é obrigatório.
+                </div>
+              </div>
+            </div>
+
+            <!-- Dados Pessoa Física -->
+
+
+
+
+
+
+            <!-- Dados Pessoa Jurídica -->
+            <div class="row">
+              <div class="mb-3 col-md-4">
+                <label class="form-label">CNPJ</label>
+                <input type="text" class="form-control" mask="00.000.000/0000-00" formControlName="cnpj"
+                  placeholder="Informe o CNPJ" />
+                <div class="text-danger" *ngIf="form.get('cnpj')?.touched && form.get('cnpj')?.hasError('required')">
+                  CNPJ é obrigatório.
+                </div>
+              </div>
+              <div class="mb-3 col-md-4">
+                <label class="form-label">Inscrição Estadual</label>
+                <input type="text" class="form-control" mask="000.000.000.000" formControlName="inscricaoEstadual"
+                  placeholder="Informe a inscrição estadual" />
+              </div>
+              <div class="mb-3 col-md-4">
+                <label class="form-label">Inscrição Municipal</label>
+                <input type="text" class="form-control" formControlName="inscricaoMunicipal"
+                  placeholder="Informe a inscrição municipal" />
+                <div class="text-danger"
+                  *ngIf="form.get('inscricaoMunicipal')?.touched && form.get('inscricaoMunicipal')?.hasError('required')">
+                  Inscrição municipal é obrigatória.
+                </div>
+              </div>
+            </div>
+
+            <!-- Endereço -->
+            <h5 class="card-title">Endereço</h5>
+            <div class="row mb-3">
+              <div class="col-md-2">
+                <label class="form-label">CEP</label>
+                <input type="text" class="form-control" mask="00000-000" formControlName="cep"
+                  placeholder="Informe o CEP" (blur)="buscarCep()" />
+                <div class="text-danger" *ngIf="form.get('cep')?.touched && form.get('cep')?.hasError('required')">
+                  CEP é obrigatório.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Endereço</label>
+                <input type="text" class="form-control" formControlName="logradouro" placeholder="Informe o endereço" />
+                <div class="text-danger"
+                  *ngIf="form.get('logradouro')?.touched && form.get('logradouro')?.hasError('required')">
+                  Endereço é obrigatório.
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Número</label>
+                <input type="text" class="form-control" formControlName="numero" placeholder="Informe o número" />
+                <div class="text-danger"
+                  *ngIf="form.get('numero')?.touched && form.get('numero')?.hasError('required')">
+                  Número é obrigatório.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Complemento</label>
+                <input type="text" class="form-control" formControlName="complemento"
+                  placeholder="Informe o complemento" />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Bairro</label>
+                <input type="text" class="form-control" formControlName="bairro" placeholder="Informe o bairro" />
+                <div class="text-danger"
+                  *ngIf="form.get('bairro')?.touched && form.get('bairro')?.hasError('required')">
+                  Bairro é obrigatório.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Cidade</label>
+                <input type="text" class="form-control" formControlName="localidade" placeholder="Informe a cidade" />
+                <div class="text-danger"
+                  *ngIf="form.get('localidade')?.touched && form.get('localidade')?.hasError('required')">
+                  Cidade é obrigatória.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">UF</label>
+                <input type="text" class="form-control" (blur)="onBlurUf()" maxlength="2" formControlName="uf"
+                  placeholder="Informe o UF" />
+
+
+                <div class="text-danger" *ngIf="form.get('uf')?.touched && form.get('uf')?.hasError('required')">
+                  UF é obrigatório.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="mb-3 col-md-12">
+                <label class="form-label" for="observacoes">Motivo da edição (obrigatório)</label>
+                <textarea id="observacoes" formControlName="observacoes" class="form-control"
+                  placeholder="Informe o motivo da alteração" rows="3"></textarea>
+                <div class="text-danger"
+                  *ngIf="form.get('observacoes')?.touched && form.get('observacoes')?.hasError('required')">
+                  É obrigatório informar o motivo da alteração.
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || carregando">
+              <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+            </button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

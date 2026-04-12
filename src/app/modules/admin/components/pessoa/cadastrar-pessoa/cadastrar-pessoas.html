@@ -1,0 +1,431 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">Adicionar Contato</h1>
+
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Cadastrar Pessoa Física / Jurídica</h5>
+      <h6 class="card-subtitle text-muted">Formulário para cadastro</h6>
+    </div>
+
+    <div class="card-body">
+
+      <!-- SPINNER / ALERTAS -->
+      <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando..."></app-spinner>
+
+      <app-alerts *ngIf="!carregando && mensagemSucesso.length" titulo="Sucesso!" [mensagens]="mensagemSucesso"
+        tipo="success">
+      </app-alerts>
+
+      <app-alerts *ngIf="!carregando && mensagemErro.length" titulo="Erro!" [mensagens]="mensagemErro" tipo="danger">
+      </app-alerts>
+
+      <!-- TIPO -->
+      <div class="mb-3">
+        <label class="form-label">Tipo de Pessoa</label><br />
+        <div class="btn-group">
+          <button type="button" class="btn" [ngClass]="{'btn-primary': tipoPessoaSelecionado === tipoPessoaEnum.Fisica,
+                        'btn-outline-primary': tipoPessoaSelecionado !== tipoPessoaEnum.Fisica}"
+            (click)="onTipoPessoaChange(tipoPessoaEnum.Fisica)">
+            Pessoa Física
+          </button>
+
+          <button type="button" class="btn" [ngClass]="{'btn-primary': tipoPessoaSelecionado === tipoPessoaEnum.Juridica,
+                        'btn-outline-primary': tipoPessoaSelecionado !== tipoPessoaEnum.Juridica}"
+            (click)="onTipoPessoaChange(tipoPessoaEnum.Juridica)">
+            Pessoa Jurídica
+          </button>
+        </div>
+      </div>
+
+      <!-- NAV -->
+      <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+          <button class="nav-link" [class.active]="step === 1" (click)="irParaStep(1)">
+            Informações Pessoais
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" [class.active]="step === 2" (click)="irParaStep(2)">
+            Informações Complementares
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" [class.active]="step === 3" (click)="irParaStep(3)">
+            Documentação
+          </button>
+        </li>
+      </ul>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <!-- STEP 1 -->
+        <div [hidden]="step !== 1">
+
+          <div class="row mb-3">
+            <!-- NOME / EMPRESA -->
+            <div class="col-md-4">
+              <label class="form-label">
+                {{ tipoPessoaSelecionado === tipoPessoaEnum.Fisica ? 'Nome *' : 'Empresa *' }}
+              </label>
+              <input class="form-control" formControlName="nome" placeholder="Informe o nome">
+            </div>
+            <!-- PERFIL -->
+            <div class="col-md-4">
+              <label class="form-label">Perfil</label>
+              <select class="form-control" formControlName="perfil">
+                <option [ngValue]="null">Selecione</option>
+                <option *ngFor="let perfil of perfis" [ngValue]="perfil.id">
+                  {{ perfil.nome }}
+                </option>
+              </select>
+            </div>
+
+            <!-- APELIDO / NOME FANTASIA -->
+            <div class="col-md-4">
+              <label class="form-label">
+                {{ tipoPessoaSelecionado === tipoPessoaEnum.Fisica ? 'Apelido' : 'Nome Fantasia' }}
+              </label>
+              <input class="form-control" formControlName="apelido" placeholder="Informe o apelido">
+            </div>
+            <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
+            </app-etiquetas>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Telefone(s) </label>
+                <small class="form-text text-muted">Permitido até 3 telefones separados por ponto e vírgula (;)</small>
+                <input type="text" class="form-control" formControlName="telefone" (blur)="formatarLimitarTelefones()"
+                  placeholder="(00) 00000-0000; (00) 00000-0000; (00) 00000-0000" />
+
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Email(s) </label>
+                <small class="form-text text-muted">informe até 3 emails separados por ponto e vírgula (;)</small>
+                <input class="form-control" formControlName="email" (blur)="formatarCampoEmail()"
+                  placeholder="email1@example.com; email2@example.com; email3@example.com" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Site</label>
+                <input class="form-control" formControlName="site" placeholder="Informe o site, se houver" />
+              </div>
+            </div>
+
+            <!-- ENDEREÇO -->
+            <h5 class="mt-4">Endereço</h5>
+
+            <div formGroupName="endereco">
+
+              <div class="row mb-3">
+                <div class="col-md-2">
+                  <input class="form-control" placeholder="CEP" formControlName="cep" (blur)="buscarCep()"
+                    mask="00000-000" placeholder="Informe o CEP" />
+                </div>
+
+                <div class="col-md-4">
+                  <input class="form-control" placeholder="Logradouro" formControlName="logradouro"
+                    placeholder="Informe o logradouro" />
+                </div>
+
+                <div class="col-md-2">
+                  <input class="form-control" placeholder="Número" formControlName="numero"
+                    placeholder="Informe o número do endereço" />
+                </div>
+
+                <div class="col-md-4">
+                  <input class="form-control" placeholder="Complemento" formControlName="complemento"
+                    placeholder="Informe o complemento" />
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <input class="form-control" placeholder="Bairro" formControlName="bairro"
+                    placeholder="Informe o bairro">
+                </div>
+
+                <div class="col-md-4">
+                  <input class="form-control" placeholder="Cidade" formControlName="localidade"
+                    placeholder="Informe a cidade" />
+                </div>
+
+                <div class="col-md-4">
+                  <input class="form-control" placeholder="UF" formControlName="uf" style="text-transform: uppercase;"
+                    maxlength="2" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div [hidden]="step !== 2">
+          <!--  PESSOA FÍSICA -->
+          <ng-container *ngIf="tipoPessoaSelecionado === tipoPessoaEnum.Fisica">
+            <div formGroupName="informacoesComplementares">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Data de Nascimento</label>
+                  <input class="form-control" mask="00/00/0000" formControlName="dataNascimento"
+                    placeholder="Informe a data de nascimento" />
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Profissão</label>
+                  <input class="form-control" formControlName="profissao" placeholder="Informe a profissão" />
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Estado Civil</label>
+                  <input class="form-control" formControlName="estadoCivil" placeholder="Informe o estado civil" />
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Tratamento</label>
+                  <select class="form-control" formControlName="tratamento">
+                    <option [ngValue]="null">Selecione</option>
+                    <option *ngFor="let t of tratamentos" [ngValue]="t.id">
+                      {{ t.nome }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Nome do Pai</label>
+                  <input class="form-control" formControlName="nomePai" placeholder="Informe o nome do pai" />
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Nome da Mãe</label>
+                  <input class="form-control" formControlName="nomeMae" placeholder="Informe o nome da mãe" />
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Naturalidade</label>
+                  <input class="form-control" formControlName="naturalidade" placeholder="Informe a naturalidade" />
+                </div>
+
+
+
+
+                <div class="col-md-4">
+                  <label class="form-label">Nacionalidade</label>
+                  <input class="form-control" formControlName="nacionalidade" placeholder="Informe a nacionalidade" />
+                </div>
+              </div>
+              <!-- ✅ COMENTÁRIO (COMUM PARA PF E PJ) -->
+              <div class="mb-3 mt-3">
+                <label class="form-label">Comentários</label>
+                <textarea class="form-control" rows="3" formControlName="comentario"></textarea>
+              </div>
+            </div>
+
+
+          </ng-container>
+          <div formGroupName="informacoesComplementares">
+
+            <!-- comentário SEMPRE dentro -->
+
+
+          </div>
+          <!--  PESSOA JURÍDICA -->
+          <div [hidden]="tipoPessoaSelecionado !== tipoPessoaEnum.Juridica">
+
+            <h5 class="mb-3">Informações da Empresa</h5>
+
+            <div class="row mb-3">
+
+
+              <div class="col-md-4">
+                <label class="form-label">Atividade Econômica</label>
+                <input class="form-control" formControlName="atividadeEconomica"
+                  placeholder="Informe a atividade econômica da empresa" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Código</label>
+                <input [formControl]="codigoControl" class="form-control" placeholder="Informe o código da empresa" />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Contato</label>
+                <input [formControl]="contatoControl" class="form-control"
+                  placeholder="Informe o nome do contato na empresa" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Cargo</label>
+                <input class="form-control" [formControl]="cargoControl" placeholder="Informe o cargo do contato" />
+              </div>
+            </div>
+
+
+
+          </div>
+          <!-- COMUM PARA PF E PJ -->
+
+          <!--  CONTA BANCÁRIA (AMBOS) -->
+          <h5 class="mt-4">Conta Bancária</h5>
+
+          <div formGroupName="contaBancaria">
+
+            <div class="mb-3">
+              <label class="form-label">Tipo de Conta</label>
+
+              <div class="d-flex gap-3">
+
+                <label class="card-radio">
+                  <input type="radio" name="tipoConta" value="corrente" formControlName="tipoConta">
+                  <span>Conta Corrente</span>
+                </label>
+
+                <label class="card-radio">
+                  <input type="radio" name="tipoConta" value="poupanca" formControlName="tipoConta">
+                  <span>Conta Poupança</span>
+                </label>
+
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label class="form-label">Banco</label>
+                <input class="form-control" formControlName="nomeBanco" placeholder="Informe o nome do banco" />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">Agência</label>
+                <input class="form-control" formControlName="agencia" placeholder="Informe o número da agência" />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">Conta</label>
+                <input class="form-control" formControlName="conta" placeholder="Informe o número da conta" />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">PIX</label>
+                <input class="form-control" formControlName="pix"
+                  placeholder="Informe o número do telefone, email ou chave PIX" />
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- STEP 3 -->
+        <div [hidden]="step !== 3">
+
+          <!-- PF -->
+          <ng-container *ngIf="tipoPessoaSelecionado === tipoPessoaEnum.Fisica">
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label">CPF </label>
+                <input class="form-control" mask="000.000.000-00" formControlName="cpf" placeholder="Informe o CPF" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">RG</label>
+                <input class="form-control" formControlName="rg" placeholder="Informe o RG " />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">CNH</label>
+                <input class="form-control" mask="000.000.000.00" formControlName="cnh"
+                  placeholder="Informe o número da CNH" />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label>CTPS</label>
+                <input class="form-control" formControlName="carteiraTrabalho" placeholder="Informe o número da CTPS" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">PIS</label>
+                <input class="form-control" formControlName="pisPasep" placeholder="Informe o número do PIS" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Título de Eleitor</label>
+                <input class="form-control" formControlName="tituloEleitor"
+                  placeholder="Informe o número do título de eleitor" />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Passaporte </label>
+                <input class="form-control" formControlName="passaporte"
+                  placeholder="Informe o número do  passaporte" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Reservista</label>
+                <input class="form-control" formControlName="certidaoReservista"
+                  placeholder="Informe o número da certidão de reservista  " />
+              </div>
+            </div>
+
+          </ng-container>
+          <!-- comentário SEMPRE dentro -->
+
+          <!-- PJ -->
+          <ng-container *ngIf="tipoPessoaSelecionado === tipoPessoaEnum.Juridica">
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">CNPJ </label>
+                <input class="form-control" formControlName="cnpj" mask="00.000.000/0000-00"
+                  placeholder="Informe o CNPJ" />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Inscrição Estadual</label>
+                <input class="form-control" formControlName="inscricaoEstadual"
+                  placeholder="Informe a inscrição estadual" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Inscrição Municipal</label>
+                <input class="form-control" formControlName="inscricaoMunicipal"
+                  placeholder="Informe a inscrição municipal" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Optante pelo simples nacional</label>
+
+                <div class="d-flex gap-3">
+
+                  <label class="card-radio">
+                    <input type="radio" name="simplesNacional" value="1" formControlName="simplesNacional">
+                    <span>Sim</span>
+                  </label>
+
+                  <label class="card-radio">
+                    <input type="radio" name="simplesNacional" value="2" formControlName="simplesNacional">
+                    <span>Não</span>
+                  </label>
+
+                </div>
+              </div>
+            </div>
+
+          </ng-container>
+
+        </div>
+
+        <!-- BOTÃO -->
+        <button type="submit" class="btn btn-primary mt-3" [disabled]="carregando">
+          <i class="fas fa-save"></i> Salvar
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>

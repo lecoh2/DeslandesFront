@@ -1,579 +1,140 @@
 <div class="container-fluid">
-    <div class="row mb-2 mb-xl-3">
-        <div class="col-auto d-none d-sm-block">
-            <h3>Procon Duque de Caxias</h3>
-        </div>
-
-        <div class="col-auto ms-auto text-end mt-n1">
-
-            <div class="dropdown me-2 d-inline-block position-relative">
-                <div class="dropdown-menu dropdown-menu-end">
-                    <h6 class="dropdown-header">Settings</h6>
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Separated link</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
-            <div class="card illustration flex-fill">
-                <div class="card-body p-0 d-flex flex-fill">
-                    <div class="row g-0 w-100">
-                        <div class="col-6">
-                            <div class="illustration-text p-3 m-1">
-                                <h4 class="illustration-text">{{ saudacaoUsuario }} de volta, </h4>
-                                <p class="mb-0"><span>{{ nomeUsuario }}</span></p>
-                            </div>
-                        </div>
-                        <!--div class="col-6 align-self-end text-end">
-                            <img src="assets/appprocon/img/illustrations/customer-support.png" alt="Customer Support"
-                                class="img-fluid illustration-img">
-
-                                
-                        </div-->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
-            <div class="card flex-fill">
-                <div class="card-body py-4">
-                    <div class="d-flex align-items-start">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-2">Total de atendimentos: <strong>{{ totalGeral }}</strong><br></h3>
-                            <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-success"> {{
-                                    totalAnoAtual }}</span></p>
-                            <div class="mb-0">
-                            </div>
-                        </div>
-                        <div class="d-inline-block ms-3">
-                            <div class="stat " style="background: #4bbf73;">
-                                <i class="align-middle text-white fas fa-fw fa-book-reader"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
-            <div class="card flex-fill">
-                <div class="card-body py-4">
-                    <div class="d-flex align-items-start">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-2">Total de reclamacao: {{ totalGeralReclamacao }}<br></h3>
-                            <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-danger"> {{
-                                    totalAnoAtualReclamacao }}</span></p>
-                            <div class="mb-0">
-                            </div>
-                        </div>
-                        <div class="d-inline-block ms-3">
-                            <div class="stat " style="background: #d9534f;">
-                                <i class="align-middle text-white fas fa-fw fa-bullhorn"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
-            <div class="card flex-fill">
-                <div class="card-body py-4">
-                    <div class="d-flex align-items-start">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-2">Total de audiência: {{ totalGeralAudiencia }}<br></h3>
-                            <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-info"> {{
-                                    totalAnoAtualAudiencia }}</span></p>
-
-                            <div class="mb-0">
-
-                            </div>
-                        </div>
-                        <div class="d-inline-block ms-3">
-                            <div class="stat " style="background: #1f9bcf;">
-                                <i class="align-middle text-white fas fa-fw fa-users-cog"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="row mb-2 mb-xl-3">
+    <div class="col-auto d-none d-sm-block">
+      <h3>DESLANDES</h3>
     </div>
 
-    <div class="row">
-        <div class="col-12 col-lg-12 d-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
+    <div class="col-auto ms-auto text-end mt-n1">
 
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">5 Últimos Atendimentos em {{currentYear}}</h5>
-                </div>
-                <div class="card flex-fill">
-
-                    <table class="table table-striped mb-0">
-                        <thead>
-                            <tr>
-                                <th>Codigo</th>
-                                <th class="d-none d-xxl-table-cell">Reclamantes</th>
-                                <th class="d-none d-xl-table-cell">Reclamadas</th>
-                                <th>Status</th>
-                                <th>Prazo</th>
-                                <th>Dt. Atendimento</th>
-                                <th class="d-none d-xl-table-cell text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let atendimento of consultaCincoUltimosAtendimentos">
-                                <!-- Código e ano base -->
-                                <td [attr.data-order]="atendimento.codigo" class="align-middle">
-                                    <div class="d-flex align-items-center">
-                                        {{ atendimento.codigo }}/{{ atendimento.anoBase }}
-                                    </div>
-                                </td>
-
-                                <!-- Reclamantes -->
-                                <td class="d-none d-xxl-table-cell">
-                                    <ng-container *ngIf="atendimento.grupoReclamantesAtendimento.length > 0">
-                                        {{ atendimento.grupoReclamantesAtendimento[0] }}
-                                        <div class="text-muted">
-                                        </div>
-
-                                        <ng-container *ngIf="atendimento.grupoReclamantesAtendimento.length > 1">
-                                            <div class="dropdown d-inline">
-                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
-                                                    class="ms-2">
-                                                    <span class="badge badge-subtle-success me-2">
-                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li
-                                                        *ngFor="let r of atendimento.grupoReclamantesAtendimento.slice(1); let i = index">
-                                                        <span class="dropdown-item">
-                                                            {{ r }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </td>
-
-                                <!-- Reclamadas -->
-                                <td class="d-none d-xl-table-cell">
-                                    <ng-container *ngIf="atendimento.grupoReclamadasAtendimento.length > 0">
-                                        {{ atendimento.grupoReclamadasAtendimento[0] }}
-                                        <div class="text-muted">
-
-                                        </div>
-
-                                        <ng-container *ngIf="atendimento.grupoReclamadasAtendimento.length > 1">
-                                            <div class="dropdown d-inline">
-                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
-                                                    class="ms-2">
-                                                    <span class="badge badge-subtle-success me-2">
-                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li
-                                                        *ngFor="let r of atendimento.grupoReclamadasAtendimento.slice(1); let i = index">
-                                                        <span class="dropdown-item">
-                                                            {{ r }}
-
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </td>
-                                <td>
-                                    <div class="d-flex flex-column w-100">
-                                        <span class="badge rounded-pill" [ngClass]="{
-      'badge-subtle-success': atendimento.nomeStatus === 'Primeiro Atendimento',
-      'badge-subtle-primary': atendimento.nomeStatus === 'Dilação de Prazo',
-      'badge-subtle-danger': atendimento.nomeStatus === 'Finalizado'
-    }">
-                                            {{ atendimento.nomeStatus }}
-                                        </span>
-                                    </div>
-
-                                </td> <!-- Data + hora -->
-
-                                <td>
-                                    <div class="d-flex flex-column w-100">
-                                        <span class="me-2 mb-1 text-muted"
-                                            *ngIf="atendimento.prazo && !atendimento.prazo.startsWith('0001-01-01')">
-                                            {{ atendimento.prazo | date:'dd/MM/yyyy' }}
-                                        </span>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <div class="d-flex flex-column w-100">
-                                        <span class="me-2 mb-1 text-muted">
-
-                                            {{ atendimento.dataCadastro | date:'dd/MM/yyyy HH:mm'
-                                            }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <!-- Botões de ação -->
-                                <td class="d-none d-xl-table-cell text-end">
-                                    <a [routerLink]="['/admin/editar-atendimento', atendimento.idAtendimento]"
-                                        title="Editar" class="me-2">
-                                        <i class="align-middle fas fa-fw fa-pencil-alt"></i>
-                                    </a>
-                                    <a [href]="urlBase + '/api/atendimento/export-pdf-atendimento?codigo=' + atendimento.codigo + '&anoBase=' + atendimento.anoBase"
-                                        target="_blank" rel="noopener noreferrer" title="Imprimir PDF" class="me-2">
-                                        <i class="align-middle fas fa-print"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                </div>
-            </div>
+      <div class="dropdown me-2 d-inline-block position-relative">
+        <div class="dropdown-menu dropdown-menu-end">
+          <h6 class="dropdown-header">Settings</h6>
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
         </div>
-        <div class="col-12 col-lg-8 d-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">5 Últimas Reclamações em {{currentYear}}</h5>
-                </div>
-                <div class="card flex-fill">
-
-                    <table class="table table-striped mb-0">
-                        <thead>
-                            <tr>
-                                <th>Codigo</th>
-                                <th class="d-none d-xxl-table-cell">Reclamantes</th>
-                                <th class="d-none d-xl-table-cell">Reclamadas</th>
-                                <th>Status</th>
-                                <th class="d-none d-xl-table-cell text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let reclamacao of consultarReclamacao">
-                                <!-- Código e ano base -->
-                                <td [attr.data-order]="reclamacao.codigo" class="align-middle">
-                                    <div class="d-flex align-items-center">
-                                        {{ reclamacao.codigo }}/{{ reclamacao.anoBase }}
-                                    </div>
-                                </td>
-
-                                <!-- Reclamantes -->
-                                <td class="d-none d-xxl-table-cell">
-                                    <ng-container *ngIf="reclamacao.grupoReclamantesAtendimento.length > 0">
-                                        {{ reclamacao.grupoReclamantesAtendimento[0] }}
-                                        <div class="text-muted">
-
-                                        </div>
-
-                                        <ng-container *ngIf="reclamacao.grupoReclamantesAtendimento.length > 1">
-                                            <div class="dropdown d-inline">
-                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
-                                                    class="ms-2">
-                                                    <span class="badge badge-subtle-success me-2">
-                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li
-                                                        *ngFor="let r of reclamacao.grupoReclamantesAtendimento.slice(1); let i = index">
-                                                        <span class="dropdown-item">
-                                                            {{ r }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </td>
-
-                                <!-- Reclamadas -->
-                                <td class="d-none d-xl-table-cell">
-                                    <ng-container *ngIf="reclamacao.grupoReclamadasAtendimento.length > 0">
-                                        {{ reclamacao.grupoReclamadasAtendimento[0] }}
-                                        <div class="text-muted">
-                                        </div>
-                                        <ng-container *ngIf="reclamacao.grupoReclamadasAtendimento.length > 1">
-                                            <div class="dropdown d-inline">
-                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
-                                                    class="ms-2">
-                                                    <span class="badge badge-subtle-success me-2">
-                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li
-                                                        *ngFor="let r of reclamacao.grupoReclamadasAtendimento.slice(1); let i = index">
-                                                        <span class="dropdown-item">
-                                                            {{ r }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </td>
-                                <!-- Data + hora -->
-                                <td>
-                                    <div class="d-flex flex-column w-100">
-                                        <span class="me-2 mb-1 text-muted">
-
-                                            {{ reclamacao.dataReclamacao | date:'dd/MM/yyyy'
-                                            }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <!-- Botões de ação -->
-                                <td class="d-none d-xl-table-cell text-end">
-                                    <a [routerLink]="['/admin/editar-reclamacao', reclamacao.idReclamacao]"
-                                        title="Editar" class="me-2">
-                                        <i class="align-middle fas fa-fw fa-pencil-alt"></i>
-                                    </a>
-                                    <a [href]="urlBase + '/api/reclamacao/export-pdf-reclamacao?codigo=' + reclamacao.codigo + '&anoBase=' + reclamacao.anoBase"
-                                        target="_blank" rel="noopener noreferrer" title="Imprimir PDF" class="me-2">
-                                        <i class="align-middle fas fa-print"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-6 col-xl-4 d-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">5 Últiumas Audiências</h5>
-                </div>
-                <div class="card-body">
-                    <ul *ngFor="let audiencia of consultaAudiencia" class="timeline">
-                        <li class="timeline-item">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span
-                                    class="badge rounded-pill badge-subtle-primary"><strong>{{audiencia.codigo}}/{{audiencia.anoBase}}</strong></span>
-                                <span class="text-muted text-sm">{{ audiencia.dataAudiencia | date:'dd/MM/yyyy HH:mm'
-                                    }}</span>
-                            </div>
-
-                            <!-- Reclamantes -->
-                            <ng-container
-                                *ngIf="audiencia.grupoReclamantesAtendimento && audiencia.grupoReclamantesAtendimento.length > 0">
-                                <div class="mb-1"><strong>Reclamantes:</strong></div>
-                                <span>{{ audiencia.grupoReclamantesAtendimento[0] }}</span>
-
-                                <ng-container *ngIf="audiencia.grupoReclamantesAtendimento.length > 1">
-                                    <div class="dropdown d-inline ms-2">
-                                        <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                            <span class="badge badge-subtle-success">
-                                                ver mais <i class="fas fa-fw fa-list-ol fa-sm"></i>
-                                            </span>
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li
-                                                *ngFor="let r of audiencia.grupoReclamantesAtendimento.slice(1); let i = index">
-                                                <span class="dropdown-item">{{ r }}</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </ng-container>
-                            </ng-container>
-
-                            <!-- Reclamadas -->
-                            <ng-container
-                                *ngIf="audiencia.grupoReclamadasAtendimento && audiencia.grupoReclamadasAtendimento.length > 0">
-                                <div class="mt-2 mb-1"><strong>Reclamadas:</strong></div>
-                                <span>{{ audiencia.grupoReclamadasAtendimento[0] }}</span>
-
-                                <ng-container *ngIf="audiencia.grupoReclamadasAtendimento.length > 1">
-                                    <div class="dropdown d-inline ms-2">
-                                        <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                            <span class="badge badge-subtle-success">
-                                                ver mais <i class="fas fa-fw fa-list-ol fa-sm"></i>
-                                            </span>
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li
-                                                *ngFor="let r of audiencia.grupoReclamadasAtendimento.slice(1); let i = index">
-                                                <span class="dropdown-item">{{ r }}</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </ng-container>
-                            </ng-container>
-
-                        </li>
-                    </ul>
-                </div>
-
-
-
-            </div>
-        </div>
-
+      </div>
     </div>
-
-    <div class="row">
-        <div class="col-12 col-xl-4 d-none d-xl-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">Atendimentos em {{currentYear}}</h5>
-                </div>
-                <div class="card-body d-flex">
-                    <div class="align-self-center w-100">
-                        <app-graficoAtendimento></app-graficoAtendimento>
-
-                    </div>
-                </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+      <div class="card illustration flex-fill">
+        <div class="card-body p-0 d-flex flex-fill">
+          <div class="row g-0 w-100">
+            <div class="col-12">
+              <div class="illustration-text p-3 m-1">
+                <h4 class="illustration-text">{{ saudacaoUsuario }} de volta, <span>{{ nomeUsuario }}</span></h4>
+                <p class="mb-0"></p>
+              </div>
             </div>
-        </div>
+            <div class="col-6 align-self-end text-end">
+            <img src="assets/appdeslandes/img/illustrations/customer-support.png" alt="Customer Support"
+              class="img-fluid illustration-img">
 
-        <div class="col-12 col-lg-4 d-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
 
-                    <h5 class="card-title mb-0">Reclamações em {{currentYear}}</h5>
-                </div>
-                <div class="card-body d-flex">
-                    <div class="align-self-center w-100">
-                        <app-reclamacao-pizza></app-reclamacao-pizza>
-                    </div>
-                </div>
             </div>
+          </div>
         </div>
-        <div class="col-12 col-lg-6 col-xl-4 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">Audiências em {{currentYear}}</h5>
-                </div>
-                <div class="card-body d-flex">
-                    <div class="align-self-center w-100">
-                        <app-doughnut></app-doughnut>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-12 col-lg-8 col-xl-8 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">Processos Administrativos em {{currentYear}}</h5>
-                </div>
-                <div class="card-body d-flex">
-                    <div class="align-self-center w-100">
-                        <app-grafico-pa-barras></app-grafico-pa-barras>
-                    </div>
-                </div>
+    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body py-4">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2">Total de atendimentos: <strong>{{ totalGeral }}</strong><br></h3>
+              <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-success"> {{
+              totalAnoAtual }}</span></p>
+              <div class="mb-0">
+              </div>
             </div>
-        </div>
-        <div class="col-12 col-lg-4 col-xl-4 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">Notificação/Intimação em {{currentYear}}</h5>
-                </div>
-                <div class="card-body d-flex">
-                    <div class="align-self-center w-100">
-                        <app-notificacao></app-notificacao>
-                    </div>
-                </div>
+            <div class="d-inline-block ms-3">
+              <div class="stat " style="background: #4bbf73;">
+                <i class="align-middle text-white fas fa-fw fa-book-reader"></i>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body py-4">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2">Total de reclamacao: {{ totalGeralReclamacao }}<br></h3>
+              <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-danger"> {{
+              totalAnoAtualReclamacao }}</span></p>
+              <div class="mb-0">
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+              <div class="stat " style="background: #d9534f;">
+                <i class="align-middle text-white fas fa-fw fa-bullhorn"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body py-4">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2">Total de audiência: {{ totalGeralAudiencia }}<br></h3>
+              <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-info"> {{
+              totalAnoAtualAudiencia }}</span></p>
+
+              <div class="mb-0">
+
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+              <div class="stat " style="background: #1f9bcf;">
+                <i class="align-middle text-white fas fa-fw fa-users-cog"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 col-lg-12 d-flex">
+      <div class="card flex-fill w-100">
+        <div class="card-header">
+          <div class="card-actions float-end">
+            <div class="dropdown position-relative">
+              <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
+                <i class="align-middle" data-lucide="more-horizontal"></i>
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </div>
+          </div>
+          <h5 class="card-title mb-0">5 Últimos Atendimentos em {{currentYear}}</h5>
+        </div>
+        <div class="card flex-fill">
+
+          <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Codigo</th>
+                <th class="d-none d-xxl-table-cell">Reclamantes</th>
+                <th class="d-none d-xl-table-cell">Reclamadas</th>
+                <th>Status</th>
+                <th>Prazo</th>
+                <th>Dt. Atendimento</th>
+                <th class="d-none d-xl-table-cell text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+           

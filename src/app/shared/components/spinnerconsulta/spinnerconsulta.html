@@ -1,11 +1,12 @@
-       <!-- Spinner de três bolinhas -->
-          <div *ngIf="carregando" class="spinner-container">
-            <div class="spinner-bounce">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <div class="spinner-message">Consultando...</div>
-          </div>
+<!-- Spinner de três bolinhas -->
+@if (carregando) {
+  <div class="spinner-container">
+    <div class="spinner-bounce">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="spinner-message">Consultando...</div>
+  </div>
+}
 
-          

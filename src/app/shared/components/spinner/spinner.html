@@ -1,6 +1,8 @@
-<div *ngIf="show" class="spinner-overlay">
-  <div class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">{{ message }}</span>
+@if (show) {
+  <div class="spinner-overlay">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">{{ message }}</span>
+    </div>
+    <div>{{ message }}</div>
   </div>
-  <div>{{ message }}</div>
-</div>
+}

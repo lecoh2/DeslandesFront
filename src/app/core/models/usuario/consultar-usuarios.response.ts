@@ -1,6 +1,6 @@
-import { FotosResponse } from "../fotos/fotos-response";
-import { GrupoNiveisRequest } from "../grupo-niveis/grupo-niveis-request";
-import { GrupoSetoresRequest } from "../grupo-setores/grupo-setores-request";
+///import { FotosResponse } from "../fotos/fotos-response";
+//import { GrupoNiveisRequest } from "../grupo-niveis/grupo-niveis-request";
+//import { GrupoSetoresRequest } from "../grupo-setores/grupo-setores-request";
 
 
 export interface ConsultarUsuarioResponse {
@@ -14,9 +14,9 @@ export interface ConsultarUsuarioResponse {
     endereco?:string;
     telefone?:string;
     genero?:string;
-    foto?: string;
+   // foto?: string;
     fileUrl?:string;
-    grupoSetores?: GrupoSetoresRequest[];
-    grupoNiveis?: GrupoNiveisRequest[];
-    fotos?: FotosResponse;
+    //grupoSetores?: GrupoSetoresRequest[];
+    //grupoNiveis?: GrupoNiveisRequest[];
+    //fotos?: FotosResponse;
 }

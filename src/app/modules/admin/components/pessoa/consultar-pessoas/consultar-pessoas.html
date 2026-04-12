@@ -1,0 +1,190 @@
+<div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">Consultar de Reclamantes / Empresas</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Para trocar a pesquisa clique na opção desejada</h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Pessoa</label><br />
+                        <div class="btn-group" role="group" aria-label="Tipo de Pessoa">
+                            <button type="button" class="btn"
+                                [ngClass]="{'btn-primary': tipoPessoaSelecionado === 'fisica', 'btn-outline-primary': tipoPessoaSelecionado !== 'fisica'}"
+                                (click)="tipoPessoaSelecionado = 'fisica'; onTipoPessoaChange()">
+                                Pessoa Física
+                            </button>
+                            <button type="button" class="btn"
+                                [ngClass]="{'btn-primary': tipoPessoaSelecionado === 'juridica', 'btn-outline-primary': tipoPessoaSelecionado !== 'juridica'}"
+                                (click)="tipoPessoaSelecionado = 'juridica'; onTipoPessoaChange()">
+                                Pessoa Jurídica
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+
+
+                        <!-- Spinner alinhado à esquerda -->
+                        <app-spinner-consulta *ngIf="carregando" [carregando]="true" message="Consultando..."
+                            class="d-inline-block">
+                        </app-spinner-consulta>
+
+
+                        <!-- Alertas ocupando 100% da largura -->
+                        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+                        </app-alerts>
+
+                        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+                        </app-alerts>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <input type="text" class="form-control form-control-sm w-50"
+                            placeholder="Pesquisar código, reclamante ou reclamada" [(ngModel)]="filtro"
+                            (keyup.enter)="aplicarFiltro()">
+                        <div>
+                            <select class="form-select form-select-sm" [(ngModel)]="tamanhoPagina"
+                                (change)="aplicarFiltro()">
+                                <option *ngFor="let size of [5,10,20,50]" [value]="size">{{ size }} por página</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Tabela Pessoas Físicas -->
+                    <table *ngIf="tipoPessoaSelecionado === 'fisica'" id="datatables-fisica"
+                        class="table table-striped w-100">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Profissão</th>
+                                <th>CPF</th>
+                                <th>RG</th>
+                                <th>Telefone</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let pessoas of dataSource.data">
+                                <td>{{ pessoas.nome }}</td>
+                                <td>{{ pessoas.profissao }}</td>
+                                <td>{{ formatarCpf(pessoas.cpf) }}</td>
+                                <td>{{ formatarRg(pessoas.rg) }}</td>
+                                <td>
+                                    <ng-container *ngIf="formatarTelefoneArray(pessoas.telefone).length > 0">
+                                        <span>{{ formatarTelefoneArray(pessoas.telefone)[0] }}</span>
+
+                                        <ng-container *ngIf="formatarTelefoneArray(pessoas.telefone).length > 1">
+                                            <div class="dropdown d-inline">
+                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
+                                                    class="ms-2">
+                                                    <span class="badge badge-subtle-success me-2">
+                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
+                                                    </span>
+                                                </a>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li *ngFor="
+                    let tel of formatarTelefoneArray(pessoas.telefone).slice(1)
+                  ">
+                                                        <span class="dropdown-item">{{ tel }}</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                </td>
+                                <td class="text-end align-middle">
+                                    <a [routerLink]="['/admin/editar-pessoa-fisica', pessoas.idPessoa]" title="Editar">
+                                        <i class="align-middle me-2 fas fa-fw fa-pencil-alt fa-lg"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Tabela Pessoas Jurídicas -->
+                    <table *ngIf="tipoPessoaSelecionado === 'juridica'" id="datatables-juridica"
+                        class="table table-striped w-100">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CNPJ</th>
+                                <th>Inscrição Estadual</th>
+                                <th>Inscrição Municipal</th>
+                                <th>Telefone</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let pessoas of consulta">
+                                <td>{{ pessoas.nome }}</td>
+                                <td>{{ formatarCnpj(pessoas.cnpj) }}</td>
+
+                                <td>{{ formatarInscricaoMunicipal(pessoas.inscricaoMunicipal) }}</td>
+                                <td>{{ formatarInscricaoEstadual(pessoas.inscricaoEstadual) }}</td>
+
+                                <td>
+                                    <ng-container *ngIf="formatarTelefoneArray(pessoas.telefone).length > 0">
+                                        <span>{{ formatarTelefoneArray(pessoas.telefone)[0] }}</span>
+
+                                        <ng-container *ngIf="formatarTelefoneArray(pessoas.telefone).length > 1">
+                                            <div class="dropdown d-inline">
+                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
+                                                    class="ms-2">
+                                                    <span class="badge badge-subtle-success me-2">
+                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
+                                                    </span>
+                                                </a>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li *ngFor="
+                    let tel of formatarTelefoneArray(pessoas.telefone).slice(1)
+                  ">
+                                                        <span class="dropdown-item">{{ tel }}</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                </td>
+                                <td class="text-end align-middle">
+                                    <a [routerLink]="['/admin/editar-pessoa-juridica', pessoas.idPessoa]"
+                                        title="Editar">
+                                        <i class="align-middle me-2 fas fa-fw fa-pencil-alt fa-lg"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <nav *ngIf="totalPaginas > 1">
+                        <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item" [class.disabled]="paginaAtual === 1">
+                                <a class="page-link" (click)="irParaPagina(1)">Primeira</a>
+                            </li>
+                            <li class="page-item" [class.disabled]="paginaAtual === 1">
+                                <a class="page-link" (click)="irParaPagina(paginaAtual - 1)">Anterior</a>
+                            </li>
+
+                            <li class="page-item" *ngFor="let p of paginasVisiveis" [class.active]="p === paginaAtual">
+                                <a class="page-link" (click)="irParaPagina(p)">{{ p }}</a>
+                            </li>
+
+                            <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
+                                <a class="page-link" (click)="irParaPagina(paginaAtual + 1)">Próxima</a>
+                            </li>
+                            <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
+                                <a class="page-link" (click)="irParaPagina(totalPaginas)">Última</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <p class="text-end text-muted">Mostrando página {{ paginaAtual }} de {{ totalPaginas }} | Total de
+                        registros: {{
+                        totalRegistros }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>

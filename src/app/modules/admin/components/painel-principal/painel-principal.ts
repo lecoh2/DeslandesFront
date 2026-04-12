@@ -1,14 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AuthHelper } from '../../../../core/helpers/auth.helper';
 import { environment } from '../../../../../environments/environment';
-//import { DashboardService } from '../../../../core/services/dashboard.service';
-//import { DasboardResponse } from '../../../../core/models/dashboard/dashboard.response';
-//import { AtendimentoService } from '../../../../core/services/atendimento.service';
-//import { ConsultarAtendimentoResponse } from '../../../../core/models/atendimento/consultar-atendimento-response';
-//import { ReclamacaoService } from '../../../../core/services/reclamacao.service';
-//import { AudienciaService } from '../../../../core/services/audiencia.service';
-//import { consultarAudienciaResponse } from '../../../../core/models/audiencia/consultar-audiencia-response';
-//import { ConsultarReclamacaoResponse } from '../../../../core/models/reclamacao/consultar-reclamacao-response';
+
 
 import { AccessService } from '../../../../core/services/access.service';
 
@@ -18,17 +11,10 @@ import { AccessService } from '../../../../core/services/access.service';
   templateUrl: './painel-principal.html',
   styleUrl: './painel-principal.css'
 })
-export class PainelPrincipalComponent {
+export class PainelPrincipal {
     constructor(public access: AccessService
     ) { }
- // consulta: ConsultarAtendimentoResponse[] = [];
-  //consultaCincoUltimosAtendimentos: ConsultarAtendimentoResponse[] = [];
- // consultarReclamacao: ConsultarReclamacaoResponse[]=[];
- // dashboardService = inject(DashboardService);
- // private atendimentoService = inject(AtendimentoService);
- // private reclamacaoService = inject(ReclamacaoService);
- // private audienciaService = inject(AudienciaService);
- // consultaAudiencia: consultarAudienciaResponse[] = [];
+
   authHelper = inject(AuthHelper);
   totalGeral: number = 0;
   totalAnoAtual: number = 0;
@@ -48,83 +34,18 @@ export class PainelPrincipalComponent {
     if (!this.sexoUsuario) return 'Bem-vindo(a)';
     return this.sexoUsuario.toLowerCase() === 'feminino' ? 'Bem-vinda' : 'Bem-vindo';
   }
-  /*ngOnInit() {
-    this.buscarCincoUltimosAtendimentos();
-     this.buscarCincoUltimasAudiencias();
-     this.buscarReclamacao();
-    const usuario = this.authHelper.get();
-    console.log('Usuário logado:', usuario); // <-- aqui
-    this.nomeUsuario = this.authHelper.get()?.nomeUsuario ?? 'Usuário';
-    this.sexoUsuario = this.authHelper.get()?.sexo ?? 'Masculino'; // default
-    this.atendimentoService.getQuantidadeAtendimentos()
-      .subscribe({
-        next: (resultado) => {
-          this.totalGeral = resultado.totalGeral;
-          this.totalAnoAtual = resultado.totalAnoAtual;
-        },
-        error: (erro) => {
-          console.error('Erro ao consultar quantidade de atendimentos', erro);
-          this.totalGeral = 0;
-          this.totalAnoAtual = 0;
-        }
-      });
-    this.reclamacaoService.getQuantidadeReclamacao()
-      .subscribe({
-        next: (resultado) => {
-          this.totalGeralReclamacao = resultado.totalGeral;
-          this.totalAnoAtualReclamacao = resultado.totalAnoAtual;
-        },
-        error: (erro) => {
-          console.error('Erro ao consultar quantidade de atendimentos', erro);
-          this.totalGeral = 0;
-          this.totalAnoAtual = 0;
-        }
-      });
-    this.audienciaService.getQuantidadeAudiencia()
-      .subscribe({
-        next: (resultado) => {
-          this.totalGeralAudiencia = resultado.totalGeral;
-          this.totalAnoAtualAudiencia = resultado.totalAnoAtual;
-        },
-        error: (erro) => {
-          console.error('Erro ao consultar quantidade de atendimentos', erro);
-          this.totalGeral = 0;
-          this.totalAnoAtual = 0;
-        }
-      });
+ngOnInit() {
+  const usuario = this.authHelper.get();
+
+  console.log('Usuário logado:', usuario);
+
+  if (usuario) {
+    this.nomeUsuario = usuario.nomeUsuario;
+    this.sexoUsuario = usuario.sexo ?? 'Masculino';
+  } else {
+    this.nomeUsuario = 'Usuário';
   }
-  buscarCincoUltimosAtendimentos() {  
-    this.atendimentoService.ConsultarCincoUltimosAtendimentos().subscribe({
-      next: (response) => {
-        console.log('Resposta da API Audiencia:', response);
-        this.consultaCincoUltimosAtendimentos = response;       
-        setTimeout(() => {       
-        }, 0);
-      },
-   
-    });
-  }
-    buscarReclamacao() {
-    this.reclamacaoService.getCincoUltimasReclamacao().subscribe({
-      next: (response) => {
-        console.log("Dados da Reclamacao", response);
-        this.consultarReclamacao = response;    
-        setTimeout(() => {         
-        }, 0);      
-      }, 
-    });
-  }
-  buscarCincoUltimasAudiencias() {  
-    this.audienciaService.consultarcincoUltimasAudiencias().subscribe({
-      next: (response) => {
-        console.log('Resposta da API Audiencia:', response);
-        this.consultaAudiencia = response;       
-        setTimeout(() => {       
-        }, 0);
-      },
-   
-    });
-  }
+}
 formatarCpf(cpf?: string): string {
     if (!cpf) return '';
     const cleaned = cpf.replace(/\D/g, '');
@@ -151,5 +72,5 @@ formatarCpf(cpf?: string): string {
 
     return `${dia}/${mes}/${ano}`;
   }
-    */
+    
 }

@@ -26,10 +26,10 @@ export class UsuarioService {
 
     autenticar(request: AutenticarUsuarioRequest): Observable<AutenticarUsuarioResponse> {
         return this.http
-            .post<{ mensagem: String, dados: AutenticarUsuarioResponse }>(
-                `${this.url}/api/usuario/autenticar-usuario`, request)
+            .post<{ mensagem: String, data: AutenticarUsuarioResponse }>(
+                `${this.url}/api/v1/usuarios/autenticar-usuario`, request)
             .pipe(
-                map(response => response.dados) // pega apenas os dados
+                map(response => response.data) // pega apenas os dados
             );
     }
     //métodos para cadastrar reclamacao
@@ -54,7 +54,7 @@ export class UsuarioService {
     }
     consultarPerfilUsuarioPorId(id: string): Observable<ConsultarUsuarioResponse[]> {
         return this.http.get<ConsultarUsuarioResponse[]>
-            (`${this.url}/api/usuario/consultar-usuarios-por-id-perfil/${id}`
+            (`${this.url}/api/v1/usuarios/consultar-usuarios-por-id-perfil/${id}`
             );
     }
 
