@@ -8,6 +8,8 @@ import { AuthGuard } from "../../core/guards/auth.guard";
 import { NivelGuard } from "../../core/guards/nivel.guard";
 import { AdminLayout } from "./layouts/layouts/admin-layout/admin-layout";
 import { CadastrarPessoas } from "./components/pessoa/cadastrar-pessoa/cadastrar-pessoas";
+import { ConsultarPessoas } from "./components/pessoa/consultar-pessoas/consultar-pessoas";
+import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cadastrar-processo";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -26,8 +28,23 @@ export const routes: Routes = [
             {
                 path: 'cadastrar-pessoas',
                 component: CadastrarPessoas,
-              //  canActivate: [AuthGuard, NivelGuard],
-                //data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
+            {
+                path: 'consultar-pessoas',
+                component: ConsultarPessoas,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
+//processo
+              {
+                path: 'cadastrar-proceso',
+                component: CadastrarProcesso,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
             },
             

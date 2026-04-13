@@ -60,6 +60,7 @@
                         class="table table-striped w-100">
                         <thead>
                             <tr>
+                                <td>Perfil</td>
                                 <th>Nome</th>
                                 <th>Profissão</th>
                                 <th>CPF</th>
@@ -70,6 +71,18 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let pessoas of dataSource.data">
+                                <td>
+                                    <i class="fas" [ngClass]="{
+       'fa-user text-primary': pessoas.perfil === 1,
+       'fa-address-book text-success': pessoas.perfil === 2,
+       'fa-question-circle text-muted': !pessoas.perfil
+     }" [title]="
+       pessoas.perfil === 1 ? 'Cliente' :
+       pessoas.perfil === 2 ? 'Contato' :
+       'Sem perfil'
+     ">
+                                    </i>
+                                </td>
                                 <td>{{ pessoas.nome }}</td>
                                 <td>{{ pessoas.profissao }}</td>
                                 <td>{{ formatarCpf(pessoas.cpf) }}</td>
@@ -111,21 +124,32 @@
                         class="table table-striped w-100">
                         <thead>
                             <tr>
+                                <td>Perfil</td>
                                 <th>Nome</th>
                                 <th>CNPJ</th>
                                 <th>Inscrição Estadual</th>
-                                <th>Inscrição Municipal</th>
                                 <th>Telefone</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let pessoas of consulta">
+                                <td>
+                                    <i class="fas" [ngClass]="{
+       'fa-user text-primary': pessoas.perfil === 1,
+       'fa-address-book text-success': pessoas.perfil === 2,
+       'fa-question-circle text-muted': !pessoas.perfil
+     }" [title]="
+       pessoas.perfil === 1 ? 'Cliente' :
+       pessoas.perfil === 2 ? 'Contato' :
+       'Sem perfil'
+     ">
+                                    </i>
+                                </td>
                                 <td>{{ pessoas.nome }}</td>
                                 <td>{{ formatarCnpj(pessoas.cnpj) }}</td>
 
-                                <td>{{ formatarInscricaoMunicipal(pessoas.inscricaoMunicipal) }}</td>
-                                <td>{{ formatarInscricaoEstadual(pessoas.inscricaoEstadual) }}</td>
+<td>{{ formatarInscricaoEstadual(pessoas.inscricaoEstadual) }}</td>
 
                                 <td>
                                     <ng-container *ngIf="formatarTelefoneArray(pessoas.telefone).length > 0">

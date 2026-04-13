@@ -14,6 +14,8 @@ import { PainelPrincipal } from "./components/painel-principal/painel-principal"
 import { AdminLayout } from "./layouts/layouts/admin-layout/admin-layout";
 import { CadastrarPessoas } from "./components/pessoa/cadastrar-pessoa/cadastrar-pessoas";
 import { CadastrarEtiquetas } from "./components/etiquetas/cadastrar-etiquetas/cadastrar-etiquetas";
+import { ConsultarPessoas } from "./components/pessoa/consultar-pessoas/consultar-pessoas";
+import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cadastrar-processo";
 
 
 @NgModule({
@@ -22,7 +24,8 @@ import { CadastrarEtiquetas } from "./components/etiquetas/cadastrar-etiquetas/c
         PainelPrincipal,
         CadastrarPessoas,
         CadastrarEtiquetas,
-
+        ConsultarPessoas,
+        CadastrarProcesso,
 
 
         //siderbar, navbar, footer

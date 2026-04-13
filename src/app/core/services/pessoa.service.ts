@@ -62,6 +62,16 @@ cadastrarPessoaFisica(request: PessoaFisicaRequest): Observable<PessoaFisicaResp
     return this.http.post<PessoaJuridicaResponse>
       (`${this.url}/api/v1/pessoa-juridica/cadastrar-pessoa-juridica`, request);
   }
+    consultarPessoaFisicaPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
+  const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
+  if (searchTerm) params.searchTerm = searchTerm;
+  return this.http.get<any>(`${this.url}/api/v1/pessoa-fisica/consultar-pessoa-fisica-paginacao`, { params });
+}
+  consultarPessoaJuridicaPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
+  const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
+  if (searchTerm) params.searchTerm = searchTerm;
+  return this.http.get<any>(`${this.url}/api/v1/pessoa-juridica/consultar-pessoa-juridica-paginacao`, { params });
+}
   /*
   consultarPessoasFisica(): Observable<ConsultarPessoaResponse[]> {
     return this.http.get<ConsultarPessoaResponse[]>
@@ -125,16 +135,8 @@ consultarPessoasFisicaComPaginacao(
 }
 
 
-  consultarPessoaFisicaPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
-  const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
-  if (searchTerm) params.searchTerm = searchTerm;
-  return this.http.get<any>(`${this.url}/api/pessoa/consultar-pessoas-fisica-paginacao`, { params });
-}
-  consultarPessoaJuridicaPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
-  const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
-  if (searchTerm) params.searchTerm = searchTerm;
-  return this.http.get<any>(`${this.url}/api/pessoa/consultar-pessoas-juridica-paginacao`, { params });
-}
+
+
 
 consultarPessoasJuridicaComPaginacao(
   pageNumber: number,

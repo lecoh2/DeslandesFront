@@ -37,10 +37,10 @@ export class UsuarioService {
         return this.http.post<CriarUsuarioResponse>
             (`${this.url}/api/usuario/cadastrar-usuario`, request)
     }
-    /*consultarUsuarios(): Observable<ConsultarUsuarioResponse[]> {
+    consultarUsuarioResponsavel(): Observable<ConsultarUsuarioResponse[]> {
         return this.http.get<ConsultarUsuarioResponse[]>
-            (`${this.url}/api/usuario/consultar-usuarios`);
-    }*/
+            (`${this.url}/api/v1/usuarios/consultar-usaurio-responsavel`);
+    }
 
       consultarUsuariosPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
   const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };

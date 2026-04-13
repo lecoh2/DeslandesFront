@@ -1,4 +1,4 @@
-/*declare var $: any;
+declare var $: any;
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ConsultarPessoaResponse } from '../../../../../core/models/pessoa/consultar-pessoa-response';
 import { environment } from '../../../../../../environments/environment.development';
@@ -9,8 +9,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
 @Component({
   selector: 'app-consultar-pessoas',
   standalone: false,
-  templateUrl: './consultar-pessoas.component.html',
-  styleUrl: './consultar-pessoas.component.css',
+  templateUrl: './consultar-pessoas.html',
+  styleUrl: './consultar-pessoas.css',
   animations: [
     trigger('fadeAnimation', [
       transition(':enter', [
@@ -23,7 +23,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
     ]),
   ],
 })
-export class ConsultarPessoasComponent implements OnInit {
+export class ConsultarPessoas implements OnInit {
 
 
   displayedColumns: string[] = ['nome', 'profissao', 'cpf', 'rg', 'telefone', 'acoes'];
@@ -40,7 +40,7 @@ export class ConsultarPessoasComponent implements OnInit {
   mensagemErro: string[] = [];
   mensagemSucesso: string[] = [];
 
-  urlBase = environment.apiProcon;
+  urlBase = environment.apiDeslandes;
 
   tipoPessoaSelecionado: 'fisica' | 'juridica' = 'fisica';
 
@@ -63,6 +63,7 @@ carregarPessoas() {
   if (this.tipoPessoaSelecionado === 'fisica') {
     this.service.consultarPessoaFisicaPaginado(this.paginaAtual, this.tamanhoPagina, this.filtro).subscribe({
       next: (response: any) => {
+      
         this.dataSource.data = response.items || []; // tabela física usa dataSource
         this.totalRegistros = response.totalCount || 0;
         this.totalPaginas = Math.ceil(this.totalRegistros / this.tamanhoPagina);
@@ -79,6 +80,7 @@ carregarPessoas() {
   else {
     this.service.consultarPessoaJuridicaPaginado(this.paginaAtual, this.tamanhoPagina, this.filtro).subscribe({
       next: (response: any) => {
+        console.log(this.formatarInscricaoEstadual('123456789'));
         this.consulta = response.items || []; // tabela jurídica usa consulta
         this.totalRegistros = response.totalCount || 0;
         this.totalPaginas = Math.ceil(this.totalRegistros / this.tamanhoPagina);
@@ -99,7 +101,16 @@ carregarPessoas() {
       this.paginaAtual = p;
       this.carregarPessoas();
     }
-
+getIconPerfil(perfil?: number) {
+  switch (perfil) {
+    case 1:
+      return 'fas fa-user text-primary';
+    case 2:
+      return 'fas fa-address-book text-success';
+    default:
+      return 'fas fa-question-circle text-muted';
+  }
+}
     atualizarPaginasVisiveis() {
       const maxVisiveis = 5;
       let start = Math.max(1, this.paginaAtual - Math.floor(maxVisiveis / 2));
@@ -178,18 +189,22 @@ carregarPessoas() {
 }
 
 
-    formatarInscricaoEstadual(ie ?: string): string {
-      if (!ie) return '';
-      const cleaned = ie.replace(/\D/g, '');
+formatarInscricaoEstadual(ie?: string): string {
+  if (!ie) return '';
 
-      // Exemplo básico para IE com 9 dígitos: 12.345.678-9
-      if (cleaned.length === 9) {
-        return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4');
-      }
+  // ✅ Se já tem pontuação, retorna como está
+  if (ie.includes('.') || ie.includes('-') || ie.includes('/')) {
+    return ie;
+  }
 
-      // Para outros tamanhos, só retorna o valor limpo
-      return ie;
-    }
+  const cleaned = ie.replace(/\D/g, '');
+
+  if (cleaned.length === 9) {
+    return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4');
+  }
+
+  return ie;
+}
 
     formatarInscricaoMunicipal(im ?: string): string {
       if (!im) return '';
@@ -215,4 +230,3 @@ carregarPessoas() {
       );
     }
   }
-*/

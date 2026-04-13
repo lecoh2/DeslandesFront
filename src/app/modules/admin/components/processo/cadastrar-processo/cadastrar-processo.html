@@ -1,1 +1,198 @@
-<p>cadastrar-processo works!</p>
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">Cadastrar Processo</h1>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Cadastro de Processo</h5>
+      <h6 class="card-subtitle text-muted">Preencha os dados do processo</h6>
+    </div>
+
+    <div class="card-body">
+
+      <!-- SPINNER / ALERTAS -->
+      <app-spinner *ngIf="carregando" [show]="true" message="Salvando..."></app-spinner>
+
+      <app-alerts *ngIf="!carregando && mensagemSucesso.length"
+                  titulo="Sucesso!"
+                  [mensagens]="mensagemSucesso"
+                  tipo="success">
+      </app-alerts>
+
+      <app-alerts *ngIf="!carregando && mensagemErro.length"
+                  titulo="Erro!"
+                  [mensagens]="mensagemErro"
+                  tipo="danger">
+      </app-alerts>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <!-- ================= DADOS DO PROCESSO ================= -->
+        <h5 class="mb-3">Dados do Processo</h5>
+
+        <div class="row mb-3">
+
+          <div class="col-md-4">
+            <label class="form-label">Pasta *</label>
+            <input class="form-control" formControlName="pasta">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Título *</label>
+            <input class="form-control" formControlName="titulo">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Número do Processo *</label>
+            <input class="form-control" formControlName="numeroProcesso">
+          </div>
+
+        </div>
+
+        <div class="row mb-3">
+
+          <div class="col-md-4">
+            <label class="form-label">Vara *</label>
+            <select class="form-control" formControlName="varaId">
+              <option [ngValue]="null">Selecione</option>
+              <option *ngFor="let vara of varas" [ngValue]="vara.id">
+                {{ vara.nomeVara }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Ação</label>
+            <select class="form-control" formControlName="acaoId">
+              <option [ngValue]="null">Selecione</option>
+              <option *ngFor="let acao of acoes" [ngValue]="acao.id">
+                {{ acao.NomeAcao }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Responsável</label>
+            <select class="form-control" formControlName="usuarioResponsavelId">
+              <option [ngValue]="null">Selecione</option>
+              <option *ngFor="let user of responsaveis" [ngValue]="user.idUsuario">
+                {{ user.nomeUsuario }}
+              </option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Link do Tribunal</label>
+          <input class="form-control" formControlName="linkTribunal">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Objeto</label>
+          <textarea class="form-control" rows="3" formControlName="objeto"></textarea>
+        </div>
+
+        <!-- ================= VALORES ================= -->
+        <h5 class="mt-4 mb-3">Valores e Datas</h5>
+
+        <div class="row mb-3">
+
+          <div class="col-md-4">
+            <label class="form-label">Valor da Causa</label>
+            <input type="number" class="form-control" formControlName="valorCausa">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Valor da Condenação</label>
+            <input type="number" class="form-control" formControlName="valorCondenacao">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Data de Distribuição</label>
+            <input type="date" class="form-control" formControlName="distribuido">
+          </div>
+
+        </div>
+
+        <div class="row mb-3">
+
+          <div class="col-md-4">
+            <label class="form-label">Instância</label>
+            <select class="form-control" formControlName="instancia">
+              <option [ngValue]="null">Selecione</option>
+              <option *ngFor="let i of instancias" [ngValue]="i.id">
+                {{ i.nome }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Acesso</label>
+            <select class="form-control" formControlName="acesso">
+              <option [ngValue]="null">Selecione</option>
+              <option *ngFor="let a of acessos" [ngValue]="a.id">
+                {{ a.nome }}
+              </option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Observação</label>
+          <textarea class="form-control" rows="3" formControlName="observacao"></textarea>
+        </div>
+
+        <!-- ================= RELACIONAMENTOS ================= -->
+        <h5 class="mt-4 mb-3">Relacionamentos</h5>
+
+        <!-- CLIENTES -->
+        <div class="mb-3">
+          <label class="form-label">Clientes</label>
+
+          <app-autocomplete-pessoa
+            (selecionado)="adicionarCliente($event)">
+          </app-autocomplete-pessoa>
+
+          <div class="mt-2">
+            <span *ngFor="let c of clientesSelecionados"
+                  class="badge bg-primary me-2">
+              {{ c.nome }}
+            </span>
+          </div>
+        </div>
+
+        <!-- ENVOLVIDOS -->
+        <div class="mb-3">
+          <label class="form-label">Envolvidos</label>
+
+         <app-autocomplete-pessoa
+            (selecionado)="adicionarEnvolvido($event)">
+          </app-autocomplete-pessoa>
+
+          <div class="mt-2">
+            <span *ngFor="let e of envolvidosSelecionados"
+                  class="badge bg-warning me-2">
+              {{ e.nome }}
+            </span>
+          </div>
+        </div>
+
+        <!-- ETIQUETAS -->
+        <div class="mb-3">
+          <label class="form-label">Etiquetas</label>
+
+     <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
+            </app-etiquetas>
+
+        <!-- BOTÃO -->
+        <button type="submit"
+                class="btn btn-primary mt-3"
+                [disabled]="carregando">
+          <i class="fas fa-save"></i> Salvar Processo
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>
