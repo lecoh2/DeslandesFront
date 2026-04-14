@@ -32,7 +32,24 @@
 				</ul>
 			</li>
 		
+	
+			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+	'Estagiários', 'Supervisor','Conciliador')">
+				<a data-bs-target="#pessoas" data-bs-toggle="collapse" class="sidebar-link collapsed">
 
+					<i class="fas fa-users align-middle"></i> <span class="align-middle">Processos</span>
+
+
+				</a>
+				<ul id="pessoas" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'cadastrar-proceso']">
+							Cadastrar
+						</a></li>
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'consultar-proceso']">
+							Consultar</a></li>
+				</ul>
+			</li>
+		
 			
 
 			<!-- Múltiplos níveis -->

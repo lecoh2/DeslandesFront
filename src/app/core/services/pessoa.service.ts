@@ -6,6 +6,7 @@ import { PessoaFisicaRequest } from "../models/pessoa/pessoas-fisica-request";
 import { PessoaJuridicaRequest } from "../models/pessoa/pessoa-juridica-request";
 import { PessoaFisicaResponse } from "../models/pessoa/pessoa-fisica-response";
 import { PessoaJuridicaResponse } from "../models/pessoa/pessoa-jurisica-response";
+import { PessoaResumo } from "../models/pessoa/pessoa-resumo";
 
 
 //import { ConsultarPessoaResponse } from "../models/pessoa/consultar-pessoa-response";
@@ -57,7 +58,18 @@ cadastrarPessoaFisica(request: PessoaFisicaRequest): Observable<PessoaFisicaResp
     }
   );
 }
+consultarPessoasResumo(termo?: string, limite: number = 50) {
+  const params: any = { limite: limite.toString() };
 
+  if (termo) {
+    params.termo = termo;
+  }
+
+  return this.http.get<PessoaResumo[]>(
+    `${this.url}/api/v1/pessoas/resumo`,
+    { params }
+  );
+}
   cadastrarPessoaJuridica(request: PessoaJuridicaRequest): Observable<PessoaJuridicaResponse> {
     return this.http.post<PessoaJuridicaResponse>
       (`${this.url}/api/v1/pessoa-juridica/cadastrar-pessoa-juridica`, request);
