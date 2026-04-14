@@ -5,8 +5,7 @@ import { Navbar } from "./shared/navbar/navbar";
 import { Footer } from "./shared/footer/footer";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { RouterLink } from "@angular/router";
-
+import { RouterModule } from "@angular/router";
 import { SharedModule } from "../../shared/shared.module";
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -16,6 +15,7 @@ import { CadastrarPessoas } from "./components/pessoa/cadastrar-pessoa/cadastrar
 import { CadastrarEtiquetas } from "./components/etiquetas/cadastrar-etiquetas/cadastrar-etiquetas";
 import { ConsultarPessoas } from "./components/pessoa/consultar-pessoas/consultar-pessoas";
 import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cadastrar-processo";
+import { AutocompletePessoa } from "./components/autocomplete-pessoas/autocomplete-pessoas";
 
 
 @NgModule({
@@ -28,6 +28,8 @@ import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cada
         CadastrarProcesso,
 
 
+        //autocomplete
+        AutocompletePessoa,
         //siderbar, navbar, footer
         Siderbar,
         Navbar,
@@ -38,7 +40,7 @@ import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cada
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterLink,
+        RouterModule,
         SharedModule,  
               
         NgxMaskDirective,

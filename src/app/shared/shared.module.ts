@@ -13,6 +13,8 @@ import { Alerts } from './components/alerts/alerts';
 import { LogoAnimada } from './components/logo-animada/logo-animada';
 import { TextoDeslandesAnimado } from './components/texto-deslandes-animado/texto-deslandes-animado';
 import { ModalGeral } from './components/modal-geral/modal-geral';
+import { AutocompletePessoa } from '../modules/admin/components/autocomplete-pessoas/autocomplete-pessoas';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,8 @@ import { ModalGeral } from './components/modal-geral/modal-geral';
     LogoAnimada,
     Alerts,
     TextoDeslandesAnimado,
-    ModalGeral
+    ModalGeral,
+  
   ],
   imports: [
     CommonModule,
@@ -31,7 +34,9 @@ import { ModalGeral } from './components/modal-geral/modal-geral';
 
     // 👇 ADICIONA AQUI
     NgxMaskDirective,
-    NgxMaskPipe
+    NgxMaskPipe,
+     FormsModule,            // 🔥 ESSENCIAL
+    ReactiveFormsModule  
   ],
   exports: [
     Spinner,
@@ -40,6 +45,7 @@ import { ModalGeral } from './components/modal-geral/modal-geral';
     LogoAnimada,
     TextoDeslandesAnimado,
     ModalGeral,
+   
 
     NgxPaginationModule,
     MatPaginatorModule,

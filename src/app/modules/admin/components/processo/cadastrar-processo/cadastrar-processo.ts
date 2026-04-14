@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -16,15 +16,17 @@ import { ConsultarEtiquetaResponse } from '../../../../../core/models/etiqueta/c
 import { PessoaResumo } from '../../../../../core/models/pessoa/pessoa-resumo';
 import { PessoaSelecionada } from '../../../../../core/models/pessoa/pessoa-selecionada';
 import { QualificacoesService } from '../../../../../core/services/qualificacoes.service';
-
-
-import { catchError, debounceTime, filter, of, switchMap } from 'rxjs';
 import { PessoaService } from '../../../../../core/services/pessoa.service';
 import { QualificacaoResponse } from '../../../../../core/models/qualificacao/qualificacao-response';
 
+import { catchError, of } from 'rxjs';
+import { EtiquetaService } from '../../../../../core/services/etiqueta.service';
+import { InstanciaEnum } from '../../../../../core/models/enums/intancia/instanciaEnum';
+import { AcessoEnum } from '../../../../../core/models/enums/acesso/acesoEnum';
+
 @Component({
   selector: 'app-cadastrar-processo',
-  standalone:false,
+  standalone: false,
   templateUrl: './cadastrar-processo.html',
   styleUrl: './cadastrar-processo.css',
 })
@@ -40,7 +42,7 @@ export class CadastrarProcesso implements OnInit {
   private usuarioService = inject(UsuarioService);
   private pessoaService = inject(PessoaService);
   private qualificacaoService = inject(QualificacoesService);
-
+  private etiquetaService = inject(EtiquetaService);
   // ================== ESTADO ==================
   usuarioLogado?: AutenticarUsuarioResponse | null;
 
@@ -54,15 +56,16 @@ export class CadastrarProcesso implements OnInit {
   qualificacoes: QualificacaoResponse[] = [];
 
   tiposetiquetas: ConsultarEtiquetaResponse[] = [];
-
+  etiquetasSelecionadas: ConsultarEtiquetaResponse[] = [];
+  // 🔥 AGORA PADRONIZADO
   pessoasSelecionadas: PessoaSelecionada[] = [];
   pessoasFiltradas: PessoaResumo[] = [];
 
-  envolvidosSelecionados: any[] = [];
-  etiquetasSelecionadas: any[] = [];
+  envolvidosSelecionados: PessoaSelecionada[] = [];
+  envolvidosFiltradas: PessoaResumo[] = [];
 
-  pessoaNomeControl = new FormControl('');
-  mostrarSugestoesPessoa = false;
+instanciaEnum = InstanciaEnum;
+acessoEnum = AcessoEnum;
 
   // ================== FORM ==================
   form = this.builder.group({
@@ -94,85 +97,57 @@ export class CadastrarProcesso implements OnInit {
       this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
     }
 
-    // VARAS
+    this.carregarDadosIniciais();
+          // carrega etiquetas
+      this.etiquetaService.consultar().subscribe({
+        next: (tipos) => {
+          this.tiposetiquetas = tipos;
+          this.carregando = false;
+        },
+        error: () => {
+          this.mensagemErro = ['Erro ao carregar as etiquetas.'];
+          this.carregando = false;
+        }
+      });
+  }
+
+  // ================== CARGAS ==================
+  private carregarDadosIniciais() {
+
     this.varaService.consultar().subscribe({
-      next: (data) => {
-        this.varas = data;
-        this.carregando = false;
-      },
-      error: () => {
-        this.mensagemErro = ['Erro ao carregar varas'];
-        this.carregando = false;
-      }
+      next: (data) => this.varas = data,
+      error: () => this.mensagemErro = ['Erro ao carregar varas']
     });
 
-    // AÇÕES
     this.acaoService.consultar().subscribe({
-      next: (data) => {
-        this.acoes = data;
-        this.carregando = false;
-      },
-      error: () => {
-        this.mensagemErro = ['Erro ao carregar ações'];
-        this.carregando = false;
-      }
+      next: (data) => this.acoes = data,
+      error: () => this.mensagemErro = ['Erro ao carregar ações']
     });
 
-    // RESPONSÁVEIS
     this.usuarioService.consultarUsuarioResponsavel().subscribe({
-      next: (data) => {
-        this.responsaveis = data;
-        this.carregando = false;
-      },
-      error: () => {
-        this.mensagemErro = ['Erro ao carregar responsáveis'];
-        this.carregando = false;
-      }
+      next: (data) => this.responsaveis = data,
+      error: () => this.mensagemErro = ['Erro ao carregar responsáveis']
     });
 
-    // QUALIFICAÇÕES
     this.qualificacaoService.consultarQualificacoes().subscribe({
-      next: (data: QualificacaoResponse[]) => {
-        this.qualificacoes = data;
-      },
-      error: () => {
-        this.mensagemErro = ['Erro ao carregar qualificações'];
-      }
+      next: (data) => this.qualificacoes = data,
+      error: () => this.mensagemErro = ['Erro ao carregar qualificações']
     });
 
-    // AUTOCOMPLETE PESSOAS
-    this.pessoaNomeControl.valueChanges.pipe(
-      debounceTime(300),
-      filter((nome): nome is string => !!nome && nome.trim().length >= 1),
-      switchMap(nome => this.pessoaService.consultarPessoasResumo(nome)),
-      catchError(() => of([]))
-    ).subscribe(pessoas => this.pessoasFiltradas = pessoas);
+    this.carregando = false;
   }
 
-  // ================== PESSOAS ==================
-  selecionarPessoa(pessoa: PessoaResumo) {
-    if (this.pessoasSelecionadas.some(p => p.id === pessoa.id)) {
-      this.mensagemErro = ['Essa pessoa já foi selecionada.'];
-      return;
-    }
-
-    this.pessoasSelecionadas.push({
-      ...pessoa,
-      idQualificacao: null
-    });
-
-    this.pessoaNomeControl.setValue('');
-    this.mostrarSugestoesPessoa = false;
+  // ================== BUSCAS (NOVO PADRÃO) ==================
+  buscarPessoas(nome: string) {
+    this.pessoaService.consultarPessoasResumo(nome)
+      .pipe(catchError(() => of([])))
+      .subscribe(res => this.pessoasFiltradas = res);
   }
 
-  removerPessoaSelecionada(pessoa: PessoaSelecionada) {
-    this.pessoasSelecionadas = this.pessoasSelecionadas.filter(p => p.id !== pessoa.id);
-  }
-
-  ocultarSugestoesComDelay() {
-    setTimeout(() => {
-      this.mostrarSugestoesPessoa = false;
-    }, 200);
+  buscarEnvolvidos(nome: string) {
+    this.pessoaService.consultarPessoasResumo(nome)
+      .pipe(catchError(() => of([])))
+      .subscribe(res => this.envolvidosFiltradas = res);
   }
 
   // ================== SUBMIT ==================
@@ -185,16 +160,20 @@ export class CadastrarProcesso implements OnInit {
       return;
     }
 
-    // 🔥 VALIDAÇÃO ESSENCIAL
+    // 🔥 VALIDAÇÕES
     if (this.pessoasSelecionadas.some(p => !p.idQualificacao)) {
       this.mensagemErro = ['Selecione a qualificação para todos os clientes.'];
+      return;
+    }
+
+    if (this.envolvidosSelecionados.some(e => !e.idQualificacao)) {
+      this.mensagemErro = ['Selecione a qualificação para todos os envolvidos.'];
       return;
     }
 
     this.carregando = true;
 
     const formValue = this.form.value;
-
     const limpar = (v: any) => v ?? undefined;
 
     const request = {
@@ -216,15 +195,13 @@ export class CadastrarProcesso implements OnInit {
 
       grupoCliente: this.pessoasSelecionadas.map(p => ({
         idPessoa: p.id,
-   idQualificacao: p.idQualificacao ?? undefined
+         idQualificacao: p.idQualificacao ?? undefined
       })),
 
-      grupoEnvolvidos: this.envolvidosSelecionados
-        .filter(e => e.idPessoa && e.idQualificacao)
-        .map(e => ({
-          idPessoa: e.idPessoa,
-          idQualificacao: e.idQualificacao
-        })),
+      grupoEnvolvidos: this.envolvidosSelecionados.map(e => ({
+        idPessoa: e.id,
+         idQualificacao: e.idQualificacao ?? undefined
+      })),
 
       grupoPessoasEtiquetas: this.etiquetasSelecionadas
         .filter(e => e.id)
@@ -236,17 +213,28 @@ export class CadastrarProcesso implements OnInit {
         this.resetarFormulario();
         this.carregando = false;
         this.mensagemSucesso = [response?.mensagem];
-
         this.router.navigate(['/admin/processos']);
       },
       error: (err: HttpErrorResponse) => this.tratarErro(err)
     });
   }
+selecionarEtiqueta(etiqueta: ConsultarEtiquetaResponse) {
+    if (this.etiquetasSelecionadas.some(e => e.id === etiqueta.id)) {
+      this.mensagemErro = ['Etiqueta já selecionada.'];
+      return;
+    }
 
+    this.etiquetasSelecionadas.push(etiqueta);
+  }
+  removerEtiqueta(etiqueta: ConsultarEtiquetaResponse) {
+    this.etiquetasSelecionadas =
+      this.etiquetasSelecionadas.filter(e => e.id !== etiqueta.id);
+  }
   // ================== RESET ==================
   private resetarFormulario() {
     this.form.reset();
     this.pessoasSelecionadas = [];
+    this.envolvidosSelecionados = [];
 
     if (this.usuarioLogado) {
       this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
