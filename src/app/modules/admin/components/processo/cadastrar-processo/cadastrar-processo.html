@@ -97,24 +97,25 @@
                         <label class="form-label">Juízo</label>
                         <input class="form-control" formControlName="juizo" placeholder="Nº do juízo">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Vara *</label>
-                        <select class="form-control" formControlName="varaId">
-                            <option [ngValue]="null">Selecione</option>
-                            <option *ngFor="let vara of varas" [ngValue]="vara.id">
-                                {{ vara.nomeVara }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Foro *</label>
-                        <select class="form-control" formControlName="varaId">
-                            <option [ngValue]="null">Selecione</option>
-                            <option *ngFor="let vara of varas" [ngValue]="vara.id">
-                                {{ vara.nomeVara }}
-                            </option>
-                        </select>
-                    </div>
+                <div class="col-md-4">
+  <label class="form-label">Foro</label>
+  <select class="form-control" formControlName="foroId">
+    <option [ngValue]="null">Selecione</option>
+    <option *ngFor="let foro of foros" [ngValue]="foro.id">
+      {{ foro.nome }}
+    </option>
+  </select>
+</div>
+
+<div class="col-md-4">
+  <label class="form-label">Vara *</label>
+  <select class="form-control" formControlName="varaId">
+    <option [ngValue]="null">Selecione</option>
+    <option *ngFor="let vara of varasFiltradas" [ngValue]="vara.id">
+      {{ vara.nomeVara }}
+    </option>
+  </select>
+</div>
                     <div class="col-md-4">
                         <label class="form-label">Ação</label>
                         <select class="form-control" formControlName="acaoId">
@@ -175,49 +176,40 @@
                     <textarea class="form-control" rows="3" formControlName="observacao"></textarea>
                 </div>
 
-<div class="mb-3">
-  <label class="form-label">Acesso</label>
+                <div class="mb-3">
+                    <label class="form-label">Acesso</label>
 
-  <div class="d-flex gap-4">
+                    <div class="d-flex gap-4">
 
-    <div class="form-check">
-      <input class="form-check-input"
-             type="radio"
-             formControlName="acesso"
-             [value]="acessoEnum.Publico"
-             id="acessoPublico">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" formControlName="acesso"
+                                [value]="acessoEnum.Publico" id="acessoPublico">
 
-      <label class="form-check-label" for="acessoPublico">
-        Público
-      </label>
-    </div>
+                            <label class="form-check-label" for="acessoPublico">
+                                Público
+                            </label>
+                        </div>
 
-    <div class="form-check">
-      <input class="form-check-input"
-             type="radio"
-             formControlName="acesso"
-             [value]="acessoEnum.Privado"
-             id="acessoPrivado">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" formControlName="acesso"
+                                [value]="acessoEnum.Privado" id="acessoPrivado">
 
-      <label class="form-check-label" for="acessoPrivado">
-        Privado
-      </label>
-    </div>
+                            <label class="form-check-label" for="acessoPrivado">
+                                Privado
+                            </label>
+                        </div>
 
-    <div class="form-check">
-      <input class="form-check-input"
-             type="radio"
-             formControlName="acesso"
-             [value]="acessoEnum.Envolvidos"
-             id="acessoEnvolvidos">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" formControlName="acesso"
+                                [value]="acessoEnum.Envolvidos" id="acessoEnvolvidos">
 
-      <label class="form-check-label" for="acessoEnvolvidos">
-        Envolvidos
-      </label>
-    </div>
+                            <label class="form-check-label" for="acessoEnvolvidos">
+                                Envolvidos
+                            </label>
+                        </div>
 
-  </div>
-</div>
+                    </div>
+                </div>
 
                 <!-- BOTÃO -->
                 <button type="submit" class="btn btn-primary mt-3" [disabled]="carregando">

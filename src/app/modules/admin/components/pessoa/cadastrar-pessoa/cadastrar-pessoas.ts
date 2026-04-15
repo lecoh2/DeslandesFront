@@ -179,9 +179,9 @@ export class CadastrarPessoas implements OnInit {
       // Recupera usuário logado
       this.usuarioLogado = this.authHelper.get();
 
-      if (this.usuarioLogado) {
-        this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
-      }
+     // if (this.usuarioLogado) {
+       // this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
+     // }
 
       // estado inicial do tipo pessoa
       this.onTipoPessoaChange(this.tipoPessoaSelecionado);
@@ -514,7 +514,8 @@ export class CadastrarPessoas implements OnInit {
     if (this.tipoPessoaSelecionado === TipoPessoa.Fisica) {
       console.log("FORM:", this.form.value);
       const request: PessoaFisicaRequest = {
-        idUsuario: this.form.value.idUsuario ?? undefined,
+        //idUsuario: this.form.value.idUsuario ?? undefined,
+        idUsuario: this.usuarioLogado?.idUsuario ?? undefined,
         nome: formValue.nome!,
         apelido: formValue.apelido!,
         telefone: formValue.telefone!,
@@ -545,7 +546,7 @@ export class CadastrarPessoas implements OnInit {
         next: (response) => {
           this.form.reset();
           this.carregando = false;
-          this.mensagemSucesso = [response?.mensagem];
+       this.mensagemSucesso = [response?.message];
           this.router.navigate(['/admin/cadastrar-pessoas']);
         },
         error: (err: HttpErrorResponse) => this.tratarErro(err)
@@ -558,7 +559,7 @@ export class CadastrarPessoas implements OnInit {
 
       const request: PessoaJuridicaRequest = {
 
-        idUsuario: this.form.value.idUsuario ?? undefined,
+       idUsuario: this.usuarioLogado?.idUsuario ?? undefined,
         nome: formValue.nome!,
         apelido: formValue.apelido!,
         site: formValue.site!,
@@ -583,7 +584,7 @@ export class CadastrarPessoas implements OnInit {
         next: (response) => {
           this.form.reset();
           this.carregando = false;
-          this.mensagemSucesso = [response?.mensagem];
+        this.mensagemSucesso = [response?.message];
           this.router.navigate(['/admin/cadastrar-pessoas']);
         },
         error: (err: HttpErrorResponse) => this.tratarErro(err)

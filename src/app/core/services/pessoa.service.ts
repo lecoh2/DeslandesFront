@@ -7,6 +7,7 @@ import { PessoaJuridicaRequest } from "../models/pessoa/pessoa-juridica-request"
 import { PessoaFisicaResponse } from "../models/pessoa/pessoa-fisica-response";
 import { PessoaJuridicaResponse } from "../models/pessoa/pessoa-jurisica-response";
 import { PessoaResumo } from "../models/pessoa/pessoa-resumo";
+import { ApiResponse } from "../models/respostas/api-response";
 
 
 //import { ConsultarPessoaResponse } from "../models/pessoa/consultar-pessoa-response";
@@ -46,9 +47,9 @@ export class PessoaService {
  // }
 
 
-cadastrarPessoaFisica(request: PessoaFisicaRequest): Observable<PessoaFisicaResponse> {
+cadastrarPessoaFisica(request: PessoaFisicaRequest): Observable<ApiResponse<PessoaFisicaResponse>> {
   const token = localStorage.getItem('token'); // ou de onde você armazena
-  return this.http.post<PessoaFisicaResponse>(
+  return this.http.post<ApiResponse<PessoaFisicaResponse>>(
     `${this.url}/api/v1/pessoa-fisica/cadastrar-pessoa-fisica`,
     request,
     {
@@ -70,10 +71,19 @@ consultarPessoasResumo(termo?: string, limite: number = 50) {
     { params }
   );
 }
-  cadastrarPessoaJuridica(request: PessoaJuridicaRequest): Observable<PessoaJuridicaResponse> {
-    return this.http.post<PessoaJuridicaResponse>
-      (`${this.url}/api/v1/pessoa-juridica/cadastrar-pessoa-juridica`, request);
-  }
+ cadastrarPessoaJuridica(request: PessoaJuridicaRequest): Observable<ApiResponse<PessoaJuridicaResponse>> {
+  const token = localStorage.getItem('token');
+
+  return this.http.post<ApiResponse<PessoaJuridicaResponse>>(
+    `${this.url}/api/v1/pessoa-juridica/cadastrar-pessoa-juridica`,
+    request,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+}
     consultarPessoaFisicaPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
   const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
   if (searchTerm) params.searchTerm = searchTerm;

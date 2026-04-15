@@ -5,6 +5,7 @@ import { environment } from "../../../environments/environment.development";
 import { CadastrarProcessoRequest } from "../models/processo/cadastrar-processo-request";
 import { CadastrarProcessoResponse } from "../models/processo/cadastar-processo-response";
 import { Observable } from "rxjs";
+import { ApiResponse } from "../models/respostas/api-response";
 
 
 @Injectable({
@@ -15,16 +16,17 @@ export class ProcessoService {
     private url = environment.apiDeslandes;
     private http = inject(HttpClient);
 
-    cadastrarProcesso(request: CadastrarProcessoRequest): Observable<CadastrarProcessoResponse> {
-        const token = localStorage.getItem('token'); // ou de onde você armazena
-        return this.http.post<CadastrarProcessoResponse>(
-            `${this.url}api/v1/processo/cadastrar-processo`,
-            request,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        );
+  cadastrarProcesso(request: CadastrarProcessoRequest): Observable<ApiResponse<CadastrarProcessoResponse>> {
+  const token = localStorage.getItem('token');
+
+  return this.http.post<ApiResponse<CadastrarProcessoResponse>>(
+    `${this.url}/api/v1/processo/cadastrar-processo`,
+    request,
+    {
+      headers: token
+        ? { Authorization: `Bearer ${token}` }
+        : {}
     }
+  );
+}
 }

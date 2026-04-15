@@ -7,8 +7,9 @@ import { PessoaBase } from "./pessoa-base-request";
 export interface PessoaFisicaResponse extends PessoaBase {
   // Campos específicos de Pessoa Física
 success: boolean;
-  mensagem: string;
+  message: string;
   data: {
+    nome?:string;
     rg?: string;
     cpf?: string;
     tituloEleitor?: string;

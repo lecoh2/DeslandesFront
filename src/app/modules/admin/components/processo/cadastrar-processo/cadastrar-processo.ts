@@ -45,11 +45,11 @@ export class CadastrarProcesso implements OnInit {
   private etiquetaService = inject(EtiquetaService);
   // ================== ESTADO ==================
   usuarioLogado?: AutenticarUsuarioResponse | null;
-
+varasFiltradas: ConsultarVaraResponse[] = [];
   mensagemErro: string[] = [];
   mensagemSucesso: string[] = [];
   carregando = false;
-
+foros: { id: string, nome: string }[] = [];
   varas: ConsultarVaraResponse[] = [];
   acoes: ConsultarAcaoResponse[] = [];
   responsaveis: ConsultarUsuarioResponse[] = [];
@@ -69,73 +69,99 @@ acessoEnum = AcessoEnum;
 
   // ================== FORM ==================
   form = this.builder.group({
-    idUsuario: [''],
-    acaoId: [null],
-    varaId: [null, Validators.required],
-    usuarioResponsavelId: [null],
+   
+  idUsuario: [''],
+  acaoId: [null],
+  foroId: [null], // 👈 ADICIONE ISSO
+  varaId: [null, Validators.required],
+  usuarioResponsavelId: [null],
+  juizo:[''],
 
-    pasta: [''],
-    titulo: [''],
-    numeroProcesso: [''],
-    linkTribunal: [''],
-    objeto: [''],
-    valorCausa: [null],
-    distribuido: [null],
-    valorCondenacao: [null],
-    observacao: [''],
-    instancia: [null],
-    acesso: [null],
-  });
+  pasta: [''],
+  titulo: [''],
+  numeroProcesso: [''],
+  linkTribunal: [''],
+  objeto: [''],
+  valorCausa: [null],
+  distribuido: [null],
+  valorCondenacao: [null],
+  observacao: [''],
+  instancia: [null],
+  acesso: [null],
+});
+
 
   // ================== INIT ==================
   ngOnInit(): void {
-    this.carregando = true;
+  this.carregando = true;
 
-    this.usuarioLogado = this.authHelper.get();
+  this.usuarioLogado = this.authHelper.get();
 
-    if (this.usuarioLogado) {
-      this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
-    }
-
-    this.carregarDadosIniciais();
-          // carrega etiquetas
-      this.etiquetaService.consultar().subscribe({
-        next: (tipos) => {
-          this.tiposetiquetas = tipos;
-          this.carregando = false;
-        },
-        error: () => {
-          this.mensagemErro = ['Erro ao carregar as etiquetas.'];
-          this.carregando = false;
-        }
-      });
+  if (this.usuarioLogado) {
+    this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
   }
+
+  this.carregarDadosIniciais();
+
+  // 🔥 REAGE quando seleciona FORO → filtra VARAS
+this.form.get('foroId')?.valueChanges.subscribe(foroId => {
+
+  if (!foroId) {
+    // 🔥 volta a mostrar todas
+    this.varasFiltradas = this.varas;
+    return;
+  }
+
+  this.varasFiltradas = this.varas.filter(v => v.foroId === foroId);
+
+  this.form.get('varaId')?.setValue(null);
+});
+}
 
   // ================== CARGAS ==================
-  private carregarDadosIniciais() {
+ private carregarDadosIniciais() {
 
-    this.varaService.consultar().subscribe({
-      next: (data) => this.varas = data,
-      error: () => this.mensagemErro = ['Erro ao carregar varas']
+this.varaService.consultar().subscribe({
+  next: (data) => {
+    this.varas = data;
+
+    // 🔥 MOSTRA TODAS INICIALMENTE
+    this.varasFiltradas = data;
+
+    // 🔥 monta lista única de foros
+    const mapa = new Map<string, string>();
+
+    data.forEach(v => {
+      if (v.foroId && v.nomeForo) {
+        mapa.set(v.foroId, v.nomeForo);
+      }
     });
 
-    this.acaoService.consultar().subscribe({
-      next: (data) => this.acoes = data,
-      error: () => this.mensagemErro = ['Erro ao carregar ações']
-    });
+    this.foros = Array.from(mapa, ([id, nome]) => ({
+      id,
+      nome
+    }));
+  },
+  error: () => this.mensagemErro = ['Erro ao carregar varas']
+});
 
-    this.usuarioService.consultarUsuarioResponsavel().subscribe({
-      next: (data) => this.responsaveis = data,
-      error: () => this.mensagemErro = ['Erro ao carregar responsáveis']
-    });
+  this.acaoService.consultar().subscribe({
+    next: (data) => this.acoes = data,
+    error: () => this.mensagemErro = ['Erro ao carregar ações']
+  });
 
-    this.qualificacaoService.consultarQualificacoes().subscribe({
-      next: (data) => this.qualificacoes = data,
-      error: () => this.mensagemErro = ['Erro ao carregar qualificações']
-    });
+  this.usuarioService.consultarUsuarioResponsavel().subscribe({
+    next: (data) => this.responsaveis = data,
+    error: () => this.mensagemErro = ['Erro ao carregar responsáveis']
+  });
 
-    this.carregando = false;
-  }
+  this.qualificacaoService.consultarQualificacoes().subscribe({
+    next: (data) => this.qualificacoes = data,
+    error: () => this.mensagemErro = ['Erro ao carregar qualificações']
+  });
+
+  this.carregando = false;
+}
 
   // ================== BUSCAS (NOVO PADRÃO) ==================
   buscarPessoas(nome: string) {
@@ -180,7 +206,7 @@ acessoEnum = AcessoEnum;
       acaoId: limpar(formValue.acaoId),
       varaId: formValue.varaId!,
       usuarioResponsavelId: limpar(formValue.usuarioResponsavelId),
-
+juizo:limpar(formValue.juizo),
       pasta: limpar(formValue.pasta),
       titulo: limpar(formValue.titulo),
       numeroProcesso: limpar(formValue.numeroProcesso),
@@ -212,7 +238,7 @@ acessoEnum = AcessoEnum;
       next: (response) => {
         this.resetarFormulario();
         this.carregando = false;
-        this.mensagemSucesso = [response?.mensagem];
+        this.mensagemSucesso = [response?.message];
         this.router.navigate(['/admin/processos']);
       },
       error: (err: HttpErrorResponse) => this.tratarErro(err)

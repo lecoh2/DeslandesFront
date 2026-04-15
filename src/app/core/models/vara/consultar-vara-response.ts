@@ -6,4 +6,5 @@ export interface ConsultarVaraResponse {
   tipo: string;       // Ex: "Cível", "Criminal"
 
   foroId: string;
+   nomeForo: string; // 👈 ADICIONE ISSO
 }

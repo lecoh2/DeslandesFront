@@ -1,16 +1,11 @@
 import { SimplesNacional } from "../enums/sismples-nacional/simples-nacional";
 import { PessoaBase } from "./pessoa-base-request";
 
-export interface PessoaJuridicaResponse extends PessoaBase {
-  success: boolean;
-  mensagem: string;
-  datas: {
-  cnpj: string;
-  inscricaoEstadual?: string;
-  inscricaoMunicipal?: string;
+export interface PessoaJuridicaResponse {
 
-  // Relacionamento com enum
-  simplesNacional?: SimplesNacional;
-
+    nome?: string;
+    cnpj: string;
+    inscricaoEstadual?: string;
+    inscricaoMunicipal?: string;
+    simplesNacional?: SimplesNacional;
   }
-}
