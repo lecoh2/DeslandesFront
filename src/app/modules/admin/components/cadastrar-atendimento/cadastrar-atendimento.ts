@@ -28,7 +28,10 @@ import { ProcessoAutoComplete } from '../../../../core/models/processo/processo-
 import { CasoAutoComplete } from '../../../../core/models/caso/caso-auto-complete';
 import { AtendimentoAutoComplete } from '../../../../core/models/atendimento/atendimento-auto-complete';
 import { Observable } from 'rxjs';
-
+type VinculoAutoComplete =
+  | ProcessoAutoComplete
+  | CasoAutoComplete
+  | AtendimentoAutoComplete;
 @Component({
   selector: 'app-abrir-reclamacao',
   standalone: false,
@@ -48,11 +51,11 @@ export class CadastrarAtendimento implements OnInit /*AfterViewInit*/ {
   private casoService = inject(CasoService);
   private builder = inject(FormBuilder);
   usuarioLogado?: AutenticarUsuarioResponse | null;
-
+  resultadosVinculo: any[] = [];
   mensagemErro: string[] = [];
   mensagemSucesso: string[] = [];
   carregando = false;
-
+  filtroVinculo = new FormControl<string | null>(null);
   // 🔥 Pessoas
   pessoasSelecionadas: PessoaSelecionada[] = [];
   pessoasFiltradas: PessoaResumo[] = [];
@@ -61,9 +64,9 @@ export class CadastrarAtendimento implements OnInit /*AfterViewInit*/ {
   // 🔥 Etiquetas
   tiposetiquetas: ConsultarEtiquetaResponse[] = [];
   etiquetasSelecionadas: ConsultarEtiquetaResponse[] = [];
-resultadosVinculo: (ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoComplete)[] = [];
 
-vinculoSelecionado: ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoComplete | null = null;
+
+  vinculoSelecionado: ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoComplete | null = null;
   // ================= FORM =================
   form = this.builder.group({
 
@@ -78,14 +81,98 @@ vinculoSelecionado: ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoCom
 
     responsavelId: this.builder.control<string | null>(null)
   });
+buscarVinculo(termo: string) {
+  const tipo = this.form.get('tipoVinculo')?.value;
 
+  if (!tipo || !termo) {
+    this.resultadosVinculo = [];
+    return;
+  }
+
+  let request$: Observable<VinculoAutoComplete[]>;
+
+  if (tipo === 'processo') {
+    request$ = this.processoService.consultarProcessoAutoComplete(termo);
+  } else if (tipo === 'caso') {
+    request$ = this.casoService.consultarCassoAutoComplete(termo);
+  } else {
+    request$ = this.atendimentoService.consultarAtendimentoAutoComplete(termo);
+  }
+
+  request$.subscribe(res => {
+    this.resultadosVinculo = res;
+  });
+} selecionarVinculo(item: any) {
+    const tipo = this.form.get('tipoVinculo')?.value;
+
+    this.resultadosVinculo = [];
+
+    this.form.patchValue({
+      processoId: null,
+      casoId: null,
+      atendimentoPaiId: null
+    });
+
+    if (tipo === 'processo') {
+      this.form.patchValue({ processoId: item.id });
+    } else if (tipo === 'caso') {
+      this.form.patchValue({ casoId: item.id });
+    } else {
+      this.form.patchValue({ atendimentoPaiId: item.id });
+    }
+  }
   // ================= INIT =================
   ngOnInit(): void {
     this.usuarioLogado = this.authHelper.get();
 
     this.carregarDados();
-  }
 
+    // 🔥 reset ao trocar tipo
+    this.form.get('tipoVinculo')?.valueChanges.subscribe(() => {
+      this.resultadosVinculo = [];
+      this.vinculoSelecionado = null;
+      this.filtroVinculo.setValue('');
+    });
+
+    // 🔥 autocomplete correto
+    this.filtroVinculo.valueChanges.pipe(
+      debounceTime(300),
+      switchMap((termo) => {
+        const tipo = this.form.get('tipoVinculo')?.value;
+
+        if (!tipo) return of([]);
+
+        const valor = (termo ?? '').toString().trim();
+
+        if (valor.length < 2) {
+          this.resultadosVinculo = [];
+          return of([]);
+        }
+
+        if (tipo === 'processo') {
+          return this.processoService.consultarProcessoAutoComplete(valor);
+        }
+
+        if (tipo === 'caso') {
+          return this.casoService.consultarCassoAutoComplete(valor);
+        }
+
+        return this.atendimentoService.consultarAtendimentoAutoComplete(valor);
+      }),
+      catchError(() => of([]))
+    ).subscribe(res => {
+      this.resultadosVinculo = res;
+    });
+  }
+  formatarCNJ(numero?: string): string {
+    if (!numero) return '';
+
+    const n = numero.replace(/\D/g, '');
+
+    if (n.length !== 20) return numero; // evita quebrar
+
+    return `${n.slice(0, 7)}-${n.slice(7, 9)}.${n.slice(9, 13)}.${n.slice(13, 14)}.${n.slice(14, 16)}.${n.slice(16, 20)}`;
+  }
   private carregarDados() {
 
 
@@ -180,72 +267,25 @@ vinculoSelecionado: ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoCom
     this.pessoasSelecionadas = [];
     this.etiquetasSelecionadas = [];
   }
-buscarVinculo(termo: string): void {
-  const tipo = this.form.get('tipoVinculo')?.value;
 
-  if (!termo || !tipo) {
-    this.resultadosVinculo = [];
-    return;
+  getLabel(item: ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoComplete): string {
+
+    if ('numeroProcesso' in item) {
+      const cnj = this.formatarCNJ(item.numeroProcesso);
+      return `${cnj} - ${item.titulo ?? ''}`;
+    }
+
+    if ('titulo' in item) {
+      return item.titulo;
+    }
+
+    if ('assunto' in item) {
+      return item.assunto;
+    }
+
+    return '';
   }
 
-  let request$: Observable<
-    ProcessoAutoComplete[] | CasoAutoComplete[] | AtendimentoAutoComplete[]
-  > | null = null;
-
-  if (tipo === 'processo') {
-    request$ = this.processoService.consultarProcessoAutoComplete(termo);
-  } else if (tipo === 'caso') {
-    request$ = this.casoService.consultarCassoAutoComplete(termo);
-  } else if (tipo === 'atendimento') {
-    request$ = this.atendimentoService.consultarAtendimentoAutoComplete(termo);
-  }
-
-  request$?.pipe(
-    catchError(() => of([]))
-  ).subscribe((res) => {
-    this.resultadosVinculo = res;
-  });
-}
-getLabel(item: ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoComplete): string {
-  if ('numeroProcesso' in item) {
-    return item.numeroProcesso || item.titulo || '';
-  }
-
-  if ('titulo' in item) {
-    return item.titulo;
-  }
-
-  if ('assunto' in item) {
-    return item.assunto;
-  }
-
-  return '';
-}
- selecionarVinculo(item: ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoComplete) {
-  const tipo = this.form.get('tipoVinculo')?.value;
-
-  this.vinculoSelecionado = item;
-  this.resultadosVinculo = [];
-
-  // limpa tudo
-  this.form.patchValue({
-    processoId: null,
-    casoId: null,
-    atendimentoPaiId: null
-  });
-
-  if (tipo === 'processo') {
-    this.form.patchValue({ processoId: item.id });
-  }
-
-  if (tipo === 'caso') {
-    this.form.patchValue({ casoId: item.id });
-  }
-
-  if (tipo === 'atendimento') {
-    this.form.patchValue({ atendimentoPaiId: item.id });
-  }
-}
   // ================= ERRO =================
   private tratarErro(err: HttpErrorResponse) {
     this.mensagemErro = [];

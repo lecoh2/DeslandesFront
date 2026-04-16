@@ -24,64 +24,57 @@
 
         <!-- ================= DADOS DO ATENDIMENTO ================= -->
         <h5 class="mb-3">Dados do Atendimento</h5>
- <!-- ================= CLIENTES ================= -->
-        
+        <!-- ================= CLIENTES ================= -->
+
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <app-autocomplete-pessoa label="Clientes" placeholder="Digite o nome do cliente"
+            <app-autocomplete-pessoa-atendimento label="Clientes" placeholder="Digite o nome do cliente"
               [resultados]="pessoasFiltradas" [(selecionadas)]="pessoasSelecionadas" (buscar)="buscarPessoas($event)">
-            </app-autocomplete-pessoa>
+            </app-autocomplete-pessoa-atendimento>
           </div>
-     
 
-        <!-- ================= ETIQUETAS ================= -->
-    
-       
+
+          <!-- ================= ETIQUETAS ================= -->
+
+
           <div class="col-md-6">
             <label class="form-label">Assunto *</label>
             <input class="form-control" formControlName="assunto">
           </div>
-    <div class="mb-3">
-          <label class="form-label">Etiquetas</label>
+          <div class="mb-3">
+            <label class="form-label">Etiquetas</label>
 
-          <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
-          </app-etiquetas>
-        </div>
+            <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
+            </app-etiquetas>
+          </div>
 
         </div>
 
         <div class="row mb-3">
-          <!-- ITEM DINÂMICO -->     
-           
-                <div class="col-md-4">
-              <label class="form-label">Tipo de Vínculo</label>
-              <select class="form-control" formControlName="tipoVinculo">
-                <option [ngValue]="null">Selecione</option>
-                <option value="processo">Processo</option>
-                <option value="caso">Caso</option>
-                <option value="atendimento">Atendimento</option>
-              </select>
-            </div>
+          <!-- ITEM DINÂMICO -->
+
+          <div class="col-md-4">
+            <label class="form-label">Tipo de Vínculo</label>
+            <select class="form-control" formControlName="tipoVinculo">
+              <option [ngValue]="null">Selecione</option>
+              <option value="processo">Processo</option>
+              <option value="caso">Caso</option>
+              <option value="atendimento">Atendimento</option>
+            </select>
+          </div>
 
           <div class="col-md-8">
-              <label class="form-label">Buscar vínculo</label>
-              <input type="text" class="form-control" (input)="buscarVinculo($event.target.value)"
-                placeholder="Digite para buscar...">
-            </div>
+            <label class="form-label">Buscar vínculo</label>
+            <app-vinculo [resultados]="resultadosVinculo" (buscar)="buscarVinculo($event)"
+              (selecionado)="selecionarVinculo($event)">
+            </app-vinculo>
 
-            <!-- RESULTADOS -->
-            <ul class="list-group" *ngIf="resultadosVinculo.length">
-              <li *ngFor="let item of resultadosVinculo" (click)="selecionarVinculo(item)">
-                {{ getLabel(item) }}
-              </li>
-            </ul>
+          </div>
 
-            <!-- SELECIONADO -->
-            <div *ngIf="vinculoSelecionado">
-              Selecionado: {{ getLabel(vinculoSelecionado) }}
-            </div>
-        
+
+
+
 
         </div>
         <div class="mb-3">
@@ -89,10 +82,10 @@
           <textarea class="form-control" rows="4" formControlName="registro"></textarea>
         </div>
 
-      
 
 
-       
+
+
 
         <!-- BOTÃO -->
         <button type="submit" class="btn btn-primary mt-3" [disabled]="carregando">

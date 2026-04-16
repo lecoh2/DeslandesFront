@@ -1,0 +1,37 @@
+<div class="position-relative">
+  <label class="form-label">{{ label }}</label>
+
+  <input type="text" class="form-control" [placeholder]="placeholder" [formControl]="control" (input)="onBuscar()"
+    (focus)="mostrarSugestoes = true" (blur)="ocultarComDelay()" />
+
+  <!-- Sugestões -->
+  <ul *ngIf="mostrarSugestoes && resultados.length > 0"
+    class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+
+    <li *ngFor="let p of resultados"
+      class="list-group-item d-flex justify-content-between align-items-center hover-click" style="cursor: pointer;"
+      (mousedown)="selecionar(p)">
+      {{ p.nome }} - Documento: {{ p.documento }}
+      <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+    </li>
+  </ul>
+
+  <!-- Selecionados -->
+<div *ngFor="let p of selecionadas"
+  class="d-flex justify-content-between align-items-center mb-2 px-2 py-2 border-bottom">
+
+  <!-- TEXTO -->
+  <div class="d-flex flex-column">
+    <strong>{{ p.nome }}</strong>
+    <small class="text-muted">Documento: {{ p.documento }}</small>
+  </div>
+
+  <!-- BOTÃO -->
+  <button type="button"
+          class="border-0 bg-transparent p-0 ms-3"
+          (click)="remover(p)">
+    <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+  </button>
+
+</div>
+</div>

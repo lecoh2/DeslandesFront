@@ -1,0 +1,18 @@
+<input
+  type="text"
+  class="form-control"
+  [formControl]="control"
+  (focus)="abrir()"
+  (blur)="fechar()"
+/>
+
+<ul *ngIf="mostrarSugestoes && resultados.length > 0"
+    class="list-group position-absolute w-100">
+
+  <li *ngFor="let item of resultados"
+      class="list-group-item"
+      (mousedown)="selecionar(item)">
+    {{ getLabel(item) }}
+  </li>
+
+</ul>
