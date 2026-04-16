@@ -6,6 +6,7 @@ import { CadastrarProcessoRequest } from "../models/processo/cadastrar-processo-
 import { CadastrarProcessoResponse } from "../models/processo/cadastar-processo-response";
 import { Observable } from "rxjs";
 import { ApiResponse } from "../models/respostas/api-response";
+import { ProcessoAutoComplete } from "../models/processo/processo-auto-complete";
 
 
 @Injectable({
@@ -29,4 +30,16 @@ export class ProcessoService {
     }
   );
 }
+consultarProcessoAutoComplete(termo?: string, limite: number = 50) {
+     const params: any = { limite: limite.toString() };
+   
+     if (termo) {
+       params.termo = termo;
+     }
+   
+     return this.http.get<ProcessoAutoComplete[]>(
+       `${this.url}/api/v1/processo/consultar-processo-autocomplete`,
+       { params }
+     );
+   }
 }

@@ -1,0 +1,106 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">Cadastrar Atendimento</h1>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Cadastro de Atendimento</h5>
+      <h6 class="card-subtitle text-muted">Preencha os dados do atendimento</h6>
+    </div>
+
+    <div class="card-body">
+
+      <!-- SPINNER -->
+      <app-spinner *ngIf="carregando" [show]="true" message="Salvando..."></app-spinner>
+
+      <!-- ALERTAS -->
+      <app-alerts *ngIf="!carregando && mensagemSucesso.length" titulo="Sucesso!" [mensagens]="mensagemSucesso"
+        tipo="success">
+      </app-alerts>
+
+      <app-alerts *ngIf="!carregando && mensagemErro.length" titulo="Erro!" [mensagens]="mensagemErro" tipo="danger">
+      </app-alerts>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <!-- ================= DADOS DO ATENDIMENTO ================= -->
+        <h5 class="mb-3">Dados do Atendimento</h5>
+ <!-- ================= CLIENTES ================= -->
+        
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <app-autocomplete-pessoa label="Clientes" placeholder="Digite o nome do cliente"
+              [resultados]="pessoasFiltradas" [(selecionadas)]="pessoasSelecionadas" (buscar)="buscarPessoas($event)">
+            </app-autocomplete-pessoa>
+          </div>
+     
+
+        <!-- ================= ETIQUETAS ================= -->
+    
+       
+          <div class="col-md-6">
+            <label class="form-label">Assunto *</label>
+            <input class="form-control" formControlName="assunto">
+          </div>
+    <div class="mb-3">
+          <label class="form-label">Etiquetas</label>
+
+          <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
+          </app-etiquetas>
+        </div>
+
+        </div>
+
+        <div class="row mb-3">
+          <!-- ITEM DINÂMICO -->     
+           
+                <div class="col-md-4">
+              <label class="form-label">Tipo de Vínculo</label>
+              <select class="form-control" formControlName="tipoVinculo">
+                <option [ngValue]="null">Selecione</option>
+                <option value="processo">Processo</option>
+                <option value="caso">Caso</option>
+                <option value="atendimento">Atendimento</option>
+              </select>
+            </div>
+
+          <div class="col-md-8">
+              <label class="form-label">Buscar vínculo</label>
+              <input type="text" class="form-control" (input)="buscarVinculo($event.target.value)"
+                placeholder="Digite para buscar...">
+            </div>
+
+            <!-- RESULTADOS -->
+            <ul class="list-group" *ngIf="resultadosVinculo.length">
+              <li *ngFor="let item of resultadosVinculo" (click)="selecionarVinculo(item)">
+                {{ getLabel(item) }}
+              </li>
+            </ul>
+
+            <!-- SELECIONADO -->
+            <div *ngIf="vinculoSelecionado">
+              Selecionado: {{ getLabel(vinculoSelecionado) }}
+            </div>
+        
+
+        </div>
+        <div class="mb-3">
+          <label class="form-label">1º Registro do atendimento*</label>
+          <textarea class="form-control" rows="4" formControlName="registro"></textarea>
+        </div>
+
+      
+
+
+       
+
+        <!-- BOTÃO -->
+        <button type="submit" class="btn btn-primary mt-3" [disabled]="carregando">
+          <i class="fas fa-save"></i> Salvar Atendimento
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+</div>

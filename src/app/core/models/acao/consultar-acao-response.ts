@@ -1,5 +1,5 @@
 export interface ConsultarAcaoResponse {
-  id: string;
-  NomeAcao: string;   // Ex: "2ª Vara Cível"
+  idAcao: string;
+  nomeAcao: string;   // Ex: "2ª Vara Cível"
 
 }

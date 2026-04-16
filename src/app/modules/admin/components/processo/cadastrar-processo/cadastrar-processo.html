@@ -120,8 +120,8 @@
                         <label class="form-label">Ação</label>
                         <select class="form-control" formControlName="acaoId">
                             <option [ngValue]="null">Selecione</option>
-                            <option *ngFor="let acao of acoes" [ngValue]="acao.id">
-                                {{ acao.NomeAcao }}
+                            <option *ngFor="let acao of acoes" [ngValue]="acao.idAcao">
+                                {{ acao.nomeAcao }}
                             </option>
                         </select>
                     </div>
@@ -130,7 +130,7 @@
                         <label class="form-label">Responsável</label>
                         <select class="form-control" formControlName="usuarioResponsavelId">
                             <option [ngValue]="null">Selecione</option>
-                            <option *ngFor="let user of responsaveis" [ngValue]="user.idUsuario">
+                            <option *ngFor="let user of responsaveis" [ngValue]="user.id">
                                 {{ user.nomeUsuario }}
                             </option>
                         </select>

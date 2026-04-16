@@ -16,6 +16,7 @@ import { CadastrarEtiquetas } from "./components/etiquetas/cadastrar-etiquetas/c
 import { ConsultarPessoas } from "./components/pessoa/consultar-pessoas/consultar-pessoas";
 import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cadastrar-processo";
 import { AutocompletePessoa } from "./components/autocomplete-pessoas/autocomplete-pessoas";
+import { CadastrarAtendimento } from "./components/cadastrar-atendimento/cadastrar-atendimento";
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { AutocompletePessoa } from "./components/autocomplete-pessoas/autocomple
         CadastrarEtiquetas,
         ConsultarPessoas,
         CadastrarProcesso,
+        CadastrarAtendimento,
 
 
         //autocomplete

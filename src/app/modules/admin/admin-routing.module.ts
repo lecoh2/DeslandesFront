@@ -10,6 +10,7 @@ import { AdminLayout } from "./layouts/layouts/admin-layout/admin-layout";
 import { CadastrarPessoas } from "./components/pessoa/cadastrar-pessoa/cadastrar-pessoas";
 import { ConsultarPessoas } from "./components/pessoa/consultar-pessoas/consultar-pessoas";
 import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cadastrar-processo";
+import { CadastrarAtendimento } from "./components/cadastrar-atendimento/cadastrar-atendimento";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -41,13 +42,20 @@ export const routes: Routes = [
             },
 //processo
               {
-                path: 'cadastrar-proceso',
+                path: 'cadastrar-processo',
                 component: CadastrarProcesso,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
             },
-            
+            //atendmento
+              {
+                path: 'cadastrar-atendimento',
+                component: CadastrarAtendimento,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
 
             { path: '', redirectTo: 'painel-principal', pathMatch: 'full' }
         ]

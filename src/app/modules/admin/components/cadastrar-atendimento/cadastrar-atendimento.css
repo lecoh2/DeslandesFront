@@ -1,0 +1,26 @@
+.zindex-dropdown {
+  z-index: 1050 !important; /* ou mais alto se necessário */
+}
+
+#editor-container {
+  position: relative; /* ou static */
+  z-index: 1; /* mais baixo que o autocomplete */
+}
+.texto-maior {
+  font-size: 0.95rem;
+}
+
+.lista-sem-bolinha {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.hover-click {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.hover-click:hover {
+  background-color: #6c757d; /* mesma cor do text-muted */
+  color: #fff; /* deixa o texto branco para contraste */
+}

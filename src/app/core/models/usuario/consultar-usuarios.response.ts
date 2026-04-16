@@ -4,7 +4,7 @@
 
 
 export interface ConsultarUsuarioResponse {
-    idUsuario: string;
+    id: string;
     idPessoa: string;
     nomeUsuario: string;
     login?: string;

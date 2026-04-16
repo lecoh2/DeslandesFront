@@ -45,11 +45,11 @@ export class CadastrarProcesso implements OnInit {
   private etiquetaService = inject(EtiquetaService);
   // ================== ESTADO ==================
   usuarioLogado?: AutenticarUsuarioResponse | null;
-varasFiltradas: ConsultarVaraResponse[] = [];
+  varasFiltradas: ConsultarVaraResponse[] = [];
   mensagemErro: string[] = [];
   mensagemSucesso: string[] = [];
   carregando = false;
-foros: { id: string, nome: string }[] = [];
+  foros: { id: string, nome: string }[] = [];
   varas: ConsultarVaraResponse[] = [];
   acoes: ConsultarAcaoResponse[] = [];
   responsaveis: ConsultarUsuarioResponse[] = [];
@@ -64,104 +64,117 @@ foros: { id: string, nome: string }[] = [];
   envolvidosSelecionados: PessoaSelecionada[] = [];
   envolvidosFiltradas: PessoaResumo[] = [];
 
-instanciaEnum = InstanciaEnum;
-acessoEnum = AcessoEnum;
+  instanciaEnum = InstanciaEnum;
+  acessoEnum = AcessoEnum;
 
   // ================== FORM ==================
   form = this.builder.group({
-   
-  idUsuario: [''],
-  acaoId: [null],
-  foroId: [null], // 👈 ADICIONE ISSO
-  varaId: [null, Validators.required],
-  usuarioResponsavelId: [null],
-  juizo:[''],
 
-  pasta: [''],
-  titulo: [''],
-  numeroProcesso: [''],
-  linkTribunal: [''],
-  objeto: [''],
-  valorCausa: [null],
-  distribuido: [null],
-  valorCondenacao: [null],
-  observacao: [''],
-  instancia: [null],
-  acesso: [null],
-});
+    idUsuario: [''],
+    acaoId: this.builder.control<string | null>(null),
+    foroId: [null], // 👈 ADICIONE ISSO
+    varaId: [null, Validators.required],
+    usuarioResponsavelId: this.builder.control<string | null>(null),
+    juizo: [''],
+
+    pasta: [''],
+    titulo: [''],
+    numeroProcesso: [''],
+    linkTribunal: [''],
+    objeto: [''],
+    valorCausa: [null],
+    distribuido: [null],
+    valorCondenacao: [null],
+    observacao: [''],
+    instancia: [null],
+    acesso: [null],
+  });
 
 
   // ================== INIT ==================
   ngOnInit(): void {
-  this.carregando = true;
+    this.carregando = true;
 
-  this.usuarioLogado = this.authHelper.get();
+    this.usuarioLogado = this.authHelper.get();
 
-  if (this.usuarioLogado) {
-    this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
+    if (this.usuarioLogado) {
+      this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
+    }
+    // 🔥 DEBUG AQUI (coloque logo no início do init)
+    this.form.get('acaoId')?.valueChanges.subscribe(v => {
+      console.log('🔥 acaoId mudou:', v);
+    }); this.form.get('usuarioResponsavelId')?.valueChanges.subscribe(v => {
+      console.log('🔥 usuarioResponsavelId mudou:', v);
+    });
+    this.carregarDadosIniciais();
+
+    // 🔥 REAGE quando seleciona FORO → filtra VARAS
+    this.form.get('foroId')?.valueChanges.subscribe(foroId => {
+
+      if (!foroId) {
+        // 🔥 volta a mostrar todas
+        this.varasFiltradas = this.varas;
+        return;
+      }
+
+      this.varasFiltradas = this.varas.filter(v => v.foroId === foroId);
+
+      this.form.get('varaId')?.setValue(null);
+    });
   }
-
-  this.carregarDadosIniciais();
-
-  // 🔥 REAGE quando seleciona FORO → filtra VARAS
-this.form.get('foroId')?.valueChanges.subscribe(foroId => {
-
-  if (!foroId) {
-    // 🔥 volta a mostrar todas
-    this.varasFiltradas = this.varas;
-    return;
-  }
-
-  this.varasFiltradas = this.varas.filter(v => v.foroId === foroId);
-
-  this.form.get('varaId')?.setValue(null);
-});
-}
 
   // ================== CARGAS ==================
- private carregarDadosIniciais() {
+  private carregarDadosIniciais() {
 
-this.varaService.consultar().subscribe({
-  next: (data) => {
-    this.varas = data;
+    this.varaService.consultar().subscribe({
+      next: (data) => {
+        this.varas = data;
 
-    // 🔥 MOSTRA TODAS INICIALMENTE
-    this.varasFiltradas = data;
+        // 🔥 MOSTRA TODAS INICIALMENTE
+        this.varasFiltradas = data;
 
-    // 🔥 monta lista única de foros
-    const mapa = new Map<string, string>();
+        // 🔥 monta lista única de foros
+        const mapa = new Map<string, string>();
 
-    data.forEach(v => {
-      if (v.foroId && v.nomeForo) {
-        mapa.set(v.foroId, v.nomeForo);
-      }
+        data.forEach(v => {
+          if (v.foroId && v.nomeForo) {
+            mapa.set(v.foroId, v.nomeForo);
+          }
+        });
+
+        this.foros = Array.from(mapa, ([id, nome]) => ({
+          id,
+          nome
+        }));
+      },
+      error: () => this.mensagemErro = ['Erro ao carregar varas']
     });
 
-    this.foros = Array.from(mapa, ([id, nome]) => ({
-      id,
-      nome
-    }));
+    this.acaoService.consultar().subscribe({
+      next: (data) => this.acoes = data,
+      error: () => this.mensagemErro = ['Erro ao carregar ações']
+    });
+
+    this.usuarioService.consultarUsuarioResponsavel().subscribe({
+      next: (data) => this.responsaveis = data,
+      error: () => this.mensagemErro = ['Erro ao carregar responsáveis']
+    });
+
+    this.qualificacaoService.consultarQualificacoes().subscribe({
+      next: (data) => this.qualificacoes = data,
+      error: () => this.mensagemErro = ['Erro ao carregar qualificações']
+    });
+this.etiquetaService.consultar().subscribe({
+  next: (data) => {
+    this.tiposetiquetas = data;
   },
-  error: () => this.mensagemErro = ['Erro ao carregar varas']
+  error: () => {
+    this.mensagemErro = ['Erro ao carregar etiquetas'];
+  }
 });
 
-  this.acaoService.consultar().subscribe({
-    next: (data) => this.acoes = data,
-    error: () => this.mensagemErro = ['Erro ao carregar ações']
-  });
-
-  this.usuarioService.consultarUsuarioResponsavel().subscribe({
-    next: (data) => this.responsaveis = data,
-    error: () => this.mensagemErro = ['Erro ao carregar responsáveis']
-  });
-
-  this.qualificacaoService.consultarQualificacoes().subscribe({
-    next: (data) => this.qualificacoes = data,
-    error: () => this.mensagemErro = ['Erro ao carregar qualificações']
-  });
-
-  this.carregando = false;
-}
+    this.carregando = false;
+  }
 
   // ================== BUSCAS (NOVO PADRÃO) ==================
   buscarPessoas(nome: string) {
@@ -206,7 +219,7 @@ this.varaService.consultar().subscribe({
       acaoId: limpar(formValue.acaoId),
       varaId: formValue.varaId!,
       usuarioResponsavelId: limpar(formValue.usuarioResponsavelId),
-juizo:limpar(formValue.juizo),
+      juizo: limpar(formValue.juizo),
       pasta: limpar(formValue.pasta),
       titulo: limpar(formValue.titulo),
       numeroProcesso: limpar(formValue.numeroProcesso),
@@ -219,32 +232,33 @@ juizo:limpar(formValue.juizo),
       instancia: limpar(formValue.instancia),
       acesso: limpar(formValue.acesso),
 
-      grupoCliente: this.pessoasSelecionadas.map(p => ({
+      grupoClienteProcesso: this.pessoasSelecionadas.map(p => ({
         idPessoa: p.id,
-         idQualificacao: p.idQualificacao ?? undefined
+        idQualificacao: p.idQualificacao ?? undefined
       })),
 
-      grupoEnvolvidos: this.envolvidosSelecionados.map(e => ({
+      grupoEnvolvidosProcesso: this.envolvidosSelecionados.map(e => ({
         idPessoa: e.id,
-         idQualificacao: e.idQualificacao ?? undefined
+        idQualificacao: e.idQualificacao ?? undefined
       })),
 
-      grupoPessoasEtiquetas: this.etiquetasSelecionadas
-        .filter(e => e.id)
-        .map(e => ({ idEtiqueta: e.id }))
-    };
+      grupoEtiquetasProcesso: this.etiquetasSelecionadas.map(e => ({
+        etiquetaId: e.id!
+      }))
 
+    };
+    console.log('📦 REQUEST PROCESSO ENVIADO:', request);
     this.processoService.cadastrarProcesso(request).subscribe({
       next: (response) => {
         this.resetarFormulario();
         this.carregando = false;
         this.mensagemSucesso = [response?.message];
-        this.router.navigate(['/admin/processos']);
+        this.router.navigate(['/admin/cadastrar-processo']);
       },
       error: (err: HttpErrorResponse) => this.tratarErro(err)
     });
   }
-selecionarEtiqueta(etiqueta: ConsultarEtiquetaResponse) {
+  selecionarEtiqueta(etiqueta: ConsultarEtiquetaResponse) {
     if (this.etiquetasSelecionadas.some(e => e.id === etiqueta.id)) {
       this.mensagemErro = ['Etiqueta já selecionada.'];
       return;

@@ -35,21 +35,36 @@
 	
 			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
-				<a data-bs-target="#pessoas" data-bs-toggle="collapse" class="sidebar-link collapsed">
+				<a data-bs-target="#processo" data-bs-toggle="collapse" class="sidebar-link collapsed">
 
 					<i class="fas fa-users align-middle"></i> <span class="align-middle">Processos</span>
 
 
 				</a>
-				<ul id="pessoas" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
-					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'cadastrar-proceso']">
+				<ul id="processo" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'cadastrar-processo']">
 							Cadastrar
 						</a></li>
-					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'consultar-proceso']">
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'consultar-processo']">
 							Consultar</a></li>
 				</ul>
 			</li>
-		
+				<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+	'Estagiários', 'Supervisor','Conciliador')">
+				<a data-bs-target="#atendimento" data-bs-toggle="collapse" class="sidebar-link collapsed">
+
+					<i class="fas fa-users align-middle"></i> <span class="align-middle">Atendimento</span>
+
+
+				</a>
+				<ul id="atendimento" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'cadastrar-atendimento']">
+							Cadastrar
+						</a></li>
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'consultar-atendimento']">
+							Consultar</a></li>
+				</ul>
+			</li>
 			
 
 			<!-- Múltiplos níveis -->
