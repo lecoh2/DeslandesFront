@@ -19,6 +19,11 @@ import { AutocompletePessoa } from "./components/autocomplete-pessoas/autocomple
 import { CadastrarAtendimento } from "./components/cadastrar-atendimento/cadastrar-atendimento";
 import { AutocompletePessoaAtendimento } from "./components/autocomplete-pessoas-atendimento/autocomplete-pessoa-atendimento";
 import { Vinculo } from "./components/auto-complete-vinculos-proc-caso-atend/vinculo";
+import { CadastrarCaso } from "./components/caso/cadastrar-caso/cadastrar-caso";
+import { GestaoAtividades } from "./components/gestao-atividades/gestao-atividades";
+import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-tarefa/cadastar-tarefa";
+
+
 
 
 @NgModule({
@@ -30,6 +35,9 @@ import { Vinculo } from "./components/auto-complete-vinculos-proc-caso-atend/vin
         ConsultarPessoas,
         CadastrarProcesso,
         CadastrarAtendimento,
+        CadastrarCaso,
+        GestaoAtividades,
+        CadastrarTarefa,
 
 
         //autocomplete

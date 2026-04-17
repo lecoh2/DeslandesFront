@@ -1,1 +1,123 @@
-<p>cadastrar-caso works!</p>
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">Cadastrar Caso</h1>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Cadastro de Caso</h5>
+      <h6 class="card-subtitle text-muted">Preencha os dados do caso</h6>
+    </div>
+
+    <div class="card-body">
+
+      <app-spinner *ngIf="carregando" [show]="true" message="Salvando..."></app-spinner>
+
+      <app-alerts *ngIf="mensagemSucesso.length" titulo="Sucesso!" [mensagens]="mensagemSucesso"
+        tipo="success"></app-alerts>
+      <app-alerts *ngIf="mensagemErro.length" titulo="Erro!" [mensagens]="mensagemErro" tipo="danger"></app-alerts>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label class="form-label">Pasta</label>
+            <input class="form-control" formControlName="pasta">
+          </div>
+        </div>
+        <!-- CLIENTES -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <app-autocomplete-pessoa-atendimento label="Clientes" placeholder="Digite o cliente"
+              [resultados]="clientesFiltrados" [(selecionadas)]="clientesSelecionados"
+              (buscar)="buscarClientes($event)">
+            </app-autocomplete-pessoa-atendimento>
+          </div>
+
+          <div class="col-md-6">
+            <app-autocomplete-pessoa label="Outros envolvidos" placeholder="Digite o nome do envolvido"
+              [resultados]="envolvidosFiltradas" [(selecionadas)]="envolvidosSelecionados"
+              [qualificacoes]="qualificacoes" (buscar)="buscarEnvolvidos($event)">
+            </app-autocomplete-pessoa>
+          </div>
+        </div>
+        <div class="row mb-3">
+
+          <div class="col-md-6">
+            <label class="form-label">Título *</label>
+            <input class="form-control" formControlName="titulo">
+          </div>
+
+          <div class="col-md-6">
+             <label class="form-label">Responsável</label>
+
+            <select class="form-select" formControlName="responsavelId">
+              <option [ngValue]="null">Selecione</option>
+
+              <option *ngFor="let r of responsaveis" [ngValue]="r.id">
+                {{ r.nomeUsuario }}
+              </option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- ETIQUETAS -->
+        <div class="mb-3">
+          <label class="form-label">Etiquetas</label>
+          <app-etiquetas [etiquetas]="tiposEtiquetas" [(selecionadas)]="etiquetasSelecionadas"></app-etiquetas>
+        </div>
+
+        <!-- DESCRIÇÃO -->
+        <div class="mb-3">
+          <label class="form-label">Descrição</label>
+          <textarea class="form-control" formControlName="descricao"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Observação</label>
+          <textarea class="form-control" formControlName="observacao"></textarea>
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Acesso</label>
+
+          <div class="d-flex gap-4">
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="acesso" [value]="acessoEnum.Publico"
+                id="acessoPublico">
+
+              <label class="form-check-label" for="acessoPublico">
+                Público
+              </label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="acesso" [value]="acessoEnum.Privado"
+                id="acessoPrivado">
+
+              <label class="form-check-label" for="acessoPrivado">
+                Privado
+              </label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="acesso" [value]="acessoEnum.Envolvidos"
+                id="acessoEnvolvidos">
+
+              <label class="form-check-label" for="acessoEnvolvidos">
+                Envolvidos
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- BOTÃO -->
+        <button class="btn btn-primary" [disabled]="carregando">
+          <i class="fas fa-save"></i> Salvar Caso
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>

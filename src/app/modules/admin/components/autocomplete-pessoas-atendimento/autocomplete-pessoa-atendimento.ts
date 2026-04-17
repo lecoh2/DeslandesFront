@@ -52,4 +52,29 @@ export class AutocompletePessoaAtendimento {
   ocultarComDelay() {
     setTimeout(() => this.mostrarSugestoes = false, 200);
   }
+  formatarDocumento(doc?: string | null): string {
+  if (!doc) return '';
+
+  // remove tudo que não for número
+  const numeros = doc.replace(/\D/g, '');
+
+  // CPF → 11 dígitos
+  if (numeros.length === 11) {
+    return numeros.replace(
+      /(\d{3})(\d{3})(\d{3})(\d{2})/,
+      '$1.$2.$3-$4'
+    );
+  }
+
+  // CNPJ → 14 dígitos
+  if (numeros.length === 14) {
+    return numeros.replace(
+      /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
+      '$1.$2.$3/$4-$5'
+    );
+  }
+
+  // fallback (caso venha algo diferente)
+  return doc;
+}
 }

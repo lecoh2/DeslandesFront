@@ -1,0 +1,107 @@
+<div class="container-fluid p-0">
+
+  <h1 class="h3 mb-3">Gestão de Atividades</h1>
+
+  <!-- 🔎 FILTROS -->
+  <div class="card mb-3">
+    <div class="card-body">
+
+      <div class="row g-2">
+
+        <!-- PERÍODO -->
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="filtro.periodo">
+            <option *ngFor="let p of periodos">{{ p }}</option>
+          </select>
+        </div>
+
+        <!-- ATRIBUIÇÃO -->
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="filtro.atribuicao">
+            <option *ngFor="let a of atribuicoes">{{ a }}</option>
+          </select>
+        </div>
+
+        <!-- PESSOA -->
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="filtro.pessoaId">
+            <option [ngValue]="null">Todas pessoas</option>
+            <option *ngFor="let p of pessoas" [ngValue]="p.id">
+              {{ p.nome }}
+            </option>
+          </select>
+        </div>
+
+        <!-- TIPO -->
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="filtro.tipo">
+            <option *ngFor="let t of tipos">{{ t }}</option>
+          </select>
+        </div>
+
+        <!-- STATUS 
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="filtro.status">
+            <option *ngFor="let s of status">{{ s }}</option>
+          </select>
+        </div>-->
+
+        <!-- BOTÃO -->
+        <div class="col-md-2">
+          <button class="btn btn-primary w-100" (click)="filtrar()">
+            <i class="fas fa-filter"></i> Filtrar
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 🧱 KANBAN -->
+  <div class="row">
+
+    <!-- COLUNA -->
+    <div class="col-md-3" *ngFor="let coluna of colunas">
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-light fw-semibold">
+          {{ coluna.nome }}
+        </div>
+
+        <div class="card-body kanban-coluna">
+
+          <div *ngFor="let item of coluna.itens"
+               class="card mb-2 shadow-sm kanban-card">
+
+            <div class="card-body p-2">
+
+              <div class="fw-semibold">
+                {{ item.titulo }}
+              </div>
+
+              <small class="text-muted">
+                {{ item.tipo }} • {{ item.data | date:'dd/MM' }}
+              </small>
+
+              <div class="mt-2 d-flex justify-content-between">
+
+                <span class="badge bg-secondary">
+                  {{ item.responsavel }}
+                </span>
+
+                <i class="fas fa-ellipsis-h"></i>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

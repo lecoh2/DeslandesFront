@@ -13,7 +13,22 @@
 		
 		
 
-		
+			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+	'Estagiários', 'Supervisor','Conciliador')">
+				<a data-bs-target="#atividades" data-bs-toggle="collapse" class="sidebar-link collapsed">
+
+					<i class="fas fa-columns align-middle"></i> <span class="align-middle">Atividades</span>
+
+
+				</a>
+				<ul id="atividades" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'gestao-atividades']">
+							Cadastrar
+						</a></li>
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'consultar-pessoas']">
+							Consultar</a></li>
+				</ul>
+			</li>
 			
 			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
@@ -37,7 +52,7 @@
 	'Estagiários', 'Supervisor','Conciliador')">
 				<a data-bs-target="#processo" data-bs-toggle="collapse" class="sidebar-link collapsed">
 
-					<i class="fas fa-users align-middle"></i> <span class="align-middle">Processos</span>
+					<i class="fas fa-balance-scale align-middle"></i> <span class="align-middle">Processos</span>
 
 
 				</a>
@@ -53,7 +68,7 @@
 	'Estagiários', 'Supervisor','Conciliador')">
 				<a data-bs-target="#atendimento" data-bs-toggle="collapse" class="sidebar-link collapsed">
 
-					<i class="fas fa-users align-middle"></i> <span class="align-middle">Atendimento</span>
+				<i class="fas fa-headset align-middle"></i> <span class="align-middle">Atendimento</span>
 
 
 				</a>
@@ -66,7 +81,23 @@
 				</ul>
 			</li>
 			
+			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+	'Estagiários', 'Supervisor','Conciliador')">
+				<a data-bs-target="#caso" data-bs-toggle="collapse" class="sidebar-link collapsed">
 
+					<i class="fas fa-folder-open align-middle"></i><span class="align-middle">Caso</span>
+
+
+				</a>
+				<ul id="caso" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#caz">
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'cadastrar-caso']">
+							Cadastrar
+						</a></li>
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'consultar-atendimento']">
+							Consultar</a></li>
+				</ul>
+			</li>
+			
 			<!-- Múltiplos níveis -->
 
 			<li class="sidebar-item" *ngIf="access.hasNivel('Super Administrador','Administrador')">

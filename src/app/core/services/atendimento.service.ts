@@ -19,7 +19,6 @@ export class AtendimentoService {
 
   //métodos para cadastrar reclamacao
 
-
   cadastrarAtendimento(request: CriarAtendimentoClienteRequest): Observable<ApiResponse<CriarAtendimentoClienteResponse>> {
   const token = localStorage.getItem('token');
 
@@ -33,7 +32,8 @@ export class AtendimentoService {
     }
   );
   
-}   consultarAtendimentoAutoComplete(termo?: string, limite: number = 50) {
+}  
+ consultarAtendimentoAutoComplete(termo?: string, limite: number = 50) {
      const params: any = { limite: limite.toString() };
    
      if (termo) {
