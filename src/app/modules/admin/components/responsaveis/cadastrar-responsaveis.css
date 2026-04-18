@@ -1,0 +1,40 @@
+.autocomplete-dropdown {
+  border-radius: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Hover bonito */
+.hover-click {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* 🔥 NÃO pinta tudo de branco */
+.hover-click:hover {
+  background-color: #0d6efd;
+}
+
+/* texto fica branco */
+.hover-click:hover strong {
+  color: #fff;
+}
+
+/* se tiver small */
+.hover-click:hover small {
+  color: #e9ecef;
+}
+
+/* 🔥 ícones com cor fixa */
+.fa-plus {
+  color: #0d6efd !important;
+}
+
+.fa-check {
+  color: #198754 !important;
+}
+
+/* mantém acima */
+.zindex-dropdown {
+  z-index: 1050 !important;
+}

@@ -1,5 +1,5 @@
 export interface ConsultarEtiquetaResponse {
-    id?: string;
+    id: string;
   nome?: string;
   cor?:string;
 }

@@ -1,3 +1,10 @@
+import { PrioridadeTarefaEnum } from "../enums/prioridade/prioridade-tarefaEnum";
+import { StatusGeralKanbanEnum } from "../enums/status-kaban/status-kaban-geralEnum";
+import { TipoVinculoEnum } from "../enums/tipo-vinculo/tipo-vinculoEnum";
+import { GrupoEtiquetaRequest } from "../grupo-etiquetas/grupo-etiquetas";
+import { GrupoTarefaResponsaveisRequest } from "../grupo-tarefa-responsavel/grupo-tarefa-responsaveis-request";
+import { CriarListaTarefaRequest } from "./criar-lista-tarefa-request";
+
 export interface CadastrarTarefaRequest {
   descricao: string;
 
@@ -7,17 +14,17 @@ export interface CadastrarTarefaRequest {
   processoId?: string | null;
   casoId?: string | null;
   atendimentoId?: string | null;
-
+usuarioCriacaoId?: string | null;
   responsavelId?: string | null;
 
-  prioridade: PrioridadeTarefa;
+  prioridade: PrioridadeTarefaEnum;
 
   // 🔥 NOVOS CAMPOS
-  tipoVinculo?: TipoVinculo | null;
-  statusGeralKanban: StatusGeralKanban;
+  tipoVinculo?: TipoVinculoEnum | null;
+  statusGeralKanban: StatusGeralKanbanEnum;
 
   // 🏷️ ETIQUETAS
-  etiquetas: GrupoEtiquetaRequest[];
+  grupoTarefasEtiquetas: GrupoEtiquetaRequest[];
 
   // 📋 CHECKLIST
   listasTarefa: CriarListaTarefaRequest[];

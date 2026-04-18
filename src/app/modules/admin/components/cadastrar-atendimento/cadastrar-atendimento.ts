@@ -102,7 +102,8 @@ buscarVinculo(termo: string) {
   request$.subscribe(res => {
     this.resultadosVinculo = res;
   });
-} selecionarVinculo(item: any) {
+} 
+selecionarVinculo(item: any) {
     const tipo = this.form.get('tipoVinculo')?.value;
 
     this.resultadosVinculo = [];

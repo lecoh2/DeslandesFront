@@ -22,6 +22,7 @@ import { Vinculo } from "./components/auto-complete-vinculos-proc-caso-atend/vin
 import { CadastrarCaso } from "./components/caso/cadastrar-caso/cadastrar-caso";
 import { GestaoAtividades } from "./components/gestao-atividades/gestao-atividades";
 import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-tarefa/cadastar-tarefa";
+import { CadastrarResponsaveis } from "./components/responsaveis/cadastrar-responsaveis";
 
 
 
@@ -43,6 +44,7 @@ import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-t
         //autocomplete
         AutocompletePessoa,
         AutocompletePessoaAtendimento,
+        CadastrarResponsaveis,
         Vinculo,
         //siderbar, navbar, footer
         Siderbar,

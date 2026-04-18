@@ -69,7 +69,7 @@ export const routes: Routes = [
             },
                //tarefa
               {
-                path: 'cadastrar-tareafa',
+                path: 'cadastrar-tarefa',
                 component: CadastrarTarefa,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }

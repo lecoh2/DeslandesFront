@@ -80,6 +80,22 @@
 							Consultar</a></li>
 				</ul>
 			</li>
+							<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+	'Estagiários', 'Supervisor','Conciliador')">
+				<a data-bs-target="#tarefa" data-bs-toggle="collapse" class="sidebar-link collapsed">
+
+				<i class="fas fa-tasks align-middle"></i> <span class="align-middle">Tarefa</span>
+
+
+				</a>
+				<ul id="tarefa" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'cadastrar-tarefa']">
+							Cadastrar
+						</a></li>
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'consultar-tarefa']">
+							Consultar</a></li>
+				</ul>
+			</li>
 			
 			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">

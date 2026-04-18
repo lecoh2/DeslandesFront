@@ -39,7 +39,7 @@ export class UsuarioService {
     }
     consultarUsuarioResponsavel(): Observable<ConsultarUsuarioResponse[]> {
         return this.http.get<ConsultarUsuarioResponse[]>
-            (`${this.url}/api/v1/usuarios/consultar-usaurio-responsavel`);
+            (`${this.url}/api/v1/usuarios/consultar-usuario-responsavel`);
     }
 
       consultarUsuariosPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {

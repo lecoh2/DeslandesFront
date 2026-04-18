@@ -591,6 +591,11 @@ export class CadastrarPessoas implements OnInit {
       });
     }
   }
+ // validação para habilitar submit — exige PF e PJ pelo seu requisito original
+ get podeEnviar(): boolean {
+    return this.form.valid;
+  }
+
 
   // ================== Tratar Erros ==================
   private tratarErro(err: HttpErrorResponse): void {

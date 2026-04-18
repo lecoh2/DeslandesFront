@@ -7,6 +7,7 @@ import { CadastrarProcessoResponse } from "../models/processo/cadastar-processo-
 import { Observable } from "rxjs";
 import { ApiResponse } from "../models/respostas/api-response";
 import { ProcessoAutoComplete } from "../models/processo/processo-auto-complete";
+import { CadastrarTarefaRequest } from "../models/tarefa/cadastrar-tarefa.resquest";
 
 
 @Injectable({
@@ -17,11 +18,11 @@ export class TarefaService {
     private url = environment.apiDeslandes;
     private http = inject(HttpClient);
 
-  cadastrarTarefa(request: CadastrarProcessoRequest): Observable<ApiResponse<CadastrarProcessoResponse>> {
+  cadastrarTarefa(request: CadastrarTarefaRequest): Observable<ApiResponse<CadastrarProcessoResponse>> {
   const token = localStorage.getItem('token');
 
   return this.http.post<ApiResponse<CadastrarProcessoResponse>>(
-    `${this.url}/api/v1/processo/cadastrar-processo`,
+    `${this.url}/api/v1/tarefa/cadastrar-tarefa`,
     request,
     {
       headers: token

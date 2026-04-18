@@ -1,99 +1,133 @@
-
 <div class="container-fluid p-0">
 
-  <h1 class="h3 mb-3">Cadastrar Tarefa</h1>
+    <h1 class="h3 mb-3">Cadastrar Tarefa</h1>
 
-  <div class="card">
-    <div class="card-header">
-      <h5 class="card-title">Nova Tarefa</h5>
-      <h6 class="card-subtitle text-muted">Preencha os dados</h6>
-    </div>
-
-    <div class="card-body">
-
-      <app-spinner *ngIf="carregando" [show]="true"></app-spinner>
-
-      <app-alerts *ngIf="mensagemSucesso.length" tipo="success" [mensagens]="mensagemSucesso"></app-alerts>
-      <app-alerts *ngIf="mensagemErro.length" tipo="danger" [mensagens]="mensagemErro"></app-alerts>
-
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
-        <!-- DESCRIÇÃO -->
-        <div class="mb-3">
-          <label class="form-label">Descrição *</label>
-          <textarea class="form-control" formControlName="descricao"></textarea>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Nova Tarefa</h5>
+            <h6 class="card-subtitle text-muted">Preencha os dados</h6>
         </div>
 
-        <!-- DATA -->
-        <div class="mb-3">
-          <label class="form-label">Data da tarefa</label>
-          <input type="date" class="form-control" formControlName="dataTarefa">
-        </div>
+        <div class="card-body">
 
-        <!-- RESPONSÁVEL -->
-        <div class="mb-3">
-          <label class="form-label">Responsável *</label>
-          <select class="form-select" formControlName="responsavelId">
-            <option [ngValue]="null">Selecione</option>
-            <option *ngFor="let p of pessoasFiltradas" [ngValue]="p.id">
-              {{ p.nome }}
-            </option>
-          </select>
-        </div>
+            <app-spinner *ngIf="carregando" [show]="true"></app-spinner>
 
-        <!-- ENVOLVIDOS -->
-        <div class="mb-3">
-          <app-autocomplete-pessoa
-            label="Envolvidos"
-            [resultados]="pessoasFiltradas"
-            [(selecionadas)]="envolvidosSelecionados"
-            (buscar)="buscarPessoas($event)">
-          </app-autocomplete-pessoa>
-        </div>
-<select class="form-select" [(ngModel)]="statusSelecionado">
-  <option [ngValue]="StatusGeralKanban.A_Fazer">A Fazer</option>
-  <option [ngValue]="StatusGeralKanban.Em_Andamento">Em Andamento</option>
-  <option [ngValue]="StatusGeralKanban.Concluido">Concluído</option>
-  <option [ngValue]="StatusGeralKanban.Cancelado">Cancelado</option>
-</select>
-        <!-- PRIORIDADE -->
-      <select class="form-select" [(ngModel)]="prioridadeSelecionada">
-  <option [ngValue]="PrioridadeTarefa.Baixa">Baixa</option>
-  <option [ngValue]="PrioridadeTarefa.Media">Média</option>
-  <option [ngValue]="PrioridadeTarefa.Alta">Alta</option>
-  <option [ngValue]="PrioridadeTarefa.Urgente">Urgente</option>
-</select>
-<select class="form-select" [(ngModel)]="tipoVinculoSelecionado">
-  <option [ngValue]="TipoVinculo.Processo">Processo</option>
-  <option [ngValue]="TipoVinculo.Caso">Caso</option>
-  <option [ngValue]="TipoVinculo.Atendimento">Atendimento</option>
-</select>
-        <!-- STATUS -->
-        <div class="mb-3">
-          <label class="form-label">Status</label>
-          <select class="form-select" formControlName="statusGeralKanban">
-            <option [ngValue]="statusEnum.AFazer">A Fazer</option>
-            <option [ngValue]="statusEnum.EmAndamento">Em Andamento</option>
-            <option [ngValue]="statusEnum.Concluido">Concluído</option>
-            <option [ngValue]="statusEnum.Cancelado">Cancelado</option>
-          </select>
-        </div>
+            <app-alerts *ngIf="mensagemSucesso.length" tipo="success" [mensagens]="mensagemSucesso"></app-alerts>
+            <app-alerts *ngIf="mensagemErro.length" tipo="danger" [mensagens]="mensagemErro"></app-alerts>
 
-        <!-- ETIQUETAS -->
-        <div class="mb-3">
-          <label class="form-label">Etiquetas</label>
-          <app-etiquetas
-            [etiquetas]="etiquetas"
-            [(selecionadas)]="etiquetasSelecionadas">
-          </app-etiquetas>
-        </div>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <!-- ETIQUETAS -->
+                <div class="mb-3">
+                    <label class="form-label">Etiquetas</label>
+                    <app-etiquetas [etiquetas]="grupoTarefasEtiquetas" [(selecionadas)]="etiquetasSelecionadas">
+                    </app-etiquetas>
+                </div>
+                <!-- DESCRIÇÃO -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Descrição *</label>
+                        <textarea class="form-control" formControlName="descricao"></textarea>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <!-- DATA -->
+                    <div class="col-md-6">
+                        <label class="form-label">Data da tarefa</label>
+                        <input type="date" class="form-control" formControlName="dataTarefa">
+                    </div>
+                    <!-- RESPONSÁVEL -->
+                    <div class="col-md-4">
+                        <label class="form-label">Responsável</label>
+<app-selecionar-responsaveis
+  [resultados]="responsaveisFiltrados"
+  [(selecionadas)]="responsaveisSelecionados"
+  (buscar)="buscarResponsaveis($event)">
+</app-selecionar-responsaveis>
+                    </div>
+                </div>
 
-        <!-- BOTÃO -->
-        <button class="btn btn-primary" [disabled]="carregando">
-          <i class="fas fa-save"></i> Salvar Tarefa
-        </button>
+                <div class="row mb-3">
+                    <!-- STATUS -->
+                    <div class="col-md-6">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" formControlName="statusGeralKanban">
+                            <option [ngValue]="statusEnum.A_Fazer">A Fazer</option>
+                            <option [ngValue]="statusEnum.Em_Andamento">Em Andamento</option>
+                            <option [ngValue]="statusEnum.Concluido">Concluído</option>
+                            <option [ngValue]="statusEnum.Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <!-- PRIORIDADE -->
+                    <div class="col-md-6">
+                        <label class="form-label">Prioridade</label>
+                        <select class="form-select" formControlName="prioridade">
+                            <option [ngValue]="prioridadeEnum.Baixa">Baixa</option>
+                            <option [ngValue]="prioridadeEnum.Media">Média</option>
+                            <option [ngValue]="prioridadeEnum.Alta">Alta</option>
+                            <option [ngValue]="prioridadeEnum.Urgente">Urgente</option>
+                        </select>
+                    </div>
+                </div>
 
-      </form>
-    </div>
+                <!-- TIPO VÍNCULO -->
+                <div class="row mb-3">
+                    <!-- ITEM DINÂMICO -->
+                    <div class="col-md-4">
+                        <label class="form-label">Tipo de Vínculo</label>
+                        <select class="form-control" formControlName="tipoVinculo">
+                            <option [ngValue]="null">Selecione</option>
+                            <option value="processo">Processo</option>
+                            <option value="caso">Caso</option>
+                            <option value="atendimento">Atendimento</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label">Buscar vínculo</label>
+                        <app-vinculo [resultados]="resultadosVinculo" (buscar)="buscarVinculo($event)"
+                            (selecionado)="selecionarVinculo($event)">
+                        </app-vinculo>
+
+                    </div>
+                </div>
+       <div class="row mb-3">
+
+  <label class="form-label">Lista de tarefas</label>
+
+  <div *ngFor="let item of listasTarefa; let i = index" class="col-md-4 d-flex mb-2">
+
+    <input type="text"
+       class="form-control me-2"
+       [(ngModel)]="item.descricao"
+       name="descricao{{i}}"
+       placeholder="Descrição do item" />
+
+    <button type="button"
+            class="btn btn-sm "
+            (click)="removerItemLista(i)">
+      <i class="fas fa-trash"></i>
+    </button>
+
   </div>
+
+  <div class="col-12 mt-2">
+    <button type="button"
+            class="btn btn-sm btn-info"
+            (click)="adicionarItemLista()">
+
+      <i class="fas fa-list me-1"></i>
+      Adicionar item
+
+    </button>
+  </div>
+
+</div>
+                <!-- BOTÃO -->
+                <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                  <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                </button>
+
+            </form>
+        </div>
+    </div>
 </div>

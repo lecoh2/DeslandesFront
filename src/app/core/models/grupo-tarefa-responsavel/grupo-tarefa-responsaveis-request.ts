@@ -1,3 +1,3 @@
 export interface GrupoTarefaResponsaveisRequest {
-  pessoaId: string;
+  usuarioId: string;
 }
