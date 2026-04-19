@@ -96,6 +96,22 @@
 							Consultar</a></li>
 				</ul>
 			</li>
+										<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+	'Estagiários', 'Supervisor','Conciliador')">
+				<a data-bs-target="#evento" data-bs-toggle="collapse" class="sidebar-link collapsed">
+
+				<i class="fas fa-calendar-alt align-middle"></i> <span class="align-middle">Evento</span>
+
+
+				</a>
+				<ul id="evento" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'cadastrar-evento']">
+							Cadastrar
+						</a></li>
+					<li class="sidebar-item"><a class='sidebar-link' [routerLink]="['/admin', 'consultar-evento']">
+							Consultar</a></li>
+				</ul>
+			</li>
 			
 			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">

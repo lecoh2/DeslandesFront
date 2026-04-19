@@ -8,27 +8,41 @@ import { Observable } from "rxjs";
 import { ApiResponse } from "../models/respostas/api-response";
 import { ProcessoAutoComplete } from "../models/processo/processo-auto-complete";
 import { CadastrarTarefaRequest } from "../models/tarefa/cadastrar-tarefa.resquest";
+import { ListaTarefasResponse } from "../models/tarefa/lista-tarefas-response";
 
 
 @Injectable({
-    providedIn: 'root' // Isso registra o serviço automaticamente no app
+  providedIn: 'root' // Isso registra o serviço automaticamente no app
 })
 export class TarefaService {
-    //atributos
-    private url = environment.apiDeslandes;
-    private http = inject(HttpClient);
+  //atributos
+  private url = environment.apiDeslandes;
+  private http = inject(HttpClient);
 
   cadastrarTarefa(request: CadastrarTarefaRequest): Observable<ApiResponse<CadastrarProcessoResponse>> {
-  const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-  return this.http.post<ApiResponse<CadastrarProcessoResponse>>(
-    `${this.url}/api/v1/tarefa/cadastrar-tarefa`,
-    request,
-    {
-      headers: token
-        ? { Authorization: `Bearer ${token}` }
-        : {}
+    return this.http.post<ApiResponse<CadastrarProcessoResponse>>(
+      `${this.url}/api/v1/tarefa/cadastrar-tarefa`,
+      request,
+      {
+        headers: token
+          ? { Authorization: `Bearer ${token}` }
+          : {}
+      }
+    );
+  }
+  consultarListaTarefaAutoComplete(termo?: string) {
+    const params: any = {};
+
+    if (termo) {
+      params.termo = termo;
     }
-  );
-}
+
+    return this.http.get<ListaTarefasResponse[]>(
+      `${this.url}/api/v1/tarefa/consultar-lista-tarefa-autocomplete`,
+      { params }
+    );
+  }
+
 }

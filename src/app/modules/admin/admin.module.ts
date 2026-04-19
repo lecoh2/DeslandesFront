@@ -23,6 +23,8 @@ import { CadastrarCaso } from "./components/caso/cadastrar-caso/cadastrar-caso";
 import { GestaoAtividades } from "./components/gestao-atividades/gestao-atividades";
 import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-tarefa/cadastar-tarefa";
 import { CadastrarResponsaveis } from "./components/responsaveis/cadastrar-responsaveis";
+import { AutocompleteListaTarefas } from "./components/auto-complete-lista-tarefas/autocomplete-lista-tarefas";
+import { CadastrarEvento } from "./components/evento/cadastrar-evento/cadastrar-evento";
 
 
 
@@ -39,11 +41,13 @@ import { CadastrarResponsaveis } from "./components/responsaveis/cadastrar-respo
         CadastrarCaso,
         GestaoAtividades,
         CadastrarTarefa,
+        CadastrarEvento,
 
 
         //autocomplete
         AutocompletePessoa,
         AutocompletePessoaAtendimento,
+        AutocompleteListaTarefas,
         CadastrarResponsaveis,
         Vinculo,
         //siderbar, navbar, footer

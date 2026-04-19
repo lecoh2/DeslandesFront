@@ -18,7 +18,6 @@ import { CriarListaTarefaRequest } from '../../../../../../core/models/tarefa/cr
 import { CadastrarTarefaRequest } from '../../../../../../core/models/tarefa/cadastrar-tarefa.resquest';
 
 import { UsuarioService } from '../../../../../../core/services/usuario.service';
-import { UsuarioResumo } from '../../../../../../core/models/usuario/usuario-resumo';
 import { ConsultarUsuarioResponse } from '../../../../../../core/models/usuario/consultar-usuarios.response';
 
 import { ProcessoAutoComplete } from '../../../../../../core/models/processo/processo-auto-complete';
@@ -28,6 +27,7 @@ import { AtendimentoAutoComplete } from '../../../../../../core/models/atendimen
 import { ProcessoService } from '../../../../../../core/services/processo.service';
 import { CasoService } from '../../../../../../core/services/caso.service';
 import { AtendimentoService } from '../../../../../../core/services/atendimento.service';
+import { ListaTarefasResponse } from '../../../../../../core/models/tarefa/lista-tarefas-response';
 
 type VinculoAutoComplete =
   | ProcessoAutoComplete
@@ -59,25 +59,26 @@ export class CadastrarTarefa implements OnInit {
   carregando = false;
 
   resultadosVinculo: VinculoAutoComplete[] = [];
-
+  listaFiltradas: ListaTarefasResponse[] = [];
   prioridadeEnum = PrioridadeTarefaEnum;
   statusEnum = StatusGeralKanbanEnum;
   tiposVinculo = Object.values(TipoVinculoEnum).filter(v => typeof v === 'number');
 
-  // 🔥 RESPONSÁVEIS
   responsaveis: ConsultarUsuarioResponse[] = [];
   responsaveisFiltrados: ConsultarUsuarioResponse[] = [];
   responsaveisSelecionados: ConsultarUsuarioResponse[] = [];
 
-  // 🔥 ETIQUETAS
   grupoTarefasEtiquetas: ConsultarEtiquetaResponse[] = [];
   etiquetasSelecionadas: ConsultarEtiquetaResponse[] = [];
 
-listasTarefa: CriarListaTarefaRequest[] = [];
+  // 🔥 LISTA DE TAREFAS (SEM ngModel)
+  listasTarefa: CriarListaTarefaRequest[] = [];
+
   vinculoSelecionado: ProcessoAutoComplete | CasoAutoComplete | AtendimentoAutoComplete | null = null;
+
   form = this.builder.group({
     descricao: ['', Validators.required],
-    dataTarefa: [null],
+    dataTarefa: ['', Validators.required],
     prioridade: [PrioridadeTarefaEnum.Media],
     statusGeralKanban: [StatusGeralKanbanEnum.A_Fazer],
     tipoVinculo: this.builder.control<'processo' | 'caso' | 'atendimento' | null>(null),
@@ -92,13 +93,7 @@ listasTarefa: CriarListaTarefaRequest[] = [];
   get podeEnviar(): boolean {
     return this.form.valid;
   }
-adicionarItemLista() {
-  this.listasTarefa.push({
-    descricao: ''
-  });
-}removerItemLista(index: number) {
-  this.listasTarefa.splice(index, 1);
-}
+
   ngOnInit(): void {
     this.usuarioLogado = this.authHelper.get();
     this.carregarDados();
@@ -115,7 +110,29 @@ adicionarItemLista() {
     });
   }
 
-  // 🔍 BUSCAR RESPONSÁVEIS
+  // =========================
+  // LISTA DE TAREFAS
+  // =========================
+
+  adicionarItemLista() {
+    this.listasTarefa = [
+      ...this.listasTarefa,
+      { descricao: '' }
+    ];
+  }
+
+  removerItemLista(index: number) {
+    this.listasTarefa = this.listasTarefa.filter((_, i) => i !== index);
+  }
+
+atualizarDescricaoLista(index: number, valor: string) {
+  this.listasTarefa[index].descricao = valor;
+}
+
+  // =========================
+  // RESPONSÁVEIS
+  // =========================
+
   buscarResponsaveis(termo: string) {
     if (!termo) {
       this.responsaveisFiltrados = [];
@@ -126,7 +143,10 @@ adicionarItemLista() {
       .filter(r => r.nomeUsuario.toLowerCase().includes(termo.toLowerCase()));
   }
 
-  // 🔍 VÍNCULO
+  // =========================
+  // VÍNCULO
+  // =========================
+
   buscarVinculo(termo: string) {
     const tipo = this.form.get('tipoVinculo')?.value;
 
@@ -164,6 +184,10 @@ adicionarItemLista() {
     else this.form.patchValue({ atendimentoId: item.id });
   }
 
+  // =========================
+  // SUBMIT
+  // =========================
+
   onSubmit(): void {
     this.mensagemErro = [];
     this.mensagemSucesso = [];
@@ -172,24 +196,27 @@ adicionarItemLista() {
       this.form.markAllAsTouched();
       return;
     }
-
+if (this.listasTarefa.length === 0) {
+  this.mensagemErro = ['Adicione pelo menos um item na lista de tarefas.'];
+  return;
+}
     this.carregando = true;
-    const formValue = this.form.value;
+
+    const f = this.form.value;
     const limpar = (v: any) => v ?? undefined;
 
-
     const request: CadastrarTarefaRequest = {
-      descricao: limpar(formValue.descricao) ?? '',
-      dataTarefa: limpar(formValue.dataTarefa),
+      descricao: limpar(f.descricao) ?? '',
+      dataTarefa: limpar(f.dataTarefa),
       usuarioCriacaoId: this.usuarioLogado?.idUsuario,
-      responsavelId: limpar(formValue.responsavelId),
+      responsavelId: limpar(f.responsavelId),
 
-      processoId: limpar(formValue.processoId),
-      casoId: limpar(formValue.casoId),
-      atendimentoId: limpar(formValue.atendimentoId),
+      processoId: limpar(f.processoId),
+      casoId: limpar(f.casoId),
+      atendimentoId: limpar(f.atendimentoId),
 
-      prioridade: formValue.prioridade!,
-      statusGeralKanban: formValue.statusGeralKanban!,
+      prioridade: f.prioridade!,
+      statusGeralKanban: f.statusGeralKanban!,
 
       grupoTarefasEtiquetas: this.etiquetasSelecionadas.map(e => ({
         etiquetaId: e.id!
@@ -199,7 +226,12 @@ adicionarItemLista() {
         usuarioId: r.id
       })),
 
+      // 🔥 GARANTIDO SEM VALOR VAZIO
       listasTarefa: this.listasTarefa
+        .filter(x => x.descricao?.trim())
+        .map(x => ({
+          descricao: x.descricao.trim()
+        }))
     };
 
     this.tarefaService.cadastrarTarefa(request).subscribe({
@@ -211,13 +243,16 @@ adicionarItemLista() {
       error: err => this.tratarErro(err)
     });
   }
-
-  resetar() {
-    this.form.reset();
-    this.responsaveisSelecionados = [];
-    this.etiquetasSelecionadas = [];
-    this.listasTarefa = [];
-  }
+buscarListaTarefas(termo: string) {
+  this.tarefaService.consultarListaTarefaAutoComplete(termo)
+    .subscribe(res => this.listaFiltradas = res);
+}
+resetar() {
+  this.form.reset();
+  this.responsaveisSelecionados = [];
+  this.etiquetasSelecionadas = [];
+  this.listasTarefa = [];
+}
 
   tratarErro(err: HttpErrorResponse) {
     const e = err.error;

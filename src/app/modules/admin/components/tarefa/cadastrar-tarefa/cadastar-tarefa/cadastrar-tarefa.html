@@ -28,6 +28,9 @@
                         <label class="form-label">Descrição *</label>
                         <textarea class="form-control" formControlName="descricao"></textarea>
                     </div>
+                    <div *ngIf="form.get('descricao')?.touched && form.get('descricao')?.invalid" class="text-danger mt-1">
+                        <span *ngIf="form.get('descricao')?.hasError('required')">A Descrição da tarefa é obrigatória.</span>
+                    </div>
                 </div>
                 <div class="row mb-3">
                     <!-- DATA -->
@@ -35,14 +38,15 @@
                         <label class="form-label">Data da tarefa</label>
                         <input type="date" class="form-control" formControlName="dataTarefa">
                     </div>
+                    <div *ngIf="form.get('dataTarefa')?.touched && form.get('dataTarefa')?.invalid" class="text-danger mt-1">
+                        <span *ngIf="form.get('dataTarefa')?.hasError('required')">A data da tarrefa é obrigatória.</span>
+                    </div>
                     <!-- RESPONSÁVEL -->
                     <div class="col-md-4">
                         <label class="form-label">Responsável</label>
-<app-selecionar-responsaveis
-  [resultados]="responsaveisFiltrados"
-  [(selecionadas)]="responsaveisSelecionados"
-  (buscar)="buscarResponsaveis($event)">
-</app-selecionar-responsaveis>
+                        <app-selecionar-responsaveis [resultados]="responsaveisFiltrados"
+                            [(selecionadas)]="responsaveisSelecionados" (buscar)="buscarResponsaveis($event)">
+                        </app-selecionar-responsaveis>
                     </div>
                 </div>
 
@@ -90,41 +94,52 @@
 
                     </div>
                 </div>
-       <div class="row mb-3">
+                <div class="row mb-3">
 
-  <label class="form-label">Lista de tarefas</label>
+                    <!-- HEADER INLINE (lado a lado de verdade) -->
+                    <div class="col-12 mb-2">
 
-  <div *ngFor="let item of listasTarefa; let i = index" class="col-md-4 d-flex mb-2">
+                        <div class="d-inline-flex align-items-center gap-3">
 
-    <input type="text"
-       class="form-control me-2"
-       [(ngModel)]="item.descricao"
-       name="descricao{{i}}"
-       placeholder="Descrição do item" />
+                            <h5 class="card-title mb-0">
+                                Adicionar uma nova lista de tarefa
+                            </h5>
 
-    <button type="button"
-            class="btn btn-sm "
-            (click)="removerItemLista(i)">
-      <i class="fas fa-trash"></i>
-    </button>
+                            <button type="button" class="btn btn-sm btn-info" (click)="adicionarItemLista()">
 
-  </div>
+                                <i class="fas fa-list me-1"></i>
+                                Adicionar item
 
-  <div class="col-12 mt-2">
-    <button type="button"
-            class="btn btn-sm btn-info"
-            (click)="adicionarItemLista()">
+                            </button>
 
-      <i class="fas fa-list me-1"></i>
-      Adicionar item
+                        </div>
 
-    </button>
-  </div>
+                    </div>
 
-</div>
-                <!-- BOTÃO -->
+                    <!-- ITENS -->
+                    <div *ngFor="let item of listasTarefa; let i = index" class="col-md-4 d-flex mb-2">
+
+                        <input type="text" class="form-control me-2" [value]="item.descricao"
+                            (input)="atualizarDescricaoLista(i, $any($event.target).value)" name="descricao{{i}}"
+                            placeholder="Descrição do item" />
+
+                        <button type="button" class="btn btn-sm " (click)="removerItemLista(i)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <app-autocomplete-lista-tarefas label="Listas de tarefas existentes"
+                            placeholder="Digite a descrição" [resultados]="listaFiltradas"
+                            [(selecionadas)]="listasTarefa" (buscar)="buscarListaTarefas($event)">
+                        </app-autocomplete-lista-tarefas>
+                    </div>
+                </div> <!-- BOTÃO -->
                 <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
-                  <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                    <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
                 </button>
 
             </form>

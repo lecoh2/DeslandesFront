@@ -1,0 +1,41 @@
+/* Dropdown */
+.autocomplete-dropdown {
+  border-radius: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Hover elegante */
+.hover-click {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hover-click:hover {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.hover-click:hover small {
+  color: #e9ecef;
+}
+
+/* Card selecionado */
+.card {
+  border-radius: 10px;
+}
+
+/* Z-index */
+.zindex-dropdown {
+  z-index: 1050 !important;
+}.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+select.form-select-sm {
+  border-radius: 6px;
+}
+
+button.btn-outline-danger {
+  border-radius: 6px;
+}
