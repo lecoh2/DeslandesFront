@@ -1,28 +1,75 @@
 .kanban-coluna {
   min-height: 400px;
-  max-height: 70vh;
+  max-height: 75vh;
   overflow-y: auto;
-  background: #f8f9fa;
+  background: #f4f6f9;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 .kanban-card {
   cursor: pointer;
-  transition: all 0.2s;
-  border-left: 4px solid #0d6efd;
+  transition: all 0.18s ease-in-out;
+  border-left: 4px solid transparent;
+  border-radius: 10px;
 }
 
 .kanban-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+  border-left-color: #0d6efd;
 }
 
-/* cores por tipo */
+/* =========================
+   BADGES POR TIPO
+========================= */
 .badge-tarefa {
   background-color: #0d6efd;
+  color: #fff;
 }
+
 .badge-prazo {
   background-color: #f39c12;
+  color: #fff;
 }
+
 .badge-audiencia {
   background-color: #8e44ad;
+  color: #fff;
+}
+
+/* =========================
+   BOOTSTRAP MODAL AJUSTES
+   (opcional, só refinamento visual)
+========================= */
+.modal-content {
+  border-radius: 12px;
+}
+
+.modal-header {
+  border-bottom: 1px solid #eee;
+}
+
+.modal-body {
+  padding: 16px;
+}
+
+/* spinner alinhado */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+}.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  width: 800px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
 }

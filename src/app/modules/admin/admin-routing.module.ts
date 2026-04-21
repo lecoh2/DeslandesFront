@@ -10,7 +10,7 @@ import { AdminLayout } from "./layouts/layouts/admin-layout/admin-layout";
 import { CadastrarPessoas } from "./components/pessoa/cadastrar-pessoa/cadastrar-pessoas";
 import { ConsultarPessoas } from "./components/pessoa/consultar-pessoas/consultar-pessoas";
 import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cadastrar-processo";
-import { CadastrarAtendimento } from "./components/cadastrar-atendimento/cadastrar-atendimento";
+import { CadastrarAtendimento } from "./components/atendimento/cadastrar-atendimento/cadastrar-atendimento";
 import { CadastrarCaso } from "./components/caso/cadastrar-caso/cadastrar-caso";
 import { GestaoAtividades } from "./components/gestao-atividades/gestao-atividades";
 import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-tarefa/cadastar-tarefa";

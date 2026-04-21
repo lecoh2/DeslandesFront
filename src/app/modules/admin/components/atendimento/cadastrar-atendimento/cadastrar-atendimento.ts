@@ -11,22 +11,22 @@ import { catchError, debounceTime, filter, of, switchMap } from 'rxjs';
 
 
 
-import { AuthHelper } from '../../../../core/helpers/auth.helper';
-import { PessoaService } from '../../../../core/services/pessoa.service';
-import { AtendimentoService } from '../../../../core/services/atendimento.service';
+import { AuthHelper } from '../../../../../core/helpers/auth.helper';
+import { PessoaService } from '../../../../../core/services/pessoa.service';
+import { AtendimentoService } from '../../../../../core/services/atendimento.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ConsultarEtiquetaResponse } from '../../../../core/models/etiqueta/consultar-etiqueta-response';
-import { QualificacaoResponse } from '../../../../core/models/qualificacao/qualificacao-response';
-import { PessoaResumo } from '../../../../core/models/pessoa/pessoa-resumo';
-import { PessoaSelecionada } from '../../../../core/models/pessoa/pessoa-selecionada';
-import { AutenticarUsuarioResponse } from '../../../../core/models/usuario/autenticar-usuario.response';
-import { QualificacoesService } from '../../../../core/services/qualificacoes.service';
-import { EtiquetaService } from '../../../../core/services/etiqueta.service';
-import { ProcessoService } from '../../../../core/services/processo.service';
-import { CasoService } from '../../../../core/services/caso.service';
-import { ProcessoAutoComplete } from '../../../../core/models/processo/processo-auto-complete';
-import { CasoAutoComplete } from '../../../../core/models/caso/caso-auto-complete';
-import { AtendimentoAutoComplete } from '../../../../core/models/atendimento/atendimento-auto-complete';
+import { ConsultarEtiquetaResponse } from '../../../../../core/models/etiqueta/consultar-etiqueta-response';
+import { QualificacaoResponse } from '../../../../../core/models/qualificacao/qualificacao-response';
+import { PessoaResumo } from '../../../../../core/models/pessoa/pessoa-resumo';
+import { PessoaSelecionada } from '../../../../../core/models/pessoa/pessoa-selecionada';
+import { AutenticarUsuarioResponse } from '../../../../../core/models/usuario/autenticar-usuario.response';
+import { QualificacoesService } from '../../../../../core/services/qualificacoes.service';
+import { EtiquetaService } from '../../../../../core/services/etiqueta.service';
+import { ProcessoService } from '../../../../../core/services/processo.service';
+import { CasoService } from '../../../../../core/services/caso.service';
+import { ProcessoAutoComplete } from '../../../../../core/models/processo/processo-auto-complete';
+import { CasoAutoComplete } from '../../../../../core/models/caso/caso-auto-complete';
+import { AtendimentoAutoComplete } from '../../../../../core/models/atendimento/atendimento-auto-complete';
 import { Observable } from 'rxjs';
 type VinculoAutoComplete =
   | ProcessoAutoComplete
@@ -94,7 +94,7 @@ buscarVinculo(termo: string) {
   if (tipo === 'processo') {
     request$ = this.processoService.consultarProcessoAutoComplete(termo);
   } else if (tipo === 'caso') {
-    request$ = this.casoService.consultarCassoAutoComplete(termo);
+    request$ = this.casoService.consultarCasoAutoComplete(termo);
   } else {
     request$ = this.atendimentoService.consultarAtendimentoAutoComplete(termo);
   }
@@ -155,7 +155,7 @@ selecionarVinculo(item: any) {
         }
 
         if (tipo === 'caso') {
-          return this.casoService.consultarCassoAutoComplete(valor);
+          return this.casoService.consultarCasoAutoComplete(valor);
         }
 
         return this.atendimentoService.consultarAtendimentoAutoComplete(valor);

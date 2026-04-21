@@ -12,7 +12,17 @@ import { UsuarioService } from '../../../../../core/services/usuario.service';
 import { EtiquetaService } from '../../../../../core/services/etiqueta.service';
 import { AuthHelper } from '../../../../../core/helpers/auth.helper';
 import { StatusGeralKanbanEnum } from '../../../../../core/models/enums/status-kaban/status-kaban-geralEnum';
-
+import { ProcessoAutoComplete } from '../../../../../core/models/processo/processo-auto-complete';
+import { CasoAutoComplete } from '../../../../../core/models/caso/caso-auto-complete';
+import { AtendimentoAutoComplete } from '../../../../../core/models/atendimento/atendimento-auto-complete';
+import { Observable } from 'rxjs';
+import { ProcessoService } from '../../../../../core/services/processo.service';
+import { CasoService } from '../../../../../core/services/caso.service';
+import { AtendimentoService } from '../../../../../core/services/atendimento.service';
+type VinculoAutoComplete =
+  | ProcessoAutoComplete
+  | CasoAutoComplete
+  | AtendimentoAutoComplete;
 @Component({
   selector: 'app-cadastrar-evento',
   standalone: false,
@@ -29,20 +39,23 @@ export class CadastrarEvento implements OnInit {
   private authHelper = inject(AuthHelper);
 
   usuarioLogado?: AutenticarUsuarioResponse | null;
-
+  private processoService = inject(ProcessoService);
+  private casoService = inject(CasoService);
+  private atendimentoService = inject(AtendimentoService);
   mensagemErro: string[] = [];
   mensagemSucesso: string[] = [];
   carregando = false;
-
+  resultadosVinculo: VinculoAutoComplete[] = [];
   // 🔥 RESPONSÁVEIS (igual tarefa)
   responsaveis: ConsultarUsuarioResponse[] = [];
   responsaveisFiltrados: ConsultarUsuarioResponse[] = [];
   responsaveisSelecionados: ConsultarUsuarioResponse[] = [];
- statusEnum = StatusGeralKanbanEnum;
+  statusEnum = StatusGeralKanbanEnum;
   // 🔥 ETIQUETAS
   etiquetas: ConsultarEtiquetaResponse[] = [];
   etiquetasSelecionadas: ConsultarEtiquetaResponse[] = [];
-grupoEventoEtiquetas: ConsultarEtiquetaResponse[] = [];
+  grupoEventoEtiquetas: ConsultarEtiquetaResponse[] = [];
+
   form = this.builder.group({
     titulo: ['', Validators.required],
     endereco: [''],
@@ -60,9 +73,14 @@ grupoEventoEtiquetas: ConsultarEtiquetaResponse[] = [];
 
     intervaloRecorrencia: [1],
     tipoRecorrencia: [0],
-
+    modalidade: [0],
     dataFimRecorrencia: [''],
-    quantidadeOcorrencias: [null]
+    quantidadeOcorrencias: [0],
+
+    tipoVinculo: ['' as 'processo' | 'caso' | 'atendimento'],
+    processoId: [null],
+    casoId: [null],
+    atendimentoId: [null]
   });
 
   get podeEnviar(): boolean {
@@ -75,7 +93,7 @@ grupoEventoEtiquetas: ConsultarEtiquetaResponse[] = [];
   }
 
   carregarDados() {
-     this.etiquetaService.consultar().subscribe({
+    this.etiquetaService.consultar().subscribe({
       next: res => this.grupoEventoEtiquetas = res
     });
 
@@ -83,6 +101,43 @@ grupoEventoEtiquetas: ConsultarEtiquetaResponse[] = [];
       next: res => this.responsaveis = res,
       error: () => this.mensagemErro = ['Erro ao carregar responsáveis']
     });
+  }
+
+  buscarVinculo(termo: string) {
+    const tipo = this.form.get('tipoVinculo')?.value;
+
+    if (!tipo || !termo) {
+      this.resultadosVinculo = [];
+      return;
+    }
+
+    let request$: Observable<VinculoAutoComplete[]>;
+
+    if (tipo === 'processo') {
+      request$ = this.processoService.consultarProcessoAutoComplete(termo);
+    } else if (tipo === 'caso') {
+      request$ = this.casoService.consultarCasoAutoComplete(termo);
+    } else {
+      request$ = this.atendimentoService.consultarAtendimentoAutoComplete(termo);
+    }
+
+    request$.subscribe(res => this.resultadosVinculo = res);
+  }
+
+  selecionarVinculo(item: any) {
+    const tipo = this.form.get('tipoVinculo')?.value as string;
+
+    this.resultadosVinculo = [];
+
+    this.form.patchValue({
+      processoId: null,
+      casoId: null,
+      atendimentoId: null
+    });
+
+    if (tipo === 'processo') this.form.patchValue({ processoId: item.id });
+    else if (tipo === 'caso') this.form.patchValue({ casoId: item.id });
+    else this.form.patchValue({ atendimentoId: item.id });
   }
 
   // =========================
@@ -117,43 +172,47 @@ grupoEventoEtiquetas: ConsultarEtiquetaResponse[] = [];
 
     const f = this.form.value;
     const limpar = (v: any) => v ?? undefined;
+    const request: CriarEventoRequest = {
+      titulo: f.titulo ?? '',
+      endereco: f.endereco || undefined,
+      observacao: f.observacao || undefined,
 
-const request: CriarEventoRequest = {
+      dataInicial: f.dataInicial!,
+      dataFinal: f.dataFinal || undefined,
 
-  titulo: limpar(f.titulo) ?? '',
-  endereco: limpar(f.endereco),
-  observacao: limpar(f.observacao),
+      // 🔥 CORREÇÃO PRINCIPAL (FORMATO ISO)
+      horaInicial: f.horaInicial || undefined,
+      horaFinal: f.horaFinal || undefined,
 
-  dataInicial: limpar(f.dataInicial),
-  dataFinal: limpar(f.dataFinal),
+      diaInteiro: f.diaInteiro ?? false,
 
-  horaInicial: limpar(f.horaInicial),
-  horaFinal: limpar(f.horaFinal),
+      statusGeralKanban: f.statusKaban ?? 1,
 
-  diaInteiro: f.diaInteiro ?? false,
+      tipoRecorrencia: f.tipoRecorrencia ?? 0,
+      intervaloRecorrencia: f.intervaloRecorrencia ?? 0,
+      modalidade: f.modalidade ?? 0,
 
-  // ✅ NOME CORRETO
-  statusGeralKanban: limpar(f.statusKaban) ?? 0,
+      // 🔥 EVITA STRING VAZIA
+      dataFimRecorrencia: f.dataFimRecorrencia || undefined,
+      quantidadeOcorrencias: f.quantidadeOcorrencias || undefined,
 
-  tipoRecorrencia: f.tipoRecorrencia ?? 0,
-  intervaloRecorrencia: f.intervaloRecorrencia ?? 1,
+      diasSemana: [],
 
-  dataFimRecorrencia: limpar(f.dataFimRecorrencia),
-  quantidadeOcorrencias: limpar(f.quantidadeOcorrencias),
+      grupoEventoEtiquetas: this.etiquetasSelecionadas.map(e => ({
+        etiquetaId: e.id!
+      })),
 
-  // (opcional)
-  diasSemana: [],
+      grupoEventoResponsaveis: this.responsaveisSelecionados.map(r => ({
+        usuarioId: r.id
+      })),
 
-  // ✅ NOME CORRETO
-  grupoEventoEtiquetas: this.etiquetasSelecionadas.map(e => ({
-    etiquetaId: e.id!
-  })),
+      // 🔥 VÍNCULO (ANTES NÃO IA)
+      processoId: limpar(f.processoId),
+      casoId: limpar(f.casoId),
+      atendimentoId: limpar(f.atendimentoId),
+    };
 
-  // ✅ NOME CORRETO
-  grupoEventoResponsaveis: this.responsaveisSelecionados.map(r => ({
-    usuarioId: r.id
-  }))
-};
+    console.log("REQUEST CORRIGIDO:", request);
 
     this.eventoService.cadastrarEvento(request).subscribe({
       next: res => {
@@ -166,9 +225,16 @@ const request: CriarEventoRequest = {
   }
 
   resetar() {
-    this.form.reset();
+    this.form.reset({
+      diaInteiro: false,
+      intervaloRecorrencia: 1,
+      tipoRecorrencia: 0,
+      modalidade: 0
+    });
+
     this.responsaveisSelecionados = [];
     this.etiquetasSelecionadas = [];
+    this.resultadosVinculo = [];
   }
 
   tratarErro(err: HttpErrorResponse) {
@@ -187,5 +253,9 @@ const request: CriarEventoRequest = {
     }
 
     this.carregando = false;
+  }
+  private montarDataHora(data?: string | null, hora?: string | null): string | undefined {
+    if (!data || !hora) return undefined;
+    return new Date(`${data}T${hora}:00`).toISOString();
   }
 }

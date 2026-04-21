@@ -16,7 +16,7 @@ import { CadastrarEtiquetas } from "./components/etiquetas/cadastrar-etiquetas/c
 import { ConsultarPessoas } from "./components/pessoa/consultar-pessoas/consultar-pessoas";
 import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cadastrar-processo";
 import { AutocompletePessoa } from "./components/autocomplete-pessoas/autocomplete-pessoas";
-import { CadastrarAtendimento } from "./components/cadastrar-atendimento/cadastrar-atendimento";
+import { CadastrarAtendimento } from "./components/atendimento/cadastrar-atendimento/cadastrar-atendimento";
 import { AutocompletePessoaAtendimento } from "./components/autocomplete-pessoas-atendimento/autocomplete-pessoa-atendimento";
 import { Vinculo } from "./components/auto-complete-vinculos-proc-caso-atend/vinculo";
 import { CadastrarCaso } from "./components/caso/cadastrar-caso/cadastrar-caso";
@@ -42,6 +42,7 @@ import { CadastrarEvento } from "./components/evento/cadastrar-evento/cadastrar-
         GestaoAtividades,
         CadastrarTarefa,
         CadastrarEvento,
+    
 
 
         //autocomplete

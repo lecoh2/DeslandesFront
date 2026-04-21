@@ -160,7 +160,7 @@ atualizarDescricaoLista(index: number, valor: string) {
     if (tipo === 'processo') {
       request$ = this.processoService.consultarProcessoAutoComplete(termo);
     } else if (tipo === 'caso') {
-      request$ = this.casoService.consultarCassoAutoComplete(termo);
+      request$ = this.casoService.consultarCasoAutoComplete(termo);
     } else {
       request$ = this.atendimentoService.consultarAtendimentoAutoComplete(termo);
     }

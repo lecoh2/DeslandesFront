@@ -33,7 +33,7 @@ export class CasoService {
       
     }
 
-   consultarCassoAutoComplete(termo?: string, limite: number = 50) {
+   consultarCasoAutoComplete(termo?: string, limite: number = 50) {
      const params: any = { limite: limite.toString() };
    
      if (termo) {

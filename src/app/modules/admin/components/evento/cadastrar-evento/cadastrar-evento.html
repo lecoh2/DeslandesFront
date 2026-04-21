@@ -43,46 +43,73 @@
         </div>
 
         <!-- OBSERVAÇÃO -->
-        <div class="row mb-3">
+        <div class="row mb-8">
           <div class="col-md-12">
             <label class="form-label">Observação</label>
             <textarea class="form-control" formControlName="observacao"></textarea>
+          </div>
+                 <div class="col-md-4">
+            <label class="form-label">Modalidade</label>
+            <select class="form-select" formControlName="modalidade">
+               <option [ngValue]="0">Escolha</option>
+              <option [ngValue]="1">Presencial</option>
+              <option [ngValue]="2">Online</option>
+              <option [ngValue]="3">Hibrido</option>
+              <option [ngValue]="4">Não de aplica</option>
+            </select>
           </div>
         </div>
 
         <!-- DATAS -->
         <div class="row mb-3">
-
           <div class="col-md-6">
-            <label class="form-label">Data Inicial *</label>
+            <label class="form-label">De data de inicio *</label>
             <input type="date" class="form-control" formControlName="dataInicial">
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Data Final</label>
-            <input type="date" class="form-control" formControlName="dataFinal">
           </div>
 
           <div *ngIf="form.get('dataInicial')?.touched && form.get('dataInicial')?.invalid" class="text-danger mt-1">
             <span *ngIf="form.get('dataInicial')?.hasError('required')">
               A data inicial é obrigatória.
             </span>
-          </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Hora Inicial*</label>
+              <input type="time" class="form-control" formControlName="horaInicial">
+            </div>
+            <div *ngIf="form.get('horaInicial')?.touched && form.get('horaInicial')?.invalid" class="text-danger mt-1">
+              <span *ngIf="form.get('horaInicial')?.hasError('required')">
+                A hora inicial é obrigatória.
+              </span>
 
+            </div>
+
+          
         </div>
-
         <!-- HORÁRIOS -->
         <div class="row mb-3">
-
-          <div class="col-md-4">
-            <label class="form-label">Hora Inicial</label>
-            <input type="time" class="form-control" formControlName="horaInicial">
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label">Hora Final</label>
+          <div class="col-md-6">
+            <label class="form-label">Hora Final*</label>
             <input type="time" class="form-control" formControlName="horaFinal">
           </div>
+          <div *ngIf="form.get('horaFinal')?.touched && form.get('horaFinal')?.invalid" class="text-danger mt-1">
+            <span *ngIf="form.get('horaFinal')?.hasError('required')">
+              A hora final é obrigatória.
+            </span>
+
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Ate data final *</label>
+            <input type="date" class="form-control" formControlName="dataFinal">
+          </div>
+
+          <div *ngIf="form.get('dataFinal')?.touched && form.get('dataFinal')?.invalid" class="text-danger mt-1">
+            <span *ngIf="form.get('dataFinal')?.hasError('required')">
+              A data final é obrigatória.
+            </span>
+
+
+          </div>
+
 
           <div class="col-md-4 d-flex align-items-end">
             <div class="form-check">
@@ -94,13 +121,32 @@
         </div>
 
 
+     <!-- TIPO VÍNCULO -->
+                <div class="row mb-3">
+                    <!-- ITEM DINÂMICO -->
+                    <div class="col-md-4">
+                        <label class="form-label">Tipo de Vínculo</label>
+                        <select class="form-control" formControlName="tipoVinculo">
+                            <option [ngValue]="null">Selecione</option>
+                            <option value="processo">Processo</option>
+                            <option value="caso">Caso</option>
+                            <option value="atendimento">Atendimento</option>
+                        </select>
+                    </div>
 
-   
+                    <div class="col-md-8">
+                        <label class="form-label">Buscar vínculo</label>
+                        <app-vinculo [resultados]="resultadosVinculo" (buscar)="buscarVinculo($event)"
+                            (selecionado)="selecionarVinculo($event)">
+                        </app-vinculo>
+
+                    </div>
+                </div>
+
 
 
         <!-- RECORRÊNCIA -->
         <div class="row mb-3">
-
           <div class="col-md-4">
             <label class="form-label">Tipo de Recorrência</label>
             <select class="form-select" formControlName="tipoRecorrencia">
@@ -134,12 +180,12 @@
               <option [ngValue]="statusEnum.Cancelado">Cancelado</option>
             </select>
           </div>
-               <div class="col-md-6">
-          <label class="form-label">Responsável</label>
-          <app-selecionar-responsaveis [resultados]="responsaveisFiltrados" [(selecionadas)]="responsaveisSelecionados"
-            (buscar)="buscarResponsaveis($event)">
-          </app-selecionar-responsaveis>
-        </div>
+          <div class="col-md-6">
+            <label class="form-label">Responsável</label>
+            <app-selecionar-responsaveis [resultados]="responsaveisFiltrados"
+              [(selecionadas)]="responsaveisSelecionados" (buscar)="buscarResponsaveis($event)">
+            </app-selecionar-responsaveis>
+          </div>
         </div>
 
         <!-- RESPONSÁVEIS -->

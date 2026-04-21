@@ -1,166 +1,138 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { KanbanColuna } from '../../../../core/models/kanban/kanban-coluna';
+import { KanbanService } from '../../../../core/services/kanban.service';
 
-interface ItemKanban {
-  id: string;
-  titulo: string;
-  tipo: string;
-  data: Date;
-  responsavel: string;
-  status: string;
-}
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-gestao-atividades',
-  standalone:false,
+  standalone: false,
   templateUrl: './gestao-atividades.html',
   styleUrl: './gestao-atividades.css'
 })
 export class GestaoAtividades implements OnInit {
 
-  // 🔎 FILTROS
-  filtro = {
-    periodo: null as string | null,
-    atribuicao: null as string | null,
-    pessoaId: null as string | null,
-    tipo: null as string | null,
-    status: null as string | null
+  colunas: KanbanColuna[] = [];
+  private colunasOriginais: KanbanColuna[] = [];
+
+  private kanbanService = inject(KanbanService);
+  private cdr = inject(ChangeDetectorRef);
+
+  cardSelecionado: any = null;
+  isLoadingDetalhe = false;
+
+  private modalInstance: any;
+filtro = {
+  periodo: null as string | null,
+  atribuicao: null as string | null,
+  pessoaId: null as string | null,
+  tipo: null as string | null,
+  status: null as string | null
+};filtrarPorStatus(): void {
+  if (!this.filtro.status) {
+    this.colunas = structuredClone(this.colunasOriginais);
+    return;
+  }
+
+  this.colunas = this.colunasOriginais.map(coluna => ({
+    ...coluna,
+    cards: coluna.cards.filter(c =>
+      String(c.status) === String(this.filtro.status)
+    )
+  }));
+}
+prioridadeLabel: Record<number, string> = {
+  1: 'Baixa',
+  2: 'Média',
+  3: 'Alta',
+  4: 'Urgente'
+};
+
+prioridadeCor: Record<number, string> = {
+  1: '#2ecc71',
+  2: '#f1c40f',
+  3: '#e67e22',
+  4: '#e74c3c'
+};
+getPrioridadeLabel(p: number): string {
+  return this.prioridadeLabel[p] ?? '---';
+}
+
+getPrioridadeCor(p: number): string {
+  return this.prioridadeCor[p] ?? '#6c757d';
+}
+getPrioridade(p?: number | null): { label: string; cor: string } {
+  if (!p) {
+    return { label: 'Sem prioridade', cor: '#6c757d' };
+  }
+
+  switch (p) {
+    case 1: return { label: 'Baixa', cor: '#2ecc71' };
+    case 2: return { label: 'Média', cor: '#f1c40f' };
+    case 3: return { label: 'Alta', cor: '#e67e22' };
+    case 4: return { label: 'Urgente', cor: '#e74c3c' };
+    default: return { label: '---', cor: '#6c757d' };
+  }
+}
+limparFiltro(): void {
+  this.filtro = {
+    periodo: null,
+    atribuicao: null,
+    pessoaId: null,
+    tipo: null,
+    status: null
   };
 
-  // 📋 LISTAS DE FILTRO
-  periodos = [
-    'Hoje',
-    'Ontem',
-    'Amanhã',
-    'Esta semana',
-    'Este mês',
-    'Próximo mês',
-    'Últimos 7 dias',
-    'Últimos 30 dias'
-  ];
-
-  atribuicoes = [
-    'Minhas',
-    'Todas',
-    'Criadas por mim',
-    'Sou responsável',
-    'Sou envolvido'
-  ];
-
-  tipos = ['Tarefa', 'Prazo', 'Audiência'];
-
-  statusList = [
-    'A Fazer',
-    'Em Andamento',
-    'Prazo',
-    'Concluído',
-    'Cancelado'
-  ];
-
-  // 👥 MOCK (depois vem do backend)
-  pessoas = [
-    { id: '1', nome: 'João' },
-    { id: '2', nome: 'Maria' }
-  ];
-
-  // 📦 TODOS OS ITENS
-  todosItens: ItemKanban[] = [];
-
-  // 🧱 COLUNAS KANBAN
-  colunas = [
-    { nome: 'A Fazer', itens: [] as ItemKanban[] },
-    { nome: 'Em Andamento', itens: [] as ItemKanban[] },
-    { nome: 'Prazo', itens: [] as ItemKanban[] },
-    { nome: 'Concluído', itens: [] as ItemKanban[] },
-    { nome: 'Cancelado', itens: [] as ItemKanban[] }
-  ];
-
-  // ================= INIT =================
+  this.colunas = structuredClone(this.colunasOriginais);
+}
   ngOnInit(): void {
-    this.carregarMock();
-    this.distribuirKanban();
+    this.carregarKanban();
   }
 
-  // ================= MOCK =================
-  carregarMock() {
-    this.todosItens = [
-      {
-        id: '1',
-        titulo: 'Petição inicial',
-        tipo: 'Tarefa',
-        data: new Date(),
-        responsavel: 'João',
-        status: 'A Fazer'
-      },
-      {
-        id: '2',
-        titulo: 'Audiência trabalhista',
-        tipo: 'Audiência',
-        data: new Date(),
-        responsavel: 'Maria',
-        status: 'Prazo'
-      },
-      {
-        id: '3',
-        titulo: 'Revisar contrato',
-        tipo: 'Prazo',
-        data: new Date(),
-        responsavel: 'João',
-        status: 'Em Andamento'
-      }
-    ];
+  carregarKanban(): void {
+this.kanbanService.consultar().subscribe({
+  next: (res) => {
+
+this.colunas = res.map(coluna => ({
+  ...coluna,
+  cards: (coluna.cards ?? []).map(card => ({
+    ...card,
+    prioridade: card.prioridade ?? null
+  }))
+}));
+
+this.colunasOriginais = structuredClone(this.colunas);
+  }
+});
   }
 
-  // ================= DISTRIBUI =================
-  distribuirKanban() {
-    // limpa colunas
-    this.colunas.forEach(c => c.itens = []);
+  selecionarCard(card: any): void {
 
-    // distribui
-    this.todosItens.forEach(item => {
-      const coluna = this.colunas.find(c => c.nome === item.status);
-      if (coluna) {
-        coluna.itens.push(item);
-      }
-    });
+    this.cardSelecionado = null;
+    this.isLoadingDetalhe = true;
+
+    // abre modal IMEDIATO
+    const el = document.getElementById('modalDetalhes');
+    this.modalInstance = bootstrap.Modal.getOrCreateInstance(el);
+    this.modalInstance.show();
+
+    this.kanbanService.obterDetalhes(card.id, card.tipo)
+      .subscribe({
+        next: (res) => {
+
+          this.cardSelecionado = {
+            ...res,
+            responsaveis: res.responsaveis ?? [],
+            etiquetas: res.etiquetas ?? []
+          };
+
+          this.isLoadingDetalhe = false;
+
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.isLoadingDetalhe = false;
+        }
+      });
   }
-
-  // ================= FILTRO =================
-  filtrar() {
-    let lista = [...this.todosItens];
-
-    // 🔎 FILTRO POR TIPO
-    if (this.filtro.tipo) {
-      lista = lista.filter(i => i.tipo === this.filtro.tipo);
-    }
-
-    // 🔎 FILTRO POR STATUS
-    if (this.filtro.status) {
-      lista = lista.filter(i => i.status === this.filtro.status);
-    }
-
-    // 🔎 FILTRO POR RESPONSÁVEL
-    if (this.filtro.pessoaId) {
-      const pessoa = this.pessoas.find(p => p.id === this.filtro.pessoaId);
-      if (pessoa) {
-        lista = lista.filter(i => i.responsavel === pessoa.nome);
-      }
-    }
-
-    // 👉 depois você pode adicionar:
-    // periodo, atribuicao, etc.
-
-    this.atualizarColunas(lista);
-  }
-
-  atualizarColunas(lista: ItemKanban[]) {
-    this.colunas.forEach(c => c.itens = []);
-
-    lista.forEach(item => {
-      const coluna = this.colunas.find(c => c.nome === item.status);
-      if (coluna) {
-        coluna.itens.push(item);
-      }
-    });
-  }
-
 }
