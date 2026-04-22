@@ -2,22 +2,27 @@
   min-height: 400px;
   max-height: 75vh;
   overflow-y: auto;
-  background: #f4f6f9;
-  padding: 10px;
-  border-radius: 8px;
+
 }
 
 .kanban-card {
   cursor: pointer;
-  transition: all 0.18s ease-in-out;
-  border-left: 4px solid transparent;
-  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+
+  
+  background: transparent;
+
+  /* sombra leve estilo Jira */
+  box-shadow: 0 1px 2px rgba(20, 19, 19, 0.06);
 }
+
 
 .kanban-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-  border-left-color: #0d6efd;
+
+  box-shadow:
+    0 6px 12px rgba(0,0,0,0.10),
+    0 2px 4px rgba(0,0,0,0.08);
 }
 
 /* =========================
@@ -72,4 +77,17 @@
   background: #fff;
   border-radius: 10px;
   padding: 20px;
+}.comentarios-box {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.comentario-item {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.comentario-item:hover {
+  background: #eef2f6;
 }

@@ -1,15 +1,19 @@
 <div class="container-fluid p-0">
 
-  <h1 class="h3 mb-3">Gestão de Atividades</h1>
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Gestão de Atividades</h1>
+  </div>
 
   <!-- 🔎 FILTROS -->
-  <div class="card mb-3">
+  <div class="card mb-3 shadow-sm border-0">
     <div class="card-body">
       <div class="row g-2">
 
         <div class="col-md-3">
+          <label class="form-label small text-muted">Status</label>
           <select class="form-select" [(ngModel)]="filtro.status">
-            <option [ngValue]="null">Todos Status</option>
+            <option [ngValue]="null">Todos</option>
             <option [ngValue]="0">A Fazer</option>
             <option [ngValue]="1">Em Andamento</option>
             <option [ngValue]="2">Concluído</option>
@@ -18,20 +22,22 @@
         </div>
 
         <div class="col-md-3">
+          <label class="form-label small text-muted">Tipo</label>
           <select class="form-select" [(ngModel)]="filtro.tipo">
-            <option [ngValue]="null">Todos Tipos</option>
+            <option [ngValue]="null">Todos</option>
             <option [ngValue]="'Tarefa'">Tarefa</option>
             <option [ngValue]="'Evento'">Evento</option>
           </select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 d-flex align-items-end">
           <button class="btn btn-primary w-100" (click)="filtrarPorStatus()">
+            <i class="fas fa-filter me-1"></i>
             Filtrar
           </button>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 d-flex align-items-end">
           <button class="btn btn-outline-secondary w-100" (click)="limparFiltro()">
             Limpar
           </button>
@@ -44,20 +50,18 @@
   <!-- 🧱 KANBAN -->
   <div class="row">
 
-    <div class="col-md-3" *ngFor="let coluna of colunas">
+    <div class="col-12 col-lg-6 col-xl-3" *ngFor="let coluna of colunas">
 
-      <div class="card shadow-sm h-100">
+      <div class="card h-100 shadow-sm">
 
         <!-- HEADER -->
-        <div class="card-header d-flex justify-content-between align-items-center text-white"
-             [style.background]="coluna.cor">
+        <div class="card-header d-flex justify-content-between align-items-center" [style.background]="coluna.cor"
+          style="color: #fff;">
 
-          <span class="fw-semibold">
-            {{ coluna.nome }}
-          </span>
+          <h5 class="mb-0">{{ coluna.nome }}</h5>
 
           <span class="badge bg-light text-dark">
-           {{ coluna.cards.length || 0 }}
+            {{ coluna.cards.length || 0 }}
           </span>
 
         </div>
@@ -65,39 +69,84 @@
         <!-- CARDS -->
         <div class="card-body kanban-coluna">
 
-          <div *ngFor="let card of coluna.cards || []"
-               class="card mb-2 shadow-sm kanban-card"
-               (click)="selecionarCard(card)">
+          <div *ngFor="let card of coluna.cards" class="card mb-3 border kanban-card cursor-pointer"
+            (click)="selecionarCard(card)">
 
-            <div class="card-body p-2">
+            <div class="card-body p-3">
 
-              <!-- TÍTULO + PRIORIDADE -->
-              <div class="d-flex justify-content-between align-items-start">
+              <!-- 🔹 TIPO -->
+              <div class="d-flex align-items-center gap-1 text-muted small mb-2">
+                <i class="fas fa-tasks text-success" *ngIf="card.tipo === 'Tarefa'"></i>
+                <i class="fas fa-calendar-alt text-info" *ngIf="card.tipo === 'Evento'"></i>
 
-                <div class="fw-semibold">
-                  {{ card.titulo }}
+                <h5 class="mb-2">{{ card.tipo }}: {{ card.titulo }}</h5>
+              </div>
+
+              <!-- 🔹 TÍTULO -->
+
+
+              <!-- 🔹 EVENTO -->
+              <ng-container *ngIf="card.tipo === 'Evento'">
+
+                <small class="text-muted d-flex align-items-center gap-1">
+                  <i class="bi bi-calendar-event"></i>
+                  {{ card.dataInicial | date:'dd/MM/yyyy' }}
+                  até
+                  {{ card.dataFinal | date:'dd/MM/yyyy' }}
+                </small>
+
+                <small class="text-muted d-flex align-items-center gap-1">
+                  <i class="bi bi-clock"></i>
+                  {{ card.horaInicial }} às {{ card.horaFinal }}
+                </small>
+
+              </ng-container>
+
+              <!-- 🔹 TAREFA -->
+              <ng-container *ngIf="card.tipo === 'Tarefa'">
+
+                <small class="text-muted d-flex align-items-center gap-1">
+                  <i class="bi bi-calendar"></i>
+                  {{ card.data | date:'dd/MM/yyyy' }}
+                </small>
+
+              </ng-container>
+
+              <!-- 🔹 RODAPÉ -->
+              <div class="d-flex flex-column mt-2">
+
+                <!-- RESPONSÁVEL -->
+                <div class="text-muted small">
+                  <i class="fas fa-user me-1"></i>
+                  Responsável: {{ card.usuarioCriacaoNome || 'Sistema' }}
                 </div>
 
+                <!-- PRIORIDADE (EMBAIXO) -->
+                <ng-container *ngIf="card.tipo === 'Tarefa'">
 
-              </div>
+                  <div class="mt-1 d-flex align-items-center gap-1">
 
-              <!-- TIPO + DATA -->
-              <div class="text-muted small mt-1">
-                {{ card.tipo }} • {{ card.data | date:'dd/MM' }}
-              </div>
+                    <span class="small text-muted">Prioridade:</span>
 
-              <!-- RESPONSÁVEL -->
-              <div class="d-flex justify-content-between align-items-center mt-2">
+                    <span class="badge" [ngClass]="{
+          'badge-subtle-warning': card.prioridadeDescricao === 'Alta',
+          'badge-subtle-info': card.prioridadeDescricao === 'Media',
+          'badge-subtle-success': card.prioridadeDescricao === 'Baixa',
+          'badge-subtle-danger': card.prioridadeDescricao === 'Urgente'
+        }">
 
- Criado por:            
-<span class="badge bg-secondary">
-  {{ card.usuarioCriacaoNome || 'Sistema' }}
-</span>
-                <i class="fas fa-ellipsis-h text-muted"></i>
+                      {{ card.prioridadeDescricao }}
+
+                    </span>
+
+                  </div>
+
+                </ng-container>
 
               </div>
 
             </div>
+
           </div>
 
         </div>
@@ -105,7 +154,10 @@
       </div>
 
     </div>
+
   </div>
+
+
 
   <!-- 🪟 MODAL DETALHES -->
   <div class="modal fade" id="modalDetalhes" tabindex="-1">
@@ -117,7 +169,6 @@
           <h5 class="modal-title">
             {{ cardSelecionado?.titulo || 'Carregando...' }}
           </h5>
-
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
@@ -137,66 +188,162 @@
               </span>
             </div>
 
-            <hr>
+            <!-- TABS -->
+            <ul class="nav nav-tabs mb-3">
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detalhes">
+                  Detalhes
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#comentarios">
+                  Comentários
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historico">
+                  Histórico
+                </button>
+              </li>
+            </ul>
 
-            <!-- INFO PRINCIPAL -->
-            <div class="row">
+            <div class="tab-content">
 
-              <div class="col-md-6">
-                <p><strong>Data:</strong><br>
-                  {{ cardSelecionado.dataInicio | date:'dd/MM/yyyy HH:mm' }}
+              <!-- 🔹 DETALHES -->
+              <div class="tab-pane fade show active" id="detalhes">
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <p><strong>Data:</strong><br>
+                      {{ cardSelecionado.dataInicio | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+                  </div>
+
+                  <div class="col-md-6">
+                    <p><strong>Criado por:</strong><br>
+                      {{ cardSelecionado.criadoPor }}
+                    </p>
+                  </div>
+                </div>
+
+                <p><strong>Endereço:</strong><br>
+                  {{ cardSelecionado.endereco || '---' }}
                 </p>
-              </div>
 
-              <div class="col-md-6">
-                <p><strong>Criado por:</strong><br>
-                  {{ cardSelecionado.criadoPor }}
-                </p>
-              </div>
+                <hr>
 
-            </div>
+                <!-- RESPONSÁVEIS -->
+                <p><strong>Responsáveis:</strong></p>
 
-            <p><strong>Endereço:</strong><br>
-              {{ cardSelecionado.endereco || '---' }}
-            </p>
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                  <span *ngFor="let r of cardSelecionado.responsaveis" class="badge bg-dark">
+                    {{ r.nomeUsuario }}
+                  </span>
+                </div>
 
-            <hr>
+                <!-- PRIORIDADE -->
+                <p><strong>Prioridade:</strong></p>
 
-            <!-- RESPONSÁVEIS -->
-            <p><strong>Responsáveis:</strong></p>
-
-            <div class="d-flex flex-wrap gap-1 mb-3">
-              <span *ngFor="let r of cardSelecionado.responsaveis"
-                    class="badge bg-dark">
-                {{ r.nomeUsuario }}
-              </span>
-            </div>
-
-            <!-- PRIORIDADE -->
-            <p><strong>Prioridade:</strong></p>
-
-            <span class="badge mb-3"
-                  [style.background]="getPrioridadeCor(cardSelecionado.prioridade)"
+                <span class="badge mb-3" [style.background]="getPrioridadeCor(cardSelecionado.prioridade)"
                   style="color:#fff">
-       {{ getPrioridadeLabel(cardSelecionado?.prioridade ?? 0) }}
-            </span>
+                  {{ getPrioridadeLabel(cardSelecionado?.prioridade ?? 0) }}
+                </span>
 
-            <hr>
+                <hr>
 
-            <!-- ETIQUETAS -->
-            <p><strong>Etiquetas:</strong></p>
+                <!-- ETIQUETAS -->
+                <p><strong>Etiquetas:</strong></p>
 
-            <div class="d-flex flex-wrap gap-1">
-              <span *ngFor="let e of cardSelecionado.etiquetas || []"
-                    class="badge px-2 py-1"
-                    [ngStyle]="{
-                      'background-color': e.cor,
-                      'color': '#fff',
-                      'border-radius': '12px',
-                      'font-size': '11px'
-                    }">
-                {{ e.nome }}
-              </span>
+                <div class="d-flex flex-wrap gap-1">
+                  <span *ngFor="let e of cardSelecionado.etiquetas || []" class="badge px-2 py-1" [ngStyle]="{
+                    'background-color': e.cor,
+                    'color': '#fff',
+                    'border-radius': '12px',
+                    'font-size': '11px'
+                  }">
+                    {{ e.nome }}
+                  </span>
+                </div>
+
+              </div>
+
+              <!-- 💬 COMENTÁRIOS -->
+              <div class="tab-pane fade" id="comentarios">
+     
+
+<div *ngIf="mensagemSucessoAtual"
+     class="alert alert-success alert-dismissible d-flex align-items-center"
+     role="alert">
+
+  <!-- ÍCONE -->
+  <div class="alert-icon me-2">
+    <i class="bi bi-check-circle-fill"></i>
+  </div>
+
+  <!-- MENSAGEM -->
+  <div class="alert-message flex-grow-1">
+    <strong>Sucesso!</strong> {{ mensagemSucessoAtual }}
+  </div>
+
+  <!-- FECHAR -->
+  <button type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="mensagemSucessoAtual = null">
+  </button>
+
+</div>
+                <div *ngIf="mensagemErro?.length" class="alert alert-danger py-2">
+                  {{ mensagemErro[0] }}
+                </div>
+                <!-- INPUT -->
+                <div class="mb-3">
+                  <label class="form-label">Novo comentário</label>
+                  <textarea class="form-control" rows="3" [(ngModel)]="novoComentario"></textarea>
+                </div>
+
+                <button class="btn btn-primary mb-3" (click)="adicionarComentario()">
+                  <i class="bi bi-send"></i> Enviar
+                </button>
+
+                <!-- LISTA -->
+                <div *ngFor="let c of comentarios" class="border rounded p-2 mb-2">
+
+                  <div class="d-flex justify-content-between">
+
+                    <strong>
+                      {{ c.usuarioNome || 'Sistema' }}
+                    </strong>
+
+                    <small class="text-muted">
+                      {{ c.dataCriacao | date:'dd/MM/yyyy HH:mm' }}
+                    </small>
+
+                  </div>
+
+                  <p class="mb-0">{{ c.texto }}</p>
+
+                </div>
+
+              </div>
+
+              <!-- 🕘 HISTÓRICO -->
+              <div class="tab-pane fade" id="historico">
+
+                <div *ngFor="let h of historico" class="mb-3 border-start ps-3">
+
+                  <div class="small text-muted">
+                    {{ h.data | date:'dd/MM/yyyy HH:mm' }} • {{ h.usuario }}
+                  </div>
+
+                  <div>
+                    {{ h.descricao }}
+                  </div>
+
+                </div>
+
+              </div>
+
             </div>
 
           </ng-container>

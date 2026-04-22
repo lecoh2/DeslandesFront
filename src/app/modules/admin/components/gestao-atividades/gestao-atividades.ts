@@ -2,6 +2,9 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { KanbanColuna } from '../../../../core/models/kanban/kanban-coluna';
 import { KanbanService } from '../../../../core/services/kanban.service';
 
+import { ComentarioService } from '../../../../core/services/comenario.service';
+import { CriarComentarioResponse } from '../../../../core/models/comentario/criar-comentario-response';
+
 declare var bootstrap: any;
 
 @Component({
@@ -16,11 +19,19 @@ export class GestaoAtividades implements OnInit {
   private colunasOriginais: KanbanColuna[] = [];
 
   private kanbanService = inject(KanbanService);
+  private comentarioService =inject(ComentarioService)
   private cdr = inject(ChangeDetectorRef);
-
+ comentarios: CriarComentarioResponse[] = [];
+novoComentario: string = '';
+  mensagemSucesso: string[] = [];
+ mensagemErro: string[] = [];
   cardSelecionado: any = null;
   isLoadingDetalhe = false;
+cardIdSelecionado: string | null = null;
+mensagemSucessoAtual: string | null = null;
+mensagemErroAtual: string | null = null;
 
+historico: any[] = [];
   private modalInstance: any;
 filtro = {
   periodo: null as string | null,
@@ -86,6 +97,7 @@ limparFiltro(): void {
   this.colunas = structuredClone(this.colunasOriginais);
 }
   ngOnInit(): void {
+
     this.carregarKanban();
   }
 
@@ -106,33 +118,105 @@ this.colunasOriginais = structuredClone(this.colunas);
 });
   }
 
-  selecionarCard(card: any): void {
+selecionarCard(card: any): void {
 
-    this.cardSelecionado = null;
-    this.isLoadingDetalhe = true;
+  this.cardSelecionado = card;
 
-    // abre modal IMEDIATO
-    const el = document.getElementById('modalDetalhes');
-    this.modalInstance = bootstrap.Modal.getOrCreateInstance(el);
-    this.modalInstance.show();
+  this.cardIdSelecionado = card.id;
 
-    this.kanbanService.obterDetalhes(card.id, card.tipo)
-      .subscribe({
-        next: (res) => {
+  this.mensagemSucessoAtual = null;
+  this.mensagemErroAtual = null;
 
-          this.cardSelecionado = {
-            ...res,
-            responsaveis: res.responsaveis ?? [],
-            etiquetas: res.etiquetas ?? []
-          };
+  this.comentarios = [];
+  this.novoComentario = '';
 
-          this.isLoadingDetalhe = false;
+  this.isLoadingDetalhe = true;
 
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.isLoadingDetalhe = false;
-        }
-      });
+  const el = document.getElementById('modalDetalhes');
+  this.modalInstance = bootstrap.Modal.getOrCreateInstance(el);
+  this.modalInstance.show();
+
+  this.kanbanService.obterDetalhes(card.id, card.tipo)
+    .subscribe({
+      next: (res) => {
+
+        this.cardSelecionado = {
+          ...res,
+          responsaveis: res.responsaveis ?? [],
+          etiquetas: res.etiquetas ?? []
+        };
+
+        this.isLoadingDetalhe = false;
+
+        this.carregarComentarios();
+
+        this.cdr.detectChanges();
+      },
+      error: () => this.isLoadingDetalhe = false
+    });
+}
+adicionarComentario() {
+
+  if (!this.novoComentario?.trim()) return;
+
+  const request = {
+    tarefaId: this.cardSelecionado.tipo === 'Tarefa'
+      ? this.cardSelecionado.id
+      : null,
+
+    eventoId: this.cardSelecionado.tipo === 'Evento'
+      ? this.cardSelecionado.id
+      : null,
+
+    texto: this.novoComentario
+  };
+
+  this.comentarioService.criarComentario(request).subscribe({
+    next: (res) => {
+
+      this.novoComentario = '';
+
+      // 🔥 AQUI É O SEGREDO
+      this.mensagemSucessoAtual =
+        res?.message ?? 'Comentário cadastrado com sucesso';
+
+      this.mensagemErroAtual = null;
+
+      this.carregarComentarios();
+
+      this.cdr.detectChanges();
+
+      // auto remove
+      setTimeout(() => {
+        this.mensagemSucessoAtual = null;
+        this.cdr.detectChanges();
+      }, 3000);
+    },
+    error: () => {
+      this.mensagemErroAtual = 'Erro ao cadastrar comentário';
+    }
+  });
+}
+carregarComentarios() {
+
+  if (!this.cardSelecionado) return;
+
+  const params: any = {};
+
+  if (this.cardSelecionado.tipo === 'Tarefa') {
+    params.tarefaId = this.cardSelecionado.id;
   }
+
+  if (this.cardSelecionado.tipo === 'Evento') {
+    params.eventoId = this.cardSelecionado.id;
+  }
+
+  this.comentarioService.obterComentario(params)
+    .subscribe({
+      next: (res) => {
+        this.comentarios = res ?? [];
+        this.cdr.detectChanges();
+      }
+    });
+}
 }
