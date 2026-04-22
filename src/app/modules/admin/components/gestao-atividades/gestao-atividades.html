@@ -269,30 +269,26 @@
 
               <!-- 💬 COMENTÁRIOS -->
               <div class="tab-pane fade" id="comentarios">
-     
 
-<div *ngIf="mensagemSucessoAtual"
-     class="alert alert-success alert-dismissible d-flex align-items-center"
-     role="alert">
 
-  <!-- ÍCONE -->
-  <div class="alert-icon me-2">
-    <i class="bi bi-check-circle-fill"></i>
-  </div>
+                <div *ngIf="mensagemSucessoAtual"
+                  class="alert alert-success alert-dismissible d-flex align-items-center" role="alert">
 
-  <!-- MENSAGEM -->
-  <div class="alert-message flex-grow-1">
-    <strong>Sucesso!</strong> {{ mensagemSucessoAtual }}
-  </div>
+                  <!-- ÍCONE -->
+                  <div class="alert-icon me-2">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
 
-  <!-- FECHAR -->
-  <button type="button"
-          class="btn-close"
-          aria-label="Close"
-          (click)="mensagemSucessoAtual = null">
-  </button>
+                  <!-- MENSAGEM -->
+                  <div class="alert-message flex-grow-1">
+                    <strong>Sucesso!</strong> {{ mensagemSucessoAtual }}
+                  </div>
 
-</div>
+                  <!-- FECHAR -->
+                  <button type="button" class="btn-close" aria-label="Close" (click)="mensagemSucessoAtual = null">
+                  </button>
+
+                </div>
                 <div *ngIf="mensagemErro?.length" class="alert alert-danger py-2">
                   {{ mensagemErro[0] }}
                 </div>
@@ -328,21 +324,26 @@
               </div>
 
               <!-- 🕘 HISTÓRICO -->
-              <div class="tab-pane fade" id="historico">
+    <div *ngFor="let h of historico" class="mb-3 border-start ps-3">
 
-                <div *ngFor="let h of historico" class="mb-3 border-start ps-3">
+  <div class="small text-muted">
+    {{ h.dataAlteracao | date:'dd/MM/yyyy HH:mm' }} • {{ h.observacao }}
+  </div>
 
-                  <div class="small text-muted">
-                    {{ h.data | date:'dd/MM/yyyy HH:mm' }} • {{ h.usuario }}
-                  </div>
+  <div class="mt-2">
 
-                  <div>
-                    {{ h.descricao }}
-                  </div>
+    <strong>Título:</strong>
+    <div>{{ h.antes.Titulo }} → {{ h.depois.Titulo }}</div>
 
-                </div>
+    <strong>Data inicial:</strong>
+    <div>{{ h.antes.DataInicial }} → {{ h.depois.DataInicial }}</div>
 
-              </div>
+    <strong>Status:</strong>
+    <div>{{ h.antes.StatusGeralKanban }} → {{ h.depois.StatusGeralKanban }}</div>
+
+  </div>
+
+</div>
 
             </div>
 
