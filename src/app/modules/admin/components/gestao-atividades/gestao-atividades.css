@@ -1,28 +1,17 @@
 .kanban-coluna {
-  min-height: 400px;
-  max-height: 75vh;
+  min-height: 500px;
+  max-height: 70vh;
   overflow-y: auto;
-
 }
 
 .kanban-card {
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-
-  
-  background: transparent;
-
-  /* sombra leve estilo Jira */
-  box-shadow: 0 1px 2px rgba(20, 19, 19, 0.06);
+  border-radius: 12px;
+  transition: all 0.2s ease;
 }
 
-
 .kanban-card:hover {
-  transform: translateY(-3px);
-
-  box-shadow:
-    0 6px 12px rgba(0,0,0,0.10),
-    0 2px 4px rgba(0,0,0,0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
 }
 
 /* =========================
@@ -90,4 +79,86 @@
 
 .comentario-item:hover {
   background: #eef2f6;
+}
+
+
+
+/**/
+.comment-card {
+
+  border: 3px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+.comment-card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #0d6efd;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #444;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+
+/*hisorico*/
+.change-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.label {
+  font-weight: 600;
+  min-width: 80px;
+}
+
+/* 🔴 ANTES (vermelho riscado) */
+.old-badge {
+  background-color: #f8d7da;
+  color: #842029;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+/* 🟢 DEPOIS (verde destaque) */
+.new-badge {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  font-weight: 600;
+}
+
+/* ➡️ Ícone */
+.arrow-icon {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.dropdown a {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  min-width: 160px;
 }

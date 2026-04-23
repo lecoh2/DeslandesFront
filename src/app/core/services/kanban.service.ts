@@ -23,4 +23,10 @@ export class KanbanService {
             `${this.url}/api/v1/atividade/${id}/detalhes/${tipo}`
         );
     }
+    atualizarStatus(id: string, status: number) {
+        return this.http.put(
+            `${this.url}/api/v1/kanban/kanban/${id}/status`,
+            status
+        );
+    }
 }

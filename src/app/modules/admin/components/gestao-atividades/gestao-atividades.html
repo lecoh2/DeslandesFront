@@ -13,11 +13,11 @@
         <div class="col-md-3">
           <label class="form-label small text-muted">Status</label>
           <select class="form-select" [(ngModel)]="filtro.status">
-            <option [ngValue]="null">Todos</option>
-            <option [ngValue]="0">A Fazer</option>
-            <option [ngValue]="1">Em Andamento</option>
-            <option [ngValue]="2">Concluído</option>
-            <option [ngValue]="3">Cancelado</option>
+         <option [ngValue]="null">Todos</option>
+<option [ngValue]="1">A Fazer</option>
+<option [ngValue]="2">Em Andamento</option>
+<option [ngValue]="3">Concluído</option>
+
           </select>
         </div>
 
@@ -48,15 +48,15 @@
   </div>
 
   <!-- 🧱 KANBAN -->
-  <div class="row">
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
 
-    <div class="col-12 col-lg-6 col-xl-3" *ngFor="let coluna of colunas">
+   <div class="col" *ngFor="let coluna of colunas">
 
       <div class="card h-100 shadow-sm">
 
         <!-- HEADER -->
-        <div class="card-header d-flex justify-content-between align-items-center" [style.background]="coluna.cor"
-          style="color: #fff;">
+    <div class="card-header d-flex justify-content-between align-items-center text-white"
+     [ngClass]="getCorColuna(coluna.status)">
 
           <h5 class="mb-0">{{ coluna.nome }}</h5>
 
@@ -142,7 +142,15 @@
                   </div>
 
                 </ng-container>
+                <span class="d-inline-block">
+                 
 
+
+                  <span class="align-middle">
+                    <strong class="badge badge-subtle-info"> {{ card.quantidadeComentarios  }} </strong> 
+                    {{ card.quantidadeComentarios === 1 ? ' Comentário' : ' Comentários' }}
+                  </span> <i class="align-middle fas fa-comments"></i>
+                </span>
               </div>
 
             </div>
@@ -169,6 +177,8 @@
           <h5 class="modal-title">
             {{ cardSelecionado?.titulo || 'Carregando...' }}
           </h5>
+          <!-- 🔥 MENU AQUI -->
+
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
@@ -183,29 +193,79 @@
                 {{ cardSelecionado.tipo }}
               </span>
 
-              <span class="badge bg-secondary">
-                {{ cardSelecionado.status }}
-              </span>
+              
             </div>
 
             <!-- TABS -->
-            <ul class="nav nav-tabs mb-3">
-              <li class="nav-item">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detalhes">
-                  Detalhes
-                </button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#comentarios">
-                  Comentários
-                </button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historico">
-                  Histórico
-                </button>
-              </li>
-            </ul>
+         <div class="d-flex justify-content-between align-items-center mb-3">
+
+  <!-- TABS -->
+  <ul class="nav nav-tabs mb-0">
+
+    <li class="nav-item">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detalhes">
+        Detalhes
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#comentarios">
+        Comentários
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historico">
+        Histórico
+      </button>
+    </li>
+
+  </ul>
+
+  <!-- 🔥 MENU -->
+<div class="dropdown">
+
+  <button class="btn btn-light border shadow-sm" data-bs-toggle="dropdown">
+    <i class="fas fa-ellipsis-v"></i>
+  </button>
+
+  <div class="dropdown-menu dropdown-menu-end">
+
+    <a class="dropdown-item">
+      <i class="fas fa-eye me-2"></i> Visualizar
+    </a>
+
+    <a class="dropdown-item">
+      <i class="fas fa-edit me-2"></i> Editar
+    </a>
+
+    <div class="dropdown-divider"></div>
+
+    <a class="dropdown-item"
+       (click)="mudarStatus(cardSelecionado.id, 1)">
+      <i class="fas fa-list me-2"></i> A Fazer
+    </a>
+
+    <a class="dropdown-item"
+       (click)="mudarStatus(cardSelecionado.id, 2)">
+      <i class="fas fa-spinner me-2"></i> Em Andamento
+    </a>
+
+    <a class="dropdown-item text-success"
+       (click)="mudarStatus(cardSelecionado.id, 3)">
+      <i class="fas fa-check me-2"></i> Concluir
+    </a>
+
+    <a class="dropdown-item text-danger"
+       (click)="mudarStatus(cardSelecionado.id, 4)">
+      <i class="fas fa-times me-2"></i> Cancelar
+    </a>
+
+  </div>
+
+</div>
+
+</div>
 
             <div class="tab-content">
 
@@ -303,48 +363,90 @@
                 </button>
 
                 <!-- LISTA -->
-                <div *ngFor="let c of comentarios" class="border rounded p-2 mb-2">
+  <div *ngFor="let c of comentarios" class="comment-card">
 
-                  <div class="d-flex justify-content-between">
+  <div class="d-flex justify-content-between align-items-center mb-1">
 
-                    <strong>
-                      {{ c.usuarioNome || 'Sistema' }}
-                    </strong>
+    <div class="d-flex align-items-center gap-2">
 
-                    <small class="text-muted">
-                      {{ c.dataCriacao | date:'dd/MM/yyyy HH:mm' }}
-                    </small>
+      <div class="avatar">
+        {{ (c.usuarioNome || 'S')[0] | uppercase }}
+      </div>
 
-                  </div>
+      <div class="d-flex flex-column">
 
-                  <p class="mb-0">{{ c.texto }}</p>
+        <small class="text-muted">
+          Comentário feito por:  {{ c.usuarioNome || 'Sistema' }}
+        </small>
 
-                </div>
+      
+
+      </div>
+
+    </div>
+
+    <small class="text-muted">
+      Comentário feito em: {{ c.dataCriacao | date:'dd/MM/yyyy HH:mm' }}
+    </small>
+
+  </div>
+
+  <p class="mb-0">
+    {{ c.texto }}
+  </p>
+
+</div>
 
               </div>
 
               <!-- 🕘 HISTÓRICO -->
-    <div *ngFor="let h of historico" class="mb-3 border-start ps-3">
+                <div class="tab-pane fade" id="historico">
+<div class="card-body">
+  <ul class="timeline">
 
-  <div class="small text-muted">
-    {{ h.dataAlteracao | date:'dd/MM/yyyy HH:mm' }} • {{ h.observacao }}
-  </div>
+    <li *ngFor="let h of historico" class="timeline-item">
 
-  <div class="mt-2">
+      <div class="d-flex justify-content-between align-items-center mb-2">
 
-    <strong>Título:</strong>
-    <div>{{ h.antes.Titulo }} → {{ h.depois.Titulo }}</div>
+        <strong class="fs-6">
+          {{ h.observacao || 'Atualização' }}
+        </strong>
+    <small class="text-muted">
+      Editardo por: <span class="badge badge-subtle-info">{{ h.usuarioNome || 'Sistema' }}</span>
+    </small>
+        <span class="text-muted small">
+          {{ h.dataAlteracao | date:'dd/MM/yyyy HH:mm' }}
+        </span>
 
-    <strong>Data inicial:</strong>
-    <div>{{ h.antes.DataInicial }} → {{ h.depois.DataInicial }}</div>
+      </div>
 
-    <strong>Status:</strong>
-    <div>{{ h.antes.StatusGeralKanban }} → {{ h.depois.StatusGeralKanban }}</div>
+      <div>
 
-  </div>
+        <div *ngFor="let m of getMudancas(h)" class="change-line">
 
+          <span class="label">
+            {{ formatarCampo(m.campo) }}:
+          </span>
+
+        <span class=" text-decoration-line-through">
+  {{ formatarValor(m.antes, m.campo) }}
+</span>
+
+          <i class="fas fa-arrow-right arrow-icon"></i>
+
+          <span class="">
+            {{ formatarValor(m.depois, m.campo) }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </li>
+
+  </ul>
 </div>
-
+</div>
             </div>
 
           </ng-container>

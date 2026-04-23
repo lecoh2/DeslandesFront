@@ -14,6 +14,7 @@ novoComentario?:string;
 comentarios?:string;
   usuarioCriacaoNome?:string;
 prioridadeDescricao?:string;
+quantidadeComentarios?: number;
   // 👇 ADICIONA ISSO
 prioridade: number | null;
 
