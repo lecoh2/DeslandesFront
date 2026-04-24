@@ -10,8 +10,8 @@
 			<li class="sidebar-header">
 				Menu
 			</li>
-		
-		
+
+
 
 			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
@@ -29,7 +29,7 @@
 							Consultar</a></li>
 				</ul>
 			</li>
-			
+
 			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
 				<a data-bs-target="#pessoas" data-bs-toggle="collapse" class="sidebar-link collapsed">
@@ -46,8 +46,8 @@
 							Consultar</a></li>
 				</ul>
 			</li>
-		
-	
+
+
 			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
 				<a data-bs-target="#processo" data-bs-toggle="collapse" class="sidebar-link collapsed">
@@ -64,11 +64,11 @@
 							Consultar</a></li>
 				</ul>
 			</li>
-				<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
 				<a data-bs-target="#atendimento" data-bs-toggle="collapse" class="sidebar-link collapsed">
 
-				<i class="fas fa-headset align-middle"></i> <span class="align-middle">Atendimento</span>
+					<i class="fas fa-headset align-middle"></i> <span class="align-middle">Atendimento</span>
 
 
 				</a>
@@ -80,11 +80,11 @@
 							Consultar</a></li>
 				</ul>
 			</li>
-							<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
 				<a data-bs-target="#tarefa" data-bs-toggle="collapse" class="sidebar-link collapsed">
 
-				<i class="fas fa-tasks align-middle"></i> <span class="align-middle">Tarefa</span>
+					<i class="fas fa-tasks align-middle"></i> <span class="align-middle">Tarefa</span>
 
 
 				</a>
@@ -96,11 +96,11 @@
 							Consultar</a></li>
 				</ul>
 			</li>
-										<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
+			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
 				<a data-bs-target="#evento" data-bs-toggle="collapse" class="sidebar-link collapsed">
 
-				<i class="fas fa-calendar-alt align-middle"></i> <span class="align-middle">Evento</span>
+					<i class="fas fa-calendar-alt align-middle"></i> <span class="align-middle">Evento</span>
 
 
 				</a>
@@ -112,7 +112,7 @@
 							Consultar</a></li>
 				</ul>
 			</li>
-			
+
 			<li class="sidebar-item" *ngIf="access.hasNivel('Administrador','Administração','Super Administrador', 'Coordenador',
 	'Estagiários', 'Supervisor','Conciliador')">
 				<a data-bs-target="#caso" data-bs-toggle="collapse" class="sidebar-link collapsed">
@@ -129,7 +129,7 @@
 							Consultar</a></li>
 				</ul>
 			</li>
-			
+
 			<!-- Múltiplos níveis -->
 
 			<li class="sidebar-item" *ngIf="access.hasNivel('Super Administrador','Administrador')">
@@ -152,12 +152,12 @@
 			<li class="sidebar-item"><a class="sidebar-link collapsed" [routerLink]="['/admin', 'perfil']">
 					<i class="fas fa-user align-middle"></i><span class="align-middle">Perfil</span>
 				</a></li>
-		<li class="sidebar-item">
-  <a class="sidebar-link collapsed" href="#" (click)="logout()">
-    <i class="fa-solid fa-right-from-bracket me-2"></i>
-    <span class="align-middle">Sair do sistema</span>
-  </a>
-</li>
+			<li class="sidebar-item">
+				<a class="sidebar-link collapsed" href="#" (click)="logout()">
+					<i class="fa-solid fa-right-from-bracket me-2"></i>
+					<span class="align-middle">Sair do sistema</span>
+				</a>
+			</li>
 
 
 

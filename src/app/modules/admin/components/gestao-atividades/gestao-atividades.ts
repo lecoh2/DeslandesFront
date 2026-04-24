@@ -6,6 +6,7 @@ import { ComentarioService } from '../../../../core/services/comenario.service';
 import { CriarComentarioResponse } from '../../../../core/models/comentario/criar-comentario-response';
 import { HistoricoService } from '../../../../core/services/historico.service';
 import { TipoEntidadeEnum } from '../../../../core/models/enums/tipo-entidade/tipo-entidadeEnum';
+import { Router } from '@angular/router';
 
 declare var bootstrap: any;
 
@@ -24,6 +25,7 @@ export class GestaoAtividades implements OnInit {
   private comentarioService = inject(ComentarioService)
   private cdr = inject(ChangeDetectorRef);
   private historicoService = inject(HistoricoService);
+  private router = inject(Router);
   comentarios: CriarComentarioResponse[] = [];
   novoComentario: string = '';
   mensagemSucesso: string[] = [];
@@ -43,6 +45,7 @@ export class GestaoAtividades implements OnInit {
     tipo: null as string | null,
     status: null as string | null
   }; 
+
 filtrarPorStatus(): void {
 
   if (!this.filtro.status) {
@@ -356,4 +359,27 @@ carregarKanban(): void {
         }
       });
   }
+editar(id: string) {
+
+  console.log('indo editar:', id); // 👈 testa isso
+
+  const modalElement = document.getElementById('modalDetalhes');
+
+  if (modalElement) {
+    const modal = (window as any).bootstrap?.Modal.getInstance(modalElement);
+    modal?.hide();
+  }
+
+  // limpa qualquer lixo do bootstrap
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+  document.body.style.paddingRight = '';
+
+  document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+
+  // 🔥 navegação segura
+  setTimeout(() => {
+    this.router.navigate(['/admin/editar-tarefa', id]);
+  }, 200);
+}
 }

@@ -25,6 +25,8 @@ import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-t
 import { CadastrarResponsaveis } from "./components/responsaveis/cadastrar-responsaveis";
 import { AutocompleteListaTarefas } from "./components/auto-complete-lista-tarefas/autocomplete-lista-tarefas";
 import { CadastrarEvento } from "./components/evento/cadastrar-evento/cadastrar-evento";
+import { EditarCaso } from "./components/caso/editar-caso/editar-caso";
+import { EditarTarefa } from "./components/tarefa/editar-tarefa/editar-tarefa";
 
 
 
@@ -41,6 +43,7 @@ import { CadastrarEvento } from "./components/evento/cadastrar-evento/cadastrar-
         CadastrarCaso,
         GestaoAtividades,
         CadastrarTarefa,
+        EditarTarefa,
         CadastrarEvento,
     
 

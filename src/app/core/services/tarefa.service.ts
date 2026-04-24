@@ -9,6 +9,8 @@ import { ApiResponse } from "../models/respostas/api-response";
 import { ProcessoAutoComplete } from "../models/processo/processo-auto-complete";
 import { CadastrarTarefaRequest } from "../models/tarefa/cadastrar-tarefa.resquest";
 import { ListaTarefasResponse } from "../models/tarefa/lista-tarefas-response";
+import { CadastrarTareResponse } from "../models/tarefa/cadastrar-tarefa-response";
+import { ObterTarefaResponse } from "../models/tarefa/obter-tarefa-response";
 
 
 @Injectable({
@@ -19,10 +21,10 @@ export class TarefaService {
   private url = environment.apiDeslandes;
   private http = inject(HttpClient);
 
-  cadastrarTarefa(request: CadastrarTarefaRequest): Observable<ApiResponse<CadastrarProcessoResponse>> {
+  cadastrarTarefa(request: CadastrarTarefaRequest): Observable<ApiResponse<CadastrarTareResponse>> {
     const token = localStorage.getItem('token');
 
-    return this.http.post<ApiResponse<CadastrarProcessoResponse>>(
+    return this.http.post<ApiResponse<CadastrarTareResponse>>(
       `${this.url}/api/v1/tarefa/cadastrar-tarefa`,
       request,
       {
@@ -44,5 +46,12 @@ export class TarefaService {
       { params }
     );
   }
+ObterTarefaPorId(id: string): Observable<ObterTarefaResponse> {
+  return this.http.get<ObterTarefaResponse>(
+    `${this.url}/api/v1/tarefa/obter-tarefa-por-id/${id}`
+
+    
+  );
+}
 
 }

@@ -5,7 +5,7 @@ import { GrupoEtiquetaRequest } from "../grupo-etiquetas/grupo-etiquetas";
 import { GrupoTarefaResponsaveisRequest } from "../grupo-tarefa-responsavel/grupo-tarefa-responsaveis-request";
 import { CriarListaTarefaRequest } from "./criar-lista-tarefa-request";
 
-export interface CadastrarTarefaRequest {
+export interface EditarTarefaRequest {
   descricao: string;
 
   dataTarefa?: Date | null;
@@ -14,10 +14,11 @@ export interface CadastrarTarefaRequest {
   processoId?: string | null;
   casoId?: string | null;
   atendimentoId?: string | null;
-  usuarioCriacaoId?: string | null;
-  responsavelId?: string | null;
+
+  // ❌ removido: usuarioCriacaoId (não deve mudar)
+  // ❌ removido: responsavelId (você já usa lista)
+
   prioridade: PrioridadeTarefaEnum;
-  // 🔥 NOVOS CAMPOS
   tipoVinculo?: TipoVinculoEnum | null;
   statusGeralKanban: StatusGeralKanbanEnum;
 
@@ -27,6 +28,6 @@ export interface CadastrarTarefaRequest {
   // 📋 CHECKLIST
   listasTarefa: CriarListaTarefaRequest[];
 
-  // 👥 ENVOLVIDOS
+  // 👥 RESPONSÁVEIS
   grupoTarefaResponsaveis: GrupoTarefaResponsaveisRequest[];
 }
