@@ -359,9 +359,12 @@ carregarKanban(): void {
         }
       });
   }
-editar(id: string) {
+editar(id: string, tipo: string) {
 
-  console.log('indo editar:', id); // 👈 testa isso
+  const tipoNormalizado = tipo?.toLowerCase();
+
+  console.log('TIPO RECEBIDO:', tipo);
+  console.log('TIPO NORMALIZADO:', tipoNormalizado);
 
   const modalElement = document.getElementById('modalDetalhes');
 
@@ -370,16 +373,19 @@ editar(id: string) {
     modal?.hide();
   }
 
-  // limpa qualquer lixo do bootstrap
   document.body.classList.remove('modal-open');
   document.body.style.overflow = '';
   document.body.style.paddingRight = '';
-
   document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
 
-  // 🔥 navegação segura
   setTimeout(() => {
-    this.router.navigate(['/admin/editar-tarefa', id]);
+
+    if (tipoNormalizado === 'tarefa') {
+      this.router.navigate(['/admin/editar-tarefa', id]);
+    } else {
+      this.router.navigate(['/admin/editar-evento', id]);
+    }
+
   }, 200);
 }
 }

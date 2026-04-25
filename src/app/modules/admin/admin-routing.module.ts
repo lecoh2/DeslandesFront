@@ -16,6 +16,7 @@ import { GestaoAtividades } from "./components/gestao-atividades/gestao-atividad
 import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-tarefa/cadastar-tarefa";
 import { CadastrarEvento } from "./components/evento/cadastrar-evento/cadastrar-evento";
 import { EditarTarefa } from "./components/tarefa/editar-tarefa/editar-tarefa";
+import { EditarEvento } from "./components/evento/editar-evento/editar-evento";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -87,6 +88,12 @@ export const routes: Routes = [
                 {
                 path: 'cadastrar-evento',
                 component: CadastrarEvento,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            }, {
+                path: 'editar-evento/:id',
+                component: EditarEvento,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 

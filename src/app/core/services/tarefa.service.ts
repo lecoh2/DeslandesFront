@@ -53,5 +53,18 @@ ObterTarefaPorId(id: string): Observable<ObterTarefaResponse> {
     
   );
 }
+editarTarefa(id: string, request: any): Observable<any> {
+  const token = localStorage.getItem('token');
+
+  return this.http.put<any>(
+    `${this.url}/api/v1/tarefa/atualizar-tarefa/${id}`,
+    request,
+    {
+      headers: token
+        ? { Authorization: `Bearer ${token}` }
+        : {}
+    }
+  );
+}
 
 }

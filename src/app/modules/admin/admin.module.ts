@@ -27,6 +27,7 @@ import { AutocompleteListaTarefas } from "./components/auto-complete-lista-taref
 import { CadastrarEvento } from "./components/evento/cadastrar-evento/cadastrar-evento";
 import { EditarCaso } from "./components/caso/editar-caso/editar-caso";
 import { EditarTarefa } from "./components/tarefa/editar-tarefa/editar-tarefa";
+import { EditarEvento } from "./components/evento/editar-evento/editar-evento";
 
 
 
@@ -45,6 +46,7 @@ import { EditarTarefa } from "./components/tarefa/editar-tarefa/editar-tarefa";
         CadastrarTarefa,
         EditarTarefa,
         CadastrarEvento,
+        EditarEvento,
     
 
 

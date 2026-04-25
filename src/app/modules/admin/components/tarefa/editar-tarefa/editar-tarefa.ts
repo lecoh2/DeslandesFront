@@ -23,7 +23,7 @@ import { AtendimentoService } from '../../../../../core/services/atendimento.ser
 
 @Component({
   selector: 'app-editar-tarefa',
-  standalone:false,
+  standalone: false,
   templateUrl: './editar-tarefa.html',
   styleUrl: './editar-tarefa.css'
 })
@@ -42,20 +42,20 @@ export class EditarTarefa implements OnInit {
 
   id!: string;
   tipoVinculoEnum = TipoVinculoEnum;
-vinculoSelecionado: any = null;
+  vinculoSelecionado: any = null;
   mensagemErro: string[] = [];
   mensagemSucesso: string[] = [];
   carregando = false;
-listaFiltradas: ListaTarefasResponse[] = [];
+  listaFiltradas: ListaTarefasResponse[] = [];
   statusEnum = StatusGeralKanbanEnum;
   prioridadeEnum = PrioridadeTarefaEnum;
 
   grupoTarefasEtiquetas: ConsultarEtiquetaResponse[] = [];
   etiquetasSelecionadas: ConsultarEtiquetaResponse[] = [];
-resultadosVinculo: any[] = [];
+  resultadosVinculo: any[] = [];
   responsaveis: ConsultarUsuarioResponse[] = [];
   responsaveisSelecionados: ConsultarUsuarioResponse[] = [];
-responsaveisFiltrados: ConsultarUsuarioResponse[] = [];
+  responsaveisFiltrados: ConsultarUsuarioResponse[] = [];
   listasTarefa: CriarListaTarefaRequest[] = [];
 
   form = this.fb.group({
@@ -70,46 +70,46 @@ responsaveisFiltrados: ConsultarUsuarioResponse[] = [];
 
     tipoVinculo: this.fb.control<any>(null)
   });
-removerBackdrop() {
-  // remove classe do body
-  document.body.classList.remove('modal-open');
+  removerBackdrop() {
+    // remove classe do body
+    document.body.classList.remove('modal-open');
 
-  // remove estilos que travam a tela
-  document.body.style.overflow = '';
-  document.body.style.paddingRight = '';
+    // remove estilos que travam a tela
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
 
-  // remove todos os backdrops
-  const backdrops = document.querySelectorAll('.modal-backdrop');
-  backdrops.forEach(b => b.remove());
+    // remove todos os backdrops
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(b => b.remove());
 
-  // remove qualquer modal aberto
-  const modals = document.querySelectorAll('.modal.show');
-  modals.forEach(m => m.classList.remove('show'));
-}
+    // remove qualquer modal aberto
+    const modals = document.querySelectorAll('.modal.show');
+    modals.forEach(m => m.classList.remove('show'));
+  }
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id')!;
 
-    this.removerBackdrop(); 
-      console.log('ID:', this.id);
+    this.removerBackdrop();
+    console.log('ID:', this.id);
     this.carregarBase();
     this.carregarTarefa();
   }
-buscarListaTarefas(termo: string) {
+  buscarListaTarefas(termo: string) {
 
-  if (!termo) {
-    this.listaFiltradas = [];
-    return;
+    if (!termo) {
+      this.listaFiltradas = [];
+      return;
+    }
+
+    const termoLower = termo.toLowerCase();
+
+    this.listaFiltradas = this.listasTarefa
+      .filter(x => x.descricao?.toLowerCase().includes(termoLower))
+      .map(x => ({
+        descricao: x.descricao,
+        quantidade: 0 // 👈 obrigatório no response
+      }));
   }
-
-  const termoLower = termo.toLowerCase();
-
-  this.listaFiltradas = this.listasTarefa
-    .filter(x => x.descricao?.toLowerCase().includes(termoLower))
-    .map(x => ({
-      descricao: x.descricao,
-      quantidade: 0 // 👈 obrigatório no response
-    }));
-}
   // =========================
   // BASE
   // =========================
@@ -120,158 +120,162 @@ buscarListaTarefas(termo: string) {
       this.responsaveis = res;
     });
   }
-buscarResponsaveis(termo: string) {
-  if (!termo) {
-    this.responsaveisFiltrados = this.responsaveis;
-    return;
+  buscarResponsaveis(termo: string) {
+    if (!termo) {
+      this.responsaveisFiltrados = this.responsaveis;
+      return;
+    }
+
+    const termoLower = termo.toLowerCase();
+
+    this.responsaveisFiltrados = this.responsaveis.filter(x =>
+      x.nomeUsuario?.toLowerCase().includes(termoLower)
+    );
   }
+  buscarVinculo(termo: string) {
 
-  const termoLower = termo.toLowerCase();
+    const tipo = this.form.get('tipoVinculo')?.value;
 
-  this.responsaveisFiltrados = this.responsaveis.filter(x =>
-    x.nomeUsuario?.toLowerCase().includes(termoLower)
-  );
-}
-buscarVinculo(termo: string) {
+    if (!tipo || !termo) {
+      this.resultadosVinculo = [];
+      return;
+    }
 
-  const tipo = this.form.get('tipoVinculo')?.value;
+    let request$: Observable<any[]>;
 
-  if (!tipo || !termo) {
-    this.resultadosVinculo = [];
-    return;
+    if (tipo === TipoVinculoEnum.Processo || tipo === 'processo') {
+      request$ = this.processoService.consultarProcessoAutoComplete(termo);
+    }
+    else if (tipo === TipoVinculoEnum.Caso || tipo === 'caso') {
+      request$ = this.casoService.consultarCasoAutoComplete(termo);
+    }
+    else {
+      request$ = this.atendimentoService.consultarAtendimentoAutoComplete(termo);
+    }
+
+    request$.subscribe(res => {
+      this.resultadosVinculo = res;
+    });
   }
-
-  let request$: Observable<any[]>;
-
-  if (tipo === TipoVinculoEnum.Processo || tipo === 'processo') {
-    request$ = this.processoService.consultarProcessoAutoComplete(termo);
-  }
-  else if (tipo === TipoVinculoEnum.Caso || tipo === 'caso') {
-    request$ = this.casoService.consultarCasoAutoComplete(termo);
-  }
-  else {
-    request$ = this.atendimentoService.consultarAtendimentoAutoComplete(termo);
-  }
-
-  request$.subscribe(res => {
-    this.resultadosVinculo = res;
-  });
-}
 selecionarVinculo(item: any) {
 
-  console.log('Selecionado:', item);
+  console.log('ITEM COMPLETO:', item);
 
-  if (!item) return;
-
-  // limpa tudo primeiro
   this.form.patchValue({
     processoId: null,
     casoId: null,
     atendimentoId: null
   });
 
-  // exemplo simples (ajuste conforme seu objeto)
-  if (item.tipo === 'processo') {
-    this.form.patchValue({ processoId: item.id });
+  const id = item.id;
+
+  if (!id) return;
+
+  // 🔥 REGRA SIMPLES: identifica pelo campo existente
+
+  if ('assunto' in item) {
+    this.form.patchValue({ atendimentoId: id });
   }
 
-  if (item.tipo === 'caso') {
-    this.form.patchValue({ casoId: item.id });
+  else if ('numeroProcesso' in item || 'processoPasta' in item) {
+    this.form.patchValue({ processoId: id });
   }
 
-  if (item.tipo === 'atendimento') {
-    this.form.patchValue({ atendimentoId: item.id });
+  else {
+    this.form.patchValue({ casoId: id });
   }
+
+  console.log('FORM FINAL:', this.form.value);
 }
   // =========================
   // CARREGA TAREFA
   // =========================
- carregarTarefa() {
-  this.carregando = true;
+  carregarTarefa() {
+    this.carregando = true;
 
-  this.tarefaService.ObterTarefaPorId(this.id).subscribe({
-    next: res => {
+    this.tarefaService.ObterTarefaPorId(this.id).subscribe({
+      next: res => {
 
-      console.log('CASO PASTA:', res.casoPasta);
-      console.log('PROCESSO PASTA:', res.processoPasta);
-      console.log('ATENDIMENTO:', res.atendimentoAssunto);
+        console.log('CASO PASTA:', res.casoPasta);
+        console.log('PROCESSO PASTA:', res.processoPasta);
+        console.log('ATENDIMENTO:', res.atendimentoAssunto);
 
-      // 🔗 TIPO DE VÍNCULO
-      let tipoVinculo: TipoVinculoEnum | null = null;
+        // 🔗 TIPO DE VÍNCULO
+        let tipoVinculo: TipoVinculoEnum | null = null;
 
-      if (res.processoId) tipoVinculo = TipoVinculoEnum.Processo;
-      else if (res.casoId) tipoVinculo = TipoVinculoEnum.Caso;
-      else if (res.atendimentoId) tipoVinculo = TipoVinculoEnum.Atendimento;
+        if (res.processoId) tipoVinculo = TipoVinculoEnum.Processo;
+        else if (res.casoId) tipoVinculo = TipoVinculoEnum.Caso;
+        else if (res.atendimentoId) tipoVinculo = TipoVinculoEnum.Atendimento;
 
-      // 🧾 FORM
-      this.form.patchValue({
-        descricao: res.descricao,
-        dataTarefa: res.dataTarefa ? res.dataTarefa.split('T')[0] : null,
-        prioridade: res.prioridade,
-        statusGeralKanban: res.statusGeralKanban,
+        // 🧾 FORM
+        this.form.patchValue({
+          descricao: res.descricao,
+          dataTarefa: res.dataTarefa ? res.dataTarefa.split('T')[0] : null,
+          prioridade: res.prioridade,
+          statusGeralKanban: res.statusGeralKanban,
 
-        processoId: res.processoId,
-        casoId: res.casoId,
-        atendimentoId: res.atendimentoId,
+          processoId: res.processoId,
+          casoId: res.casoId,
+          atendimentoId: res.atendimentoId,
 
-        tipoVinculo: tipoVinculo
-      });
+          tipoVinculo: tipoVinculo
+        });
 
-      // 📋 LISTA
-      this.listasTarefa = res.listasTarefa?.map(x => ({
-        descricao: x.descricao
-      })) ?? [];
-
-      // 👥 RESPONSÁVEIS
-this.responsaveisSelecionados =
-  res.grupoTarefaResponsaveis?.map((x: any) => ({
-    id: x.id,
-    idPessoa: x.idPessoa ?? '',
-    nomeUsuario: x.nomeUsuario
-  })) ?? [];
-
-      // 🏷️ ETIQUETAS
-      this.etiquetasSelecionadas =
-        res.grupoTarefasEtiquetas?.map((x: any) => ({
-          id: x.id,
-          nome: x.nome,
-          cor: x.cor
+        // 📋 LISTA
+        this.listasTarefa = res.listasTarefa?.map(x => ({
+          descricao: x.descricao
         })) ?? [];
 
-      // 🔗 VÍNCULO (SIMPLIFICADO E FUNCIONAL)
-      if (res.processoId) {
-        this.vinculoSelecionado = {
-          id: res.processoId,
-          tipo: 'processo',
-          pasta: res.processoPasta
-        };
-      }
-      else if (res.casoId) {
-        this.vinculoSelecionado = {
-          id: res.casoId,
-          tipo: 'caso',
-          pasta: res.casoPasta
-        };
-      }
-      else if (res.atendimentoId) {
-        this.vinculoSelecionado = {
-          id: res.atendimentoId,
-          tipo: 'atendimento',
-          pasta: res.atendimentoAssunto
-        };
-      }
-      else {
-        this.vinculoSelecionado = null;
-      }
+        // 👥 RESPONSÁVEIS
+        this.responsaveisSelecionados =
+          res.grupoTarefaResponsaveis?.map((x: any) => ({
+            id: x.id,
+            idPessoa: x.idPessoa ?? '',
+            nomeUsuario: x.nomeUsuario
+          })) ?? [];
 
-      this.carregando = false;
-    },
-    error: () => {
-      this.mensagemErro = ['Erro ao carregar tarefa'];
-      this.carregando = false;
-    }
-  });
-}
+        // 🏷️ ETIQUETAS
+        this.etiquetasSelecionadas =
+          res.grupoTarefasEtiquetas?.map((x: any) => ({
+            id: x.id,
+            nome: x.nome,
+            cor: x.cor
+          })) ?? [];
+
+        // 🔗 VÍNCULO (SIMPLIFICADO E FUNCIONAL)
+        if (res.processoId) {
+          this.vinculoSelecionado = {
+            id: res.processoId,
+            tipo: 'processo',
+            pasta: res.processoPasta
+          };
+        }
+        else if (res.casoId) {
+          this.vinculoSelecionado = {
+            id: res.casoId,
+            tipo: 'caso',
+            pasta: res.casoPasta
+          };
+        }
+        else if (res.atendimentoId) {
+          this.vinculoSelecionado = {
+            id: res.atendimentoId,
+            tipo: 'atendimento',
+            pasta: res.atendimentoAssunto
+          };
+        }
+        else {
+          this.vinculoSelecionado = null;
+        }
+
+        this.carregando = false;
+      },
+      error: () => {
+        this.mensagemErro = ['Erro ao carregar tarefa'];
+        this.carregando = false;
+      }
+    });
+  }
 
   // =========================
   // LISTA
@@ -291,51 +295,76 @@ this.responsaveisSelecionados =
   // =========================
   // SUBMIT UPDATE
   // =========================
-  onSubmit() {
+onSubmit() {
 
-    this.mensagemErro = [];
-    this.mensagemSucesso = [];
+  this.mensagemErro = [];
+  this.mensagemSucesso = [];
 
-    if (this.form.invalid) return;
+  if (this.form.invalid) return;
+ console.log('TIPO VINCULO:', this.form.get('tipoVinculo')?.value); // 👈 AQUI
+  this.carregando = true;
 
-    this.carregando = true;
+  const f = this.form.value;
 
-    const f = this.form.value;
+  const request: EditarTarefaRequest = {
 
-    const request: EditarTarefaRequest = {
-      descricao: f.descricao ?? '',
-     dataTarefa: f.dataTarefa ? new Date(f.dataTarefa) : null,
-      prioridade: f.prioridade!,
-      statusGeralKanban: f.statusGeralKanban!,
+    // =========================
+    // BÁSICOS
+    // =========================
+    descricao: f.descricao ?? '',
+    dataTarefa: f.dataTarefa ? new Date(f.dataTarefa) : null,
+    prioridade: f.prioridade!,
+    statusGeralKanban: f.statusGeralKanban!,
 
-      processoId: f.processoId,
-      casoId: f.casoId,
-      atendimentoId: f.atendimentoId,
+    // =========================
+    // VÍNCULO (GARANTIDO LIMPO)
+    // =========================
+    processoId: f.processoId ?? null,
+    casoId: f.casoId ?? null,
+    atendimentoId: f.atendimentoId ?? null,
 
-      grupoTarefasEtiquetas: this.etiquetasSelecionadas.map(e => ({
-        etiquetaId: e.id!
-      })),
+    // =========================
+    // ETIQUETAS
+    // =========================
+    grupoTarefasEtiquetas: this.etiquetasSelecionadas.map(e => ({
+      etiquetaId: e.id!
+    })),
 
-      grupoTarefaResponsaveis: this.responsaveisSelecionados.map(r => ({
-        usuarioId: r.id
-      })),
+    // =========================
+    // RESPONSÁVEIS
+    // =========================
+    grupoTarefaResponsaveis: this.responsaveisSelecionados.map(r => ({
+      usuarioId: r.id!
+    })),
 
-      listasTarefa: this.listasTarefa
-        .filter(x => x.descricao?.trim())
-        .map(x => ({
-          descricao: x.descricao.trim()
-        }))
-    };
+    // =========================
+    // CHECKLIST
+    // =========================
+    listasTarefa: this.listasTarefa
+      .filter(x => x.descricao?.trim())
+      .map(x => ({
+        descricao: x.descricao.trim(),
+        concluida: x.concluida ?? false,
+        dataConclusao: x.concluida ? new Date() : null
+      }))
+  };
 
-    /*this.tarefaService.editarTarefa(this.id, request).subscribe({
-      next: res => {
-        this.mensagemSucesso = [res.message];
-        this.carregando = false;
-      },
-      error: err => this.tratarErro(err)
-    });*/
-  }
+  this.tarefaService.editarTarefa(this.id, request).subscribe({
+    next: (res: any) => {
 
+      this.mensagemSucesso = [
+        res.message ?? 'Tarefa atualizada com sucesso'
+      ];
+
+      this.carregando = false;
+    },
+
+    error: err => {
+      this.tratarErro(err);
+      this.carregando = false;
+    }
+  });
+}
   // =========================
   // ERRO
   // =========================

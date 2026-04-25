@@ -10,6 +10,7 @@ import { CriarAtendimentoClienteResponse } from "../models/atendimento/criar-ate
 import { AtendimentoAutoComplete } from "../models/atendimento/atendimento-auto-complete";
 import { CriarEventoRequest } from "../models/evento/criar-evento-request";
 import { CriarEventoResponse } from "../models/evento/criar-evento-response";
+import { ObterEventoResponse } from "../models/evento/obter-evento-response ";
 
 @Injectable({
     providedIn: 'root' // Isso registra o serviço automaticamente no app
@@ -35,4 +36,24 @@ export class EventoService {
         );
 
     }
+
+    ObterEventoPorId(id: string): Observable<ObterEventoResponse> {
+      return this.http.get<ObterEventoResponse>(
+        `${this.url}/api/v1/evento/obter-evento-por-id/${id}`
+  
+        
+      );
+    }editarEvento(id: string, request: any): Observable<any> {
+  const token = localStorage.getItem('token');
+
+  return this.http.put<any>(
+    `${this.url}/api/v1/evento/atualizar-evento/{id}/${id}`,
+    request,
+    {
+      headers: token
+        ? { Authorization: `Bearer ${token}` }
+        : {}
+    }
+  );
+}
 }
