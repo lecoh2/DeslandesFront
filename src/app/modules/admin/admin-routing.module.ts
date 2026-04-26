@@ -17,6 +17,8 @@ import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-t
 import { CadastrarEvento } from "./components/evento/cadastrar-evento/cadastrar-evento";
 import { EditarTarefa } from "./components/tarefa/editar-tarefa/editar-tarefa";
 import { EditarEvento } from "./components/evento/editar-evento/editar-evento";
+import { ConsultarAtendimento } from "./components/atendimento/consultar-atendimento/consultar-atendimento";
+import { EditarAtendimento } from "./components/atendimento/editar-atendimento/editar-atendimento";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -60,9 +62,21 @@ export const routes: Routes = [
                 component: CadastrarAtendimento,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+            },
+               {
+                path: 'consultar-atendimento',
+                component: ConsultarAtendimento,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },     {
+                path: 'editar-atendimento/:id',
+                component: EditarAtendimento,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
             },
-               //cao
+               //ação
               {
                 path: 'cadastrar-caso',
                 component: CadastrarCaso,

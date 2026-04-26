@@ -78,13 +78,14 @@ export class Vinculo {
 
   control = new FormControl<string>('');
   mostrarSugestoes = false;
-@Input() tipoVinculo: string | null = null;
+  @Input() tipoVinculo: string | null = null;
   @Input() resultados: any[] = [];
 
   private _vinculoSelecionado: any;
 
   @Input()
   set vinculoSelecionado(value: any) {
+     console.log('CHEGOU NO COMPONENTE:', value);
     this._vinculoSelecionado = value;
 
     if (value) {

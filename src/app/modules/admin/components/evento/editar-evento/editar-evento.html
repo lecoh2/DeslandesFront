@@ -19,7 +19,8 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="mb-3">
           <label class="form-label">Etiquetas</label>
-          <app-etiquetas [etiquetas]="grupoEventoEtiquetas" [(selecionadas)]="etiquetasSelecionadas">
+          <app-etiquetas [etiquetas]="grupoEventoEtiquetas"
+           [(selecionadas)]="etiquetasSelecionadas">
           </app-etiquetas>
         </div>
         <!-- TÍTULO -->
@@ -137,9 +138,12 @@
 
                     <div class="col-md-8">
                         <label class="form-label">Buscar vínculo</label>
-                        <app-vinculo [resultados]="resultadosVinculo" (buscar)="buscarVinculo($event)"
-                            (selecionado)="selecionarVinculo($event)">
-                        </app-vinculo>
+<app-vinculo
+  [resultados]="resultadosVinculo"
+  [vinculoSelecionado]="vinculoSelecionado"
+  (buscar)="buscarVinculo($event)"
+  (selecionado)="selecionarVinculo($event)">
+</app-vinculo>
 
                     </div>
                 </div>
@@ -171,16 +175,18 @@
         </div>
         <!-- STATUS -->
         <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Status</label>
-            <select class="form-select" formControlName="statusKaban">
-              <option [ngValue]="null">Automático</option>
-              <option [ngValue]="statusEnum.A_Fazer">A Fazer</option>
-              <option [ngValue]="statusEnum.Em_Andamento">Em Andamento</option>
-              <option [ngValue]="statusEnum.Concluido">Concluído</option>
-              <option [ngValue]="statusEnum.Cancelado">Cancelado</option>
-            </select>
-          </div>
+      <div class="col-md-6">
+                        <label class="form-label">Status</label>
+          <select class="form-select" formControlName="statusGeralKanban"
+        style="pointer-events: none;">
+  
+  <option [ngValue]="statusEnum.A_Fazer">A Fazer</option>
+  <option [ngValue]="statusEnum.Em_Andamento">Em Andamento</option>
+  <option [ngValue]="statusEnum.Concluido">Concluído</option>
+  <option [ngValue]="statusEnum.Cancelado">Cancelado</option>
+
+</select>
+                    </div>
           <div class="col-md-6">
             <label class="form-label">Responsável</label>
             <app-selecionar-responsaveis [resultados]="responsaveisFiltrados"

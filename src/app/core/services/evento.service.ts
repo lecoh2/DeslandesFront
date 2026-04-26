@@ -43,11 +43,12 @@ export class EventoService {
   
         
       );
-    }editarEvento(id: string, request: any): Observable<any> {
+    }
+    editarEvento(id: string, request: any): Observable<any> {
   const token = localStorage.getItem('token');
 
   return this.http.put<any>(
-    `${this.url}/api/v1/evento/atualizar-evento/{id}/${id}`,
+    `${this.url}/api/v1/evento/atualizar-evento/${id}`,
     request,
     {
       headers: token

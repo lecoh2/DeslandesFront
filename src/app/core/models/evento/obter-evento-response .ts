@@ -18,7 +18,10 @@ export interface ObterEventoResponse {
 
   modalidade: number;
   statusGeralKanban?: number | null;
-
+processoPasta?: string;
+processoNumero?:string;
+casoPasta?: string;
+atendimentoAssunto?: string;
   processoId?: string | null;
   casoId?: string | null;
   atendimentoId?: string | null;

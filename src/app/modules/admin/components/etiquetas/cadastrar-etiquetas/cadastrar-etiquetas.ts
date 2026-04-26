@@ -31,26 +31,28 @@ export class CadastrarEtiquetas {
     this.aberto = !this.aberto;
   }
 
-  toggleEtiqueta(et: ConsultarEtiquetaResponse) {
-    const existe = this.selecionadas.find(e => e.id === et.id);
+toggleEtiqueta(et: ConsultarEtiquetaResponse) {
+  const existe = this.selecionadas?.some(e => e.id === et.id);
 
-    if (existe) {
-      this.selecionadas = this.selecionadas.filter(e => e.id !== et.id);
-    } else {
-      this.selecionadas.push(et);
-    }
+  const novaLista = existe
+    ? this.selecionadas.filter(e => e.id !== et.id)
+    : [...(this.selecionadas ?? []), et];
 
-    this.selecionadasChange.emit(this.selecionadas);
-  }
+  this.selecionadas = novaLista;
+  this.selecionadasChange.emit(novaLista);
+}
 
-  remover(et: ConsultarEtiquetaResponse) {
-    this.selecionadas = this.selecionadas.filter(e => e.id !== et.id);
-    this.selecionadasChange.emit(this.selecionadas);
-  }
+remover(et: ConsultarEtiquetaResponse) {
+  const novaLista = (this.selecionadas ?? [])
+    .filter(e => e.id !== et.id);
+
+  this.selecionadas = novaLista;
+  this.selecionadasChange.emit(novaLista);
+}
 
   isSelecionada(et: ConsultarEtiquetaResponse): boolean {
-    return this.selecionadas.some(e => e.id === et.id);
-  }
+  return (this.selecionadas ?? []).some(e => e.id === et.id);
+}
 
   @HostListener('document:click', ['$event'])
   clickFora(event: MouseEvent) {

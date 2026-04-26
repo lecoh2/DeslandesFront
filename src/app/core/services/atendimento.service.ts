@@ -8,6 +8,7 @@ import { ApiResponse } from "../models/respostas/api-response";
 import { CriarAtendimentoClienteRequest } from "../models/atendimento/criar-atendimento-cliente-request";
 import { CriarAtendimentoClienteResponse } from "../models/atendimento/criar-atendimento-response";
 import { AtendimentoAutoComplete } from "../models/atendimento/atendimento-auto-complete";
+import { ObterAtendimentoResponse } from "../models/atendimento/obter-atendimento-response";
 
 @Injectable({
   providedIn: 'root' // Isso registra o serviço automaticamente no app
@@ -46,6 +47,32 @@ export class AtendimentoService {
      );
    }
 
+       consultarAtendimentoPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
+  const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
+  if (searchTerm) params.searchTerm = searchTerm;
+  return this.http.get<any>(`${this.url}/api/v1/atendimento/consultar-atendimento-paginacao`, { params });
+}
+
+ObterAtendimentoPorId(id: string): Observable<ObterAtendimentoResponse> {
+  return this.http.get<ObterAtendimentoResponse>(
+    `${this.url}/api/v1/atendimento/obter-atendimento-por-id/${id}`
+
+    
+  );
+}
+atualizarAtendimento(id: string, request: any): Observable<any> {
+  const token = localStorage.getItem('token');
+
+  return this.http.put<any>(
+    `${this.url}/api/v1/atendimento/atualizar-atendimento/${id}`,
+    request,
+    {
+      headers: token
+        ? { Authorization: `Bearer ${token}` }
+        : {}
+    }
+  );
+}
 /*
     cadastrarPJ(request: CadastrarAtendimentoRequest): Observable<CadastrarAtendimentoResponse> {
     return this.http.post<CadastrarAtendimentoResponse>
