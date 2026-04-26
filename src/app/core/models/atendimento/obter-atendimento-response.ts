@@ -14,4 +14,7 @@ export interface ObterAtendimentoResponse {
 
   grupoAtendimentoCliente: GrupoAtendimentoClienteResponse[];
   grupoAtendimentoEtiqueta: GrupoEtiquetaAtendimentoResponse[];
+  processoPasta?: string;
+casoPasta?: string;
+atendimentoAssunto?: string;
 }

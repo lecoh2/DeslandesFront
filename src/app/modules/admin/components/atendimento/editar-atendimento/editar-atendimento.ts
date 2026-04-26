@@ -55,7 +55,7 @@ export class EditarAtendimento implements OnInit {
   // 🔥 VÍNCULO
   filtroVinculo = new FormControl<string | null>(null);
   resultadosVinculo: VinculoAutoComplete[] = [];
-
+  vinculoSelecionado: any = null;
   // 🔥 CLIENTES
 pessoasSelecionadas: PessoaSelecionadaAtendimento[] = [];
   pessoasFiltradas: PessoaResumo[] = [];
@@ -95,8 +95,21 @@ pessoasSelecionadas: PessoaSelecionadaAtendimento[] = [];
     this.carregarAtendimento();
 
     this.inicializarAutocomplete();
-  }
+      // 🔥 limpa vínculo ao trocar tipo
+    this.form.get('tipoVinculo')?.valueChanges.subscribe(() => {
+      this.resultadosVinculo = [];
+      this.vinculoSelecionado = null;
 
+      this.form.patchValue({
+        processoId: null,
+        casoId: null,
+        atendimentoPaiId: null
+      });
+    });
+  }
+irParaLista(): void {
+  this.router.navigate(['/admin/consultar-atendimento']);
+}
   // ================= CARREGAMENTO =================
   private carregarDados() {
     this.etiquetaService.consultar().subscribe({
@@ -106,61 +119,89 @@ pessoasSelecionadas: PessoaSelecionadaAtendimento[] = [];
   }
 
   private carregarAtendimento() {
-    this.carregando = true;
+  this.carregando = true;
 
-    this.atendimentoService.ObterAtendimentoPorId(this.id).subscribe({
-      next: (res: ObterAtendimentoResponse) => {
+  this.atendimentoService.ObterAtendimentoPorId(this.id).subscribe({
+    next: (res: ObterAtendimentoResponse) => {
 
-        // FORM
-        this.form.patchValue({
-          assunto: res.assunto,
-          registro: res.registro,
-          processoId: res.processoId,
-          casoId: res.casoId,
-          atendimentoPaiId: res.atendimentoPaiId,
-          responsavelId: res.responsavelId
-        });
+      // =========================
+      // FORM
+      // =========================
+      this.form.patchValue({
+        assunto: res.assunto,
+        registro: res.registro,
+        processoId: res.processoId,
+        casoId: res.casoId,
+        atendimentoPaiId: res.atendimentoPaiId,
+        responsavelId: res.responsavelId
+      });
 
-        // TIPO VÍNCULO + LABEL
-        if (res.processoId) {
-          this.form.patchValue({ tipoVinculo: 'processo' });
-          this.filtroVinculo.setValue('Processo selecionado');
-        }
+      // =========================
+      // TIPO VÍNCULO
+      // =========================
+      let tipo: 'processo' | 'caso' | 'atendimento' | null = null;
 
-        if (res.casoId) {
-          this.form.patchValue({ tipoVinculo: 'caso' });
-          this.filtroVinculo.setValue('Caso selecionado');
-        }
+      if (res.processoId) tipo = 'processo';
+      else if (res.casoId) tipo = 'caso';
+      else if (res.atendimentoPaiId) tipo = 'atendimento';
 
-        if (res.atendimentoPaiId) {
-          this.form.patchValue({ tipoVinculo: 'atendimento' });
-          this.filtroVinculo.setValue('Atendimento selecionado');
-        }
+      this.form.patchValue({ tipoVinculo: tipo });
 
-        // CLIENTES
-   this.pessoasSelecionadas = res.grupoAtendimentoCliente?.map((c: any) => ({
-  id: c.pessoaId,
-  nome: c.nome ?? '',
-  documento: '',
-  tipo: 'Fisica'
-})) || [];
-
-        // ETIQUETAS
-        this.etiquetasSelecionadas = res.grupoAtendimentoEtiqueta?.map(e => ({
-          id: e.etiquetaId,
-          nome: e.nome,
-          cor: e.cor
-        })) || [];
-
-        this.carregando = false;
-      },
-      error: () => {
-        this.mensagemErro = ['Erro ao carregar atendimento'];
-        this.carregando = false;
+      // =========================
+      // 🔥 VÍNCULO VISUAL (AQUI ESTAVA O PROBLEMA)
+      // =========================
+      if (res.processoId) {
+        this.vinculoSelecionado = {
+          id: res.processoId,
+          tipo: 'processo',
+          pasta: res.processoPasta
+        };
       }
-    });
-  }
+      else if (res.casoId) {
+        this.vinculoSelecionado = {
+          id: res.casoId,
+          tipo: 'caso',
+          pasta: res.casoPasta
+        };
+      }
+      else if (res.atendimentoPaiId) {
+        this.vinculoSelecionado = {
+          id: res.atendimentoPaiId,
+          tipo: 'atendimento',
+          pasta: res.atendimentoAssunto
+        };
+      }
+      else {
+        this.vinculoSelecionado = null;
+      }
 
+      // =========================
+      // CLIENTES
+      // =========================
+      this.pessoasSelecionadas = res.grupoAtendimentoCliente?.map((c: any) => ({
+        id: c.pessoaId,
+        nome: c.nome ?? '',
+        documento: '',
+        tipo: 'Fisica'
+      })) || [];
+
+      // =========================
+      // ETIQUETAS
+      // =========================
+      this.etiquetasSelecionadas = res.grupoAtendimentoEtiqueta?.map(e => ({
+        id: e.etiquetaId,
+        nome: e.nome,
+        cor: e.cor
+      })) || [];
+
+      this.carregando = false;
+    },
+    error: () => {
+      this.mensagemErro = ['Erro ao carregar atendimento'];
+      this.carregando = false;
+    }
+  });
+}
   // ================= AUTOCOMPLETE =================
   private inicializarAutocomplete() {
     this.form.get('tipoVinculo')?.valueChanges.subscribe(() => {
@@ -197,20 +238,17 @@ pessoasSelecionadas: PessoaSelecionadaAtendimento[] = [];
   }
 
   selecionarVinculo(item: any) {
-    const tipo = this.form.get('tipoVinculo')?.value;
-
     this.form.patchValue({
       processoId: null,
       casoId: null,
       atendimentoPaiId: null
     });
 
-    if (tipo === 'processo') this.form.patchValue({ processoId: item.id });
-    if (tipo === 'caso') this.form.patchValue({ casoId: item.id });
-    if (tipo === 'atendimento') this.form.patchValue({ atendimentoPaiId: item.id });
-
-    this.resultadosVinculo = [];
+    if ('assunto' in item) this.form.patchValue({ atendimentoPaiId: item.id });
+    else if ('numeroProcesso' in item) this.form.patchValue({ processoId: item.id });
+    else this.form.patchValue({ casoId: item.id });
   }
+
 
   // ================= PESSOAS =================
   buscarPessoas(nome: string) {

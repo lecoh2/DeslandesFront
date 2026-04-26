@@ -66,9 +66,12 @@
 
           <div class="col-md-8">
             <label class="form-label">Buscar vínculo</label>
-            <app-vinculo [resultados]="resultadosVinculo" (buscar)="buscarVinculo($event)"
-              (selecionado)="selecionarVinculo($event)">
-            </app-vinculo>
+         <app-vinculo
+  [resultados]="resultadosVinculo"
+  [vinculoSelecionado]="vinculoSelecionado"
+  (buscar)="buscarVinculo($event)"
+  (selecionado)="selecionarVinculo($event)">
+</app-vinculo>
 
           </div>
 
@@ -86,7 +89,7 @@
 
 
 <button type="button" class="btn btn-secondary mt-3 me-2"
-        (click)="router.navigate(['/admin/consultar-atendimento'])">
+        (click)="irParaLista()">
   <i class="fas fa-arrow-left"></i> Voltar
 </button>
 
