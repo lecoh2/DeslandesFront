@@ -30,6 +30,8 @@ import { EditarTarefa } from "./components/tarefa/editar-tarefa/editar-tarefa";
 import { EditarEvento } from "./components/evento/editar-evento/editar-evento";
 import { ConsultarAtendimento } from "./components/atendimento/consultar-atendimento/consultar-atendimento";
 import { EditarAtendimento } from "./components/atendimento/editar-atendimento/editar-atendimento";
+import { ConsultarCaso } from "./components/caso/consultar-caso/consultar-caso";
+import { ConsultarProcesso } from "./components/processo/consultar-processo/consultar-processo";
 
 
 
@@ -42,10 +44,12 @@ import { EditarAtendimento } from "./components/atendimento/editar-atendimento/e
         CadastrarEtiquetas,
         ConsultarPessoas,
         CadastrarProcesso,
+        ConsultarProcesso,
         CadastrarAtendimento,
         ConsultarAtendimento,
         EditarAtendimento,
         CadastrarCaso,
+        ConsultarCaso,
         GestaoAtividades,
         CadastrarTarefa,
         EditarTarefa,

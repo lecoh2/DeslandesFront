@@ -19,6 +19,8 @@ import { EditarTarefa } from "./components/tarefa/editar-tarefa/editar-tarefa";
 import { EditarEvento } from "./components/evento/editar-evento/editar-evento";
 import { ConsultarAtendimento } from "./components/atendimento/consultar-atendimento/consultar-atendimento";
 import { EditarAtendimento } from "./components/atendimento/editar-atendimento/editar-atendimento";
+import { ConsultarCaso } from "./components/caso/consultar-caso/consultar-caso";
+import { ConsultarProcesso } from "./components/processo/consultar-processo/consultar-processo";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -56,6 +58,13 @@ export const routes: Routes = [
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
             },
+            {
+                path: 'consultar-processo',
+                component: ConsultarProcesso,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
             //atendmento
               {
                 path: 'cadastrar-atendimento',
@@ -80,6 +89,12 @@ export const routes: Routes = [
               {
                 path: 'cadastrar-caso',
                 component: CadastrarCaso,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },{
+                path: 'consultar-caso',
+                component: ConsultarCaso,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 

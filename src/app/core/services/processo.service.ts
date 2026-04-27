@@ -10,36 +10,41 @@ import { ProcessoAutoComplete } from "../models/processo/processo-auto-complete"
 
 
 @Injectable({
-    providedIn: 'root' // Isso registra o serviço automaticamente no app
+  providedIn: 'root' // Isso registra o serviço automaticamente no app
 })
 export class ProcessoService {
-    //atributos
-    private url = environment.apiDeslandes;
-    private http = inject(HttpClient);
+  //atributos
+  private url = environment.apiDeslandes;
+  private http = inject(HttpClient);
 
   cadastrarProcesso(request: CadastrarProcessoRequest): Observable<ApiResponse<CadastrarProcessoResponse>> {
-  const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-  return this.http.post<ApiResponse<CadastrarProcessoResponse>>(
-    `${this.url}/api/v1/processo/cadastrar-processo`,
-    request,
-    {
-      headers: token
-        ? { Authorization: `Bearer ${token}` }
-        : {}
+    return this.http.post<ApiResponse<CadastrarProcessoResponse>>(
+      `${this.url}/api/v1/processo/cadastrar-processo`,
+      request,
+      {
+        headers: token
+          ? { Authorization: `Bearer ${token}` }
+          : {}
+      }
+    );
+  }
+  consultarProcessoAutoComplete(termo?: string, limite: number = 50) {
+    const params: any = { limite: limite.toString() };
+
+    if (termo) {
+      params.termo = termo;
     }
-  );
-}
-consultarProcessoAutoComplete(termo?: string, limite: number = 50) {
-     const params: any = { limite: limite.toString() };
-   
-     if (termo) {
-       params.termo = termo;
-     }
-   
-     return this.http.get<ProcessoAutoComplete[]>(
-       `${this.url}/api/v1/processo/consultar-processo-autocomplete`,
-       { params }
-     );
-   }
+
+    return this.http.get<ProcessoAutoComplete[]>(
+      `${this.url}/api/v1/processo/consultar-processo-autocomplete`,
+      { params }
+    );
+  }
+  consultarProcessoPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
+    const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
+    if (searchTerm) params.searchTerm = searchTerm;
+    return this.http.get<any>(`${this.url}/api/v1/processo/consultar-processo-paginacao`, { params });
+  }
 }

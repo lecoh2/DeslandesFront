@@ -12,37 +12,43 @@ import { CriarCasoResponse } from "../models/caso/cadastrar-caso-response";
 import { ApiResponse } from "../models/respostas/api-response";
 
 @Injectable({
-    providedIn: 'root' // Isso registra o serviço automaticamente no app
+  providedIn: 'root' // Isso registra o serviço automaticamente no app
 })
 export class CasoService {
-    private url = environment.apiDeslandes;
-    private http = inject(HttpClient);
+  private url = environment.apiDeslandes;
+  private http = inject(HttpClient);
 
-     cadastrarCaso(request: CriarCasoRequest): Observable<ApiResponse<CriarCasoResponse>> {
-      const token = localStorage.getItem('token');
-    
-      return this.http.post<ApiResponse<CriarCasoResponse>>(
-        `${this.url}/api/v1/caso/cadatrar-caso`,
-        request,
-        {
-          headers: token
-            ? { Authorization: `Bearer ${token}` }
-            : {}
-        }
-      );
-      
+  cadastrarCaso(request: CriarCasoRequest): Observable<ApiResponse<CriarCasoResponse>> {
+    const token = localStorage.getItem('token');
+
+    return this.http.post<ApiResponse<CriarCasoResponse>>(
+      `${this.url}/api/v1/caso/cadatrar-caso`,
+      request,
+      {
+        headers: token
+          ? { Authorization: `Bearer ${token}` }
+          : {}
+      }
+    );
+
+  }
+
+  consultarCasoAutoComplete(termo?: string, limite: number = 50) {
+    const params: any = { limite: limite.toString() };
+
+    if (termo) {
+      params.termo = termo;
     }
 
-   consultarCasoAutoComplete(termo?: string, limite: number = 50) {
-     const params: any = { limite: limite.toString() };
-   
-     if (termo) {
-       params.termo = termo;
-     }
-   
-     return this.http.get<AtendimentoAutoComplete[]>(
-       `${this.url}/api/v1/caso/consultar-caso-autocpmplete`,
-       { params }
-     );
-   }
+    return this.http.get<AtendimentoAutoComplete[]>(
+      `${this.url}/api/v1/caso/consultar-caso-autocpmplete`,
+      { params }
+    );
+  }
+  consultarCasoPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
+    const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
+    if (searchTerm) params.searchTerm = searchTerm;
+    return this.http.get<any>(`${this.url}/api/v1/caso/consultar-caso-paginacao`, { params });
+  }
+
 }
