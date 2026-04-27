@@ -11,12 +11,12 @@ import { AuthHelper } from '../../../../../core/helpers/auth.helper';
 import { ProcessoService } from '../../../../../core/services/processo.service';
 import { CasoService } from '../../../../../core/services/caso.service';
 import { AtendimentoService } from '../../../../../core/services/atendimento.service';
-
+import { ChangeDetectorRef } from '@angular/core';
 import { ConsultarEtiquetaResponse } from '../../../../../core/models/etiqueta/consultar-etiqueta-response';
 import { ConsultarUsuarioResponse } from '../../../../../core/models/usuario/consultar-usuarios.response';
 import { AutenticarUsuarioResponse } from '../../../../../core/models/usuario/autenticar-usuario.response';
 import { StatusGeralKanbanEnum } from '../../../../../core/models/enums/status-kaban/status-kaban-geralEnum';
-
+import { finalize } from 'rxjs';
 import { ProcessoAutoComplete } from '../../../../../core/models/processo/processo-auto-complete';
 import { CasoAutoComplete } from '../../../../../core/models/caso/caso-auto-complete';
 import { AtendimentoAutoComplete } from '../../../../../core/models/atendimento/atendimento-auto-complete';
@@ -28,7 +28,7 @@ type VinculoAutoComplete =
 
 @Component({
   selector: 'app-editar-evento',
-  standalone:false,
+  standalone: false,
   templateUrl: './editar-evento.html',
   styleUrls: ['./editar-evento.css']
 })
@@ -37,7 +37,7 @@ export class EditarEvento implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-
+  private cdr = inject(ChangeDetectorRef);
   private eventoService = inject(EventoService);
   private etiquetaService = inject(EtiquetaService);
   private usuarioService = inject(UsuarioService);
@@ -132,44 +132,99 @@ export class EditarEvento implements OnInit {
       error: () => this.mensagemErro = ['Erro ao carregar responsáveis']
     });
   }
+carregarEvento() {
+  this.carregando = true;
 
-  carregarEvento() {
-    this.carregando = true;
+  this.eventoService.ObterEventoPorId(this.id).subscribe({
+    next: res => {
 
-    this.eventoService.ObterEventoPorId(this.id).subscribe({
-      next: res => {
+      console.log('EVENTO COMPLETO:', res);
 
-        const tipo =
-          res.processoId ? 'processo' :
-          res.casoId ? 'caso' :
-          res.atendimentoId ? 'atendimento' : null;
+      const tipo =
+        res.processoId ? 'processo' :
+        res.casoId ? 'caso' :
+        res.atendimentoId ? 'atendimento' : null;
 
-        this.form.patchValue({
-          titulo: res.titulo,
-          endereco: res.endereco,
-          observacao: res.observacao,
-          dataInicial: res.dataInicial?.split('T')[0],
-          dataFinal: res.dataFinal?.split('T')[0],
-          horaInicial: res.horaInicial,
-          horaFinal: res.horaFinal,
-          diaInteiro: res.diaInteiro,
-          statusGeralKanban: res.statusGeralKanban,
-          modalidade: res.modalidade,
-          processoId: res.processoId,
-          casoId: res.casoId,
-          atendimentoId: res.atendimentoId,
-          tipoVinculo: tipo
-        });
+      // =========================
+      // FORM PRINCIPAL
+      // =========================
+      this.form.patchValue({
+        titulo: res.titulo,
+        endereco: res.endereco,
+        observacao: res.observacao,
 
-        this.carregando = false;
-      },
-      error: () => {
-        this.mensagemErro = ['Erro ao carregar evento'];
-        this.carregando = false;
+        dataInicial: res.dataInicial ? res.dataInicial.split('T')[0] : null,
+        dataFinal: res.dataFinal ? res.dataFinal.split('T')[0] : null,
+
+        horaInicial: res.horaInicial,
+        horaFinal: res.horaFinal,
+
+        diaInteiro: res.diaInteiro,
+
+        statusGeralKanban: res.statusGeralKanban,
+        modalidade: res.modalidade,
+
+        processoId: res.processoId,
+        casoId: res.casoId,
+        atendimentoId: res.atendimentoId,
+
+        tipoVinculo: tipo
+      });
+
+      // =========================
+      // ETIQUETAS
+      // =========================
+      this.etiquetasSelecionadas =
+        res.grupoEventoEtiquetas?.map((x: any) => ({
+          id: x.etiquetaId,
+          nome: x.nome,
+          cor: x.cor
+        })) ?? [];
+
+      // =========================
+      // RESPONSÁVEIS
+      // =========================
+      this.responsaveisSelecionados =
+        res.grupoEventoResponsaveis?.map((x: any) => ({
+          id: x.usuarioId,
+          nomeUsuario: x.nomeUsuario ?? '',
+          idPessoa: x.idPessoa ?? ''
+        })) ?? [];
+
+      // =========================
+      // VÍNCULO VISUAL (🔥 AJUSTE IMPORTANTE)
+      // =========================
+      this.vinculoSelecionado = null;
+
+      if (res.processoId) {
+        this.vinculoSelecionado = {
+          id: res.processoId,
+          numeroProcesso: res.processoNumero,
+          titulo: res.processoPasta
+        };
       }
-    });
-  }
+      else if (res.casoId) {
+        this.vinculoSelecionado = {
+          id: res.casoId,
+          pasta: res.casoPasta
+        };
+      }
+      else if (res.atendimentoId) {
+        this.vinculoSelecionado = {
+          id: res.atendimentoId,
+          assunto: res.atendimentoAssunto
+        };
+      }
 
+      this.carregando = false;
+    },
+
+    error: () => {
+      this.mensagemErro = ['Erro ao carregar evento'];
+      this.carregando = false;
+    }
+  });
+}
   buscarVinculo(termo: string) {
     const tipo = this.form.get('tipoVinculo')?.value;
 
@@ -208,19 +263,61 @@ export class EditarEvento implements OnInit {
       .filter(r => r.nomeUsuario.toLowerCase().includes(termo.toLowerCase()));
   }
 
-  onSubmit() {
-    if (this.form.invalid) return;
+onSubmit() {
+  if (this.form.invalid) return;
 
-    this.carregando = true;
+  this.carregando = true;
 
-    this.eventoService.editarEvento(this.id, this.form.value).subscribe({
+  const f = this.form.value;
+
+  const request = {
+    titulo: f.titulo ?? '',
+    endereco: f.endereco ?? '',
+    observacao: f.observacao ?? '',
+
+    dataInicial: f.dataInicial || null,
+    dataFinal: f.dataFinal || null,
+
+    horaInicial: f.horaInicial || null,
+    horaFinal: f.horaFinal || null,
+
+    diaInteiro: f.diaInteiro ?? false,
+
+    statusGeralKanban: f.statusGeralKanban,
+    modalidade: f.modalidade,
+
+    intervaloRecorrencia: f.intervaloRecorrencia,
+    tipoRecorrencia: f.tipoRecorrencia,
+    dataFimRecorrencia: f.dataFimRecorrencia || null,
+    quantidadeOcorrencias: f.quantidadeOcorrencias,
+
+    processoId: f.processoId ?? null,
+    casoId: f.casoId ?? null,
+    atendimentoId: f.atendimentoId ?? null,
+    grupoEventoEtiquetas: this.etiquetasSelecionadas.map(e => ({
+  etiquetaId: e.id!
+})),
+grupoEventoResponsavel: this.responsaveisSelecionados
+  .filter(r => r.id)
+  .map(r => ({
+    UsuarioId: r.id
+  }))
+  };
+
+  this.eventoService.editarEvento(this.id, request)
+    .pipe(
+      finalize(() => {
+        this.carregando = false;
+        this.cdr.detectChanges();
+      })
+    )
+    .subscribe({
       next: () => {
         this.mensagemSucesso = ['Evento atualizado com sucesso'];
-        this.carregando = false;
       },
       error: err => this.tratarErro(err)
     });
-  }
+}
 
   tratarErro(err: HttpErrorResponse) {
     this.mensagemErro = ['Erro inesperado'];

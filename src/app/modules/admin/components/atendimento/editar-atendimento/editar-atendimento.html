@@ -1,10 +1,10 @@
 <div class="container-fluid p-0">
-<h1 class="h3 mb-3">Editar Atendimento</h1>
+  <h1 class="h3 mb-3">Editar Atendimento</h1>
 
   <div class="card">
     <div class="card-header">
-     <h5 class="card-title">Edição de Atendimento</h5>
-     <h6 class="card-subtitle text-muted">Atualize os dados do atendimento</h6>
+      <h5 class="card-title">Edição de Atendimento</h5>
+      <h6 class="card-subtitle text-muted">Atualize os dados do atendimento</h6>
     </div>
 
     <div class="card-body">
@@ -66,12 +66,9 @@
 
           <div class="col-md-8">
             <label class="form-label">Buscar vínculo</label>
-         <app-vinculo
-  [resultados]="resultadosVinculo"
-  [vinculoSelecionado]="vinculoSelecionado"
-  (buscar)="buscarVinculo($event)"
-  (selecionado)="selecionarVinculo($event)">
-</app-vinculo>
+            <app-vinculo [resultados]="resultadosVinculo" [vinculoSelecionado]="vinculoSelecionado"
+              (buscar)="buscarVinculo($event)" (selecionado)="selecionarVinculo($event)">
+            </app-vinculo>
 
           </div>
 
@@ -88,14 +85,13 @@
 
 
 
-<button type="button" class="btn btn-secondary mt-3 me-2"
-        (click)="irParaLista()">
-  <i class="fas fa-arrow-left"></i> Voltar
-</button>
+        <button type="button" class="btn btn-secondary mt-3 me-2" (click)="irParaLista()">
+          <i class="fas fa-arrow-left"></i> Voltar
+        </button>
 
         <!-- BOTÃO -->
         <button type="submit" class="btn btn-primary mt-3" [disabled]="carregando">
-    <i class="fas fa-save"></i> Atualizar Atendimento
+          <i class="fas fa-save"></i> Atualizar Atendimento
         </button>
 
       </form>

@@ -304,8 +304,8 @@ irParaLista(): void {
       atendimentoPaiId: formValue.atendimentoPaiId ?? undefined,
       responsavelId: formValue.responsavelId ?? undefined,
 
-      grupoAtendimentoEtiquetas: this.etiquetasSelecionadas.map(e => ({
-        etiquetaId: e.id!
+     grupoAtendimentoEtiqueta: this.etiquetasSelecionadas.map(e => ({
+    etiquetaId: e.id
       })),
 
       grupoAtendimentoCliente: this.pessoasSelecionadas.map(p => ({

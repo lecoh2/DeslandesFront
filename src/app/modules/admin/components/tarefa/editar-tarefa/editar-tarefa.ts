@@ -18,8 +18,8 @@ import { TipoVinculoEnum } from '../../../../../core/models/enums/tipo-vinculo/t
 import { ProcessoService } from '../../../../../core/services/processo.service';
 import { CasoService } from '../../../../../core/services/caso.service';
 import { AtendimentoService } from '../../../../../core/services/atendimento.service';
-
-
+import { finalize } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-editar-tarefa',
@@ -39,7 +39,7 @@ export class EditarTarefa implements OnInit {
   private processoService = inject(ProcessoService);
   private casoService = inject(CasoService);
   private atendimentoService = inject(AtendimentoService);
-
+  private cdr = inject(ChangeDetectorRef);
   id!: string;
   tipoVinculoEnum = TipoVinculoEnum;
   vinculoSelecionado: any = null;
@@ -349,19 +349,21 @@ onSubmit() {
       }))
   };
 
-  this.tarefaService.editarTarefa(this.id, request).subscribe({
+this.tarefaService.editarTarefa(this.id, request)
+  .pipe(
+    finalize(() => {
+      this.carregando = false;
+      this.cdr.detectChanges();
+    })
+  )
+  .subscribe({
     next: (res: any) => {
-
       this.mensagemSucesso = [
         res.message ?? 'Tarefa atualizada com sucesso'
       ];
-
-      this.carregando = false;
     },
-
     error: err => {
       this.tratarErro(err);
-      this.carregando = false;
     }
   });
 }
