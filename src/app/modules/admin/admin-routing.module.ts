@@ -21,6 +21,7 @@ import { ConsultarAtendimento } from "./components/atendimento/consultar-atendim
 import { EditarAtendimento } from "./components/atendimento/editar-atendimento/editar-atendimento";
 import { ConsultarCaso } from "./components/caso/consultar-caso/consultar-caso";
 import { ConsultarProcesso } from "./components/processo/consultar-processo/consultar-processo";
+import { EditarCaso } from "./components/caso/editar-caso/editar-caso";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -95,6 +96,13 @@ export const routes: Routes = [
             },{
                 path: 'consultar-caso',
                 component: ConsultarCaso,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
+                {
+                path: 'editar-caso/:id',
+                component: EditarCaso,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 

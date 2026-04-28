@@ -10,6 +10,7 @@ import { CadastrarCaso } from "../../modules/admin/components/caso/cadastrar-cas
 import { CriarCasoRequest } from "../models/caso/cadastrar-caso-request";
 import { CriarCasoResponse } from "../models/caso/cadastrar-caso-response";
 import { ApiResponse } from "../models/respostas/api-response";
+import { ObterCasoResponse } from "../models/caso/obter-caso-response ";
 
 @Injectable({
   providedIn: 'root' // Isso registra o serviço automaticamente no app
@@ -51,4 +52,24 @@ export class CasoService {
     return this.http.get<any>(`${this.url}/api/v1/caso/consultar-caso-paginacao`, { params });
   }
 
+ObterCasoPorId(id: string): Observable<ObterCasoResponse> {
+  return this.http.get<ObterCasoResponse>(
+    `${this.url}/api/v1/caso/obter-caso-por-id/${id}`
+
+    
+  );
+}
+atualizarCaso(id: string, request: any): Observable<any> {
+  const token = localStorage.getItem('token');
+
+  return this.http.put<any>(
+    `${this.url}/api/v1/caso/atualizar-caso/${id}`,
+    request,
+    {
+      headers: token
+        ? { Authorization: `Bearer ${token}` }
+        : {}
+    }
+  );
+}
 }

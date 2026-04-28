@@ -50,6 +50,7 @@ import { ConsultarProcesso } from "./components/processo/consultar-processo/cons
         EditarAtendimento,
         CadastrarCaso,
         ConsultarCaso,
+        EditarCaso,
         GestaoAtividades,
         CadastrarTarefa,
         EditarTarefa,
