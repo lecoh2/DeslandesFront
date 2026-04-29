@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { catchError, debounceTime, Observable, of, switchMap } from 'rxjs';
+import { catchError, debounceTime, finalize, Observable, of, switchMap } from 'rxjs';
 
 import { AuthHelper } from '../../../../../core/helpers/auth.helper';
 import { PessoaService } from '../../../../../core/services/pessoa.service';
@@ -43,7 +43,7 @@ export class EditarAtendimento implements OnInit {
   private processoService = inject(ProcessoService);
   private casoService = inject(CasoService);
   private fb = inject(FormBuilder);
-
+ private cdr = inject(ChangeDetectorRef);
   // 🔥 ESTADO
   usuarioLogado?: AutenticarUsuarioResponse | null;
   carregando = false;
@@ -313,35 +313,42 @@ irParaLista(): void {
       }))
     };
 
-    this.atendimentoService.atualizarAtendimento(this.id, request).subscribe({
-      next: (res) => {
-        this.carregando = false;
-        this.mensagemSucesso = [res.message];
-
-        setTimeout(() => {
-          this.router.navigate(['/admin/consultar-atendimento']);
-        }, 2000);
-      },
-      error: (err: HttpErrorResponse) => this.tratarErro(err)
-    });
-  }
-
-  // ================= ERRO =================
-  private tratarErro(err: HttpErrorResponse) {
-    this.mensagemErro = [];
-
-    const e = err.error;
-
-    if (e?.errors) {
-      for (const key in e.errors) {
-        this.mensagemErro.push(...e.errors[key]);
+    this.atendimentoService.atualizarAtendimento(this.id, request)
+          .pipe(
+            finalize(() => {
+              this.carregando = false;
+              this.cdr.detectChanges();
+            })
+          )
+          .subscribe({
+            next: (res) => {
+              this.carregando = false;
+              this.mensagemSucesso = [res.message];
+      
+              setTimeout(() => {
+                this.router.navigate(['/admin/consultar-atendimento']);
+              }, 3000);
+            },
+            error: (err: HttpErrorResponse) => this.tratarErro(err)
+          });
+         
       }
-    } else if (e?.mensagem) {
-      this.mensagemErro.push(e.mensagem);
-    } else {
-      this.mensagemErro.push('Erro inesperado.');
-    }
-
-    this.carregando = false;
-  }
+      
+       private tratarErro(err: HttpErrorResponse) {
+        this.mensagemErro = [];
+    
+        const e = err.error;
+    
+        if (e?.errors) {
+          for (const key in e.errors) {
+            this.mensagemErro.push(...e.errors[key]);
+          }
+        } else if (e?.mensagem) {
+          this.mensagemErro.push(e.mensagem);
+        } else {
+          this.mensagemErro.push('Erro inesperado.');
+        }
+    
+        this.carregando = false;
+      }
 }

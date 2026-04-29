@@ -47,4 +47,17 @@ export class ProcessoService {
     if (searchTerm) params.searchTerm = searchTerm;
     return this.http.get<any>(`${this.url}/api/v1/processo/consultar-processo-paginacao`, { params });
   }
+editarProcesso(id: string, request: any): Observable<any> {
+  const token = localStorage.getItem('token');
+
+  return this.http.put<any>(
+    `${this.url}/api/v1/processo/atualizar-processo/${id}`,
+    request,
+    {
+      headers: token
+        ? { Authorization: `Bearer ${token}` }
+        : {}
+    }
+  );
+}
 }

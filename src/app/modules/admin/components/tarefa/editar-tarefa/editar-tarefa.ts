@@ -361,6 +361,10 @@ this.tarefaService.editarTarefa(this.id, request)
       this.mensagemSucesso = [
         res.message ?? 'Tarefa atualizada com sucesso'
       ];
+         setTimeout(() => {
+          this.router.navigate(['/admin/gestao-atividades']);
+        }, 3000);
+    
     },
     error: err => {
       this.tratarErro(err);
@@ -374,4 +378,8 @@ this.tarefaService.editarTarefa(this.id, request)
     this.mensagemErro = ['Erro ao atualizar tarefa'];
     this.carregando = false;
   }
+    irParaLista() {
+    this.router.navigate(['/admin/gestao-atividades']);
+  }
+
 }

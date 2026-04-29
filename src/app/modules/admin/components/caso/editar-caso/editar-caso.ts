@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 
 import { CasoService } from '../../../../../core/services/caso.service';
 import { PessoaService } from '../../../../../core/services/pessoa.service';
@@ -10,6 +10,7 @@ import { QualificacoesService } from '../../../../../core/services/qualificacoes
 import { UsuarioService } from '../../../../../core/services/usuario.service';
 import { AcessoEnum } from '../../../../../core/models/enums/acesso/acesoEnum';
 import { PessoaResumo } from '../../../../../core/models/pessoa/pessoa-resumo';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-editar-caso',
@@ -27,7 +28,7 @@ export class EditarCaso implements OnInit {
   private pessoaService = inject(PessoaService);
   private etiquetaService = inject(EtiquetaService);
   private qualificacaoService = inject(QualificacoesService);
-  private usuarioService = inject(UsuarioService);
+  private usuarioService = inject(UsuarioService);  private cdr = inject(ChangeDetectorRef);
 
   id!: string;
 
@@ -65,7 +66,9 @@ export class EditarCaso implements OnInit {
     this.carregarDados();
     this.carregarCaso();
   }
-
+irParaLista(): void {
+  this.router.navigate(['/admin/consultar-caso']);
+}
   // ================= CARREGAMENTO PRINCIPAL =================
   private carregarCaso() {
     this.carregando = true;
@@ -164,14 +167,47 @@ console.log('✅ ENVOLVIDOS MAPEADOS:', this.envolvidosSelecionados);
         idQualificacao: e.idQualificacao
       })),
 
-      grupoEtiquetaCasos: this.etiquetasSelecionadas.map(e => ({
+      grupoEtiquetaCaso: this.etiquetasSelecionadas.map(e => ({
         etiquetaId: e.id
       }))
     };
 
-    this.casoService.atualizarCaso(this.id, request).subscribe({
-      next: () => this.router.navigate(['/admin/casos']),
-      error: err => console.log(err)
-    });
+    this.casoService.atualizarCaso(this.id, request)
+      .pipe(
+        finalize(() => {
+          this.carregando = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.carregando = false;
+          this.mensagemSucesso = [res.message];
+  
+          setTimeout(() => {
+            this.router.navigate(['/admin/gestao-atividades']);
+          }, 3000);
+        },
+        error: (err: HttpErrorResponse) => this.tratarErro(err)
+      });
+     
+  }
+  
+   private tratarErro(err: HttpErrorResponse) {
+    this.mensagemErro = [];
+
+    const e = err.error;
+
+    if (e?.errors) {
+      for (const key in e.errors) {
+        this.mensagemErro.push(...e.errors[key]);
+      }
+    } else if (e?.mensagem) {
+      this.mensagemErro.push(e.mensagem);
+    } else {
+      this.mensagemErro.push('Erro inesperado.');
+    }
+
+    this.carregando = false;
   }
 }

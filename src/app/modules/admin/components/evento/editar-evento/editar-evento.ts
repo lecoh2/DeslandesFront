@@ -119,7 +119,7 @@ export class EditarEvento implements OnInit {
   }
 
   irParaLista() {
-    this.router.navigate(['/admin/consultar-atendimento']);
+    this.router.navigate(['/admin/gestao-atividades']);
   }
 
   carregarDados() {
@@ -312,15 +312,34 @@ grupoEventoResponsavel: this.responsaveisSelecionados
       })
     )
     .subscribe({
-      next: () => {
-        this.mensagemSucesso = ['Evento atualizado com sucesso'];
+      next: (res) => {
+        this.carregando = false;
+        this.mensagemSucesso = [res.message];
+
+        setTimeout(() => {
+          this.router.navigate(['/admin/gestao-atividades']);
+        }, 3000);
       },
-      error: err => this.tratarErro(err)
+      error: (err: HttpErrorResponse) => this.tratarErro(err)
     });
+   
 }
 
-  tratarErro(err: HttpErrorResponse) {
-    this.mensagemErro = ['Erro inesperado'];
+  private tratarErro(err: HttpErrorResponse) {
+    this.mensagemErro = [];
+
+    const e = err.error;
+
+    if (e?.errors) {
+      for (const key in e.errors) {
+        this.mensagemErro.push(...e.errors[key]);
+      }
+    } else if (e?.mensagem) {
+      this.mensagemErro.push(e.mensagem);
+    } else {
+      this.mensagemErro.push('Erro inesperado.');
+    }
+
     this.carregando = false;
   }
 }

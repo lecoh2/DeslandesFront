@@ -141,11 +141,15 @@
           </div>
         </div>
 
-        <!-- BOTÃO -->
-        <button class="btn btn-primary" [disabled]="carregando">
-          <i class="fas fa-save"></i> Atualizar Caso
+     
+ <button type="button" class="btn btn-secondary mt-3 me-2" (click)="irParaLista()">
+          <i class="fas fa-arrow-left"></i> Voltar
         </button>
 
+        <!-- BOTÃO -->
+        <button type="submit" class="btn btn-primary mt-3" [disabled]="carregando">
+          <i class="fas fa-save"></i> Atualizar Caso
+        </button>
       </form>
     </div>
   </div>

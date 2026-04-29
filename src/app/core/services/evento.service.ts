@@ -44,10 +44,10 @@ export class EventoService {
         
       );
     }
-    editarEvento(id: string, request: any): Observable<any> {
+    editarEvento(id: string, request: any): Observable<ApiResponse<CriarEventoResponse>> {
   const token = localStorage.getItem('token');
 
-  return this.http.put<any>(
+  return this.http.put<ApiResponse<CriarEventoResponse>>(
     `${this.url}/api/v1/evento/atualizar-evento/${id}`,
     request,
     {

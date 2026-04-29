@@ -26,7 +26,12 @@
         <h5 class="mb-3">Dados do Atendimento</h5>
         <!-- ================= CLIENTES ================= -->
 
+        <div class="mb-3">
+            <label class="form-label">Etiquetas</label>
 
+            <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
+            </app-etiquetas>
+          </div>
         <div class="row mb-3">
           <div class="col-md-6">
             <app-autocomplete-pessoa-atendimento label="Clientes" placeholder="Digite o nome do cliente"
@@ -42,12 +47,7 @@
             <label class="form-label">Assunto *</label>
             <input class="form-control" formControlName="assunto">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Etiquetas</label>
-
-            <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
-            </app-etiquetas>
-          </div>
+  
 
         </div>
 
