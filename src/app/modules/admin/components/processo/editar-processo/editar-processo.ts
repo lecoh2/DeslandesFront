@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { Router } from "express";
+import { Router } from "@angular/router";
 import { ProcessoService } from "../../../../../core/services/processo.service";
 import { AuthHelper } from "../../../../../core/helpers/auth.helper";
 import { VaraService } from "../../../../../core/services/vara.service";
@@ -14,9 +14,17 @@ import { inject, OnInit } from "@angular/core";
 import { InstanciaEnum } from "../../../../../core/models/enums/intancia/instanciaEnum";
 import { AcessoEnum } from "../../../../../core/models/enums/acesso/acesoEnum";
 import { HttpErrorResponse } from '@angular/common/http';
+import { forkJoin, catchError, of} from 'rxjs';
+import { ConsultarVaraResponse } from '../../../../../core/models/vara/consultar-vara-response';
+import { ConsultarAcaoResponse } from '../../../../../core/models/acao/consultar-acao-response';
+import { ConsultarUsuarioResponse } from '../../../../../core/models/usuario/consultar-usuarios.response';
+import { QualificacaoResponse } from '../../../../../core/models/qualificacao/qualificacao-response';
+import { ConsultarEtiquetaResponse } from '../../../../../core/models/etiqueta/consultar-etiqueta-response';
+import { PessoaSelecionada } from '../../../../../core/models/pessoa/pessoa-selecionada';
+import { PessoaResumo } from '../../../../../core/models/pessoa/pessoa-resumo';
 @Component({
   selector: 'app-editar-processo',
-  imports: [],
+  standalone:false,
   templateUrl: './editar-processo.html',
   styleUrl: './editar-processo.css',
 })
@@ -42,24 +50,29 @@ export class EditarProcesso implements OnInit {
   mensagemErro: string[] = [];
   mensagemSucesso: string[] = [];
 
-  varas: any[] = [];
-  varasFiltradas: any[] = [];
-  foros: any[] = [];
-  acoes: any[] = [];
-  responsaveis: any[] = [];
-  qualificacoes: any[] = [];
+  foros: { id: string, nome: string }[] = [];
 
-  tiposetiquetas: any[] = [];
-  etiquetasSelecionadas: any[] = [];
+  varas: ConsultarVaraResponse[] = [];  
+  varasFiltradas: ConsultarVaraResponse[] = [];
 
-  pessoasSelecionadas: any[] = [];
-  pessoasFiltradas: any[] = [];
+  acoes: ConsultarAcaoResponse[] = [];
 
-  envolvidosSelecionados: any[] = [];
-  envolvidosFiltradas: any[] = [];
+  responsaveis: ConsultarUsuarioResponse[] = [];
+  qualificacoes: QualificacaoResponse[] = [];
+
+  tiposetiquetas: ConsultarEtiquetaResponse[] = [];
+  etiquetasSelecionadas: ConsultarEtiquetaResponse[] = [];
+
+  //  AGORA PADRONIZADO
+  pessoasSelecionadas: PessoaSelecionada[] = [];
+  pessoasFiltradas: PessoaResumo[] = [];
+
+envolvidosSelecionados: PessoaSelecionada[] = [];
+  envolvidosFiltradas: PessoaResumo[] = [];
 
   instanciaEnum = InstanciaEnum;
   acessoEnum = AcessoEnum;
+
 
   form = this.builder.group({
     acaoId: [null],
@@ -79,7 +92,73 @@ export class EditarProcesso implements OnInit {
     instancia: [null],
     acesso: [null],
   });
+private carregarDadosIniciais() {
+  this.carregando = true;
+  this.mensagemErro = [];
 
+  forkJoin({
+    varas: this.varaService.consultar(),
+    acoes: this.acaoService.consultar(),
+    usuarios: this.usuarioService.consultarUsuarioResponsavel(),
+    qualificacoes: this.qualificacaoService.consultarQualificacoes(),
+    etiquetas: this.etiquetaService.consultar()
+  }).subscribe({
+    next: (res) => {
+
+      const { varas, acoes, usuarios, qualificacoes, etiquetas } = res as {
+        varas: ConsultarVaraResponse[];
+        acoes: ConsultarAcaoResponse[];
+        usuarios: ConsultarUsuarioResponse[];
+        qualificacoes: QualificacaoResponse[];
+        etiquetas: ConsultarEtiquetaResponse[];
+      };
+
+      // 🔥 VARAS + FOROS
+      this.varas = varas;
+      this.varasFiltradas = varas;
+
+      const mapa = new Map<string, string>();
+      varas.forEach(v => {
+        if (v.foroId && v.nomeForo) {
+          mapa.set(v.foroId, v.nomeForo);
+        }
+      });
+
+      this.foros = Array.from(mapa, ([id, nome]) => ({ id, nome }));
+
+      // 🔥 OUTROS DADOS
+      this.acoes = acoes;
+      this.responsaveis = usuarios;
+      this.qualificacoes = qualificacoes;
+      this.tiposetiquetas = etiquetas;
+
+      // 🔥 IMPORTANTE (somente no EDITAR)
+      if (this.id) {
+        this.carregarProcesso();
+      }
+    },
+    error: () => {
+      this.mensagemErro = ['Erro ao carregar dados iniciais'];
+      this.carregando = false;
+    },
+    complete: () => {
+      this.carregando = false;
+    }
+  });
+}irParaLista(): void {
+  this.router.navigate(['/admin/consultar-processo']);
+}
+  buscarPessoas(nome: string) {
+    this.pessoaService.consultarPessoasResumo(nome)
+      .pipe(catchError(() => of([])))
+      .subscribe(res => this.pessoasFiltradas = res);
+  }
+
+  buscarEnvolvidos(nome: string) {
+    this.pessoaService.consultarPessoasResumo(nome)
+      .pipe(catchError(() => of([])))
+      .subscribe(res => this.envolvidosFiltradas = res);
+  }
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id')!;
 
@@ -101,7 +180,7 @@ export class EditarProcesso implements OnInit {
   private carregarProcesso() {
     this.carregando = true;
 
-    this.processoService.obterProcessoPorId(this.id).subscribe({
+    this.processoService.ObterProcessoPorId(this.id).subscribe({
       next: (res: any) => {
 
         // FORM

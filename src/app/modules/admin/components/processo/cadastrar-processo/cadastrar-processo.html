@@ -24,6 +24,12 @@
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <!-- ================= ETIQUETAS ================= -->
 
+                <div class="mb-3">
+                    <label class="form-label">Etiquetas</label>
+
+                    <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
+                    </app-etiquetas>
+                </div>
                 <!-- ================= DADOS DO PROCESSO ================= -->
                 <h5 class="mb-3">Dados do Processo</h5>
 
@@ -67,12 +73,6 @@
 
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Etiquetas</label>
-
-                    <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
-                    </app-etiquetas>
-                </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Instância</label>

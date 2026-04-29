@@ -7,6 +7,7 @@ import { CadastrarProcessoResponse } from "../models/processo/cadastar-processo-
 import { Observable } from "rxjs";
 import { ApiResponse } from "../models/respostas/api-response";
 import { ProcessoAutoComplete } from "../models/processo/processo-auto-complete";
+import { ObterProcessoResponse } from "../models/processo/obter-processo-response";
 
 
 @Injectable({
@@ -58,6 +59,13 @@ editarProcesso(id: string, request: any): Observable<any> {
         ? { Authorization: `Bearer ${token}` }
         : {}
     }
+  );
+}
+ObterProcessoPorId(id: string): Observable<ObterProcessoResponse> {
+  return this.http.get<ObterProcessoResponse>(
+    `${this.url}/api/v1/processo/obter-processo-por-id/${id}`
+
+    
   );
 }
 }

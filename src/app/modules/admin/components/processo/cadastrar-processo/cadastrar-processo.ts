@@ -19,7 +19,7 @@ import { QualificacoesService } from '../../../../../core/services/qualificacoes
 import { PessoaService } from '../../../../../core/services/pessoa.service';
 import { QualificacaoResponse } from '../../../../../core/models/qualificacao/qualificacao-response';
 
-import { catchError, of } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { EtiquetaService } from '../../../../../core/services/etiqueta.service';
 import { InstanciaEnum } from '../../../../../core/models/enums/intancia/instanciaEnum';
 import { AcessoEnum } from '../../../../../core/models/enums/acesso/acesoEnum';
@@ -57,7 +57,7 @@ export class CadastrarProcesso implements OnInit {
 
   tiposetiquetas: ConsultarEtiquetaResponse[] = [];
   etiquetasSelecionadas: ConsultarEtiquetaResponse[] = [];
-  // 🔥 AGORA PADRONIZADO
+  //  AGORA PADRONIZADO
   pessoasSelecionadas: PessoaSelecionada[] = [];
   pessoasFiltradas: PessoaResumo[] = [];
 
@@ -124,7 +124,7 @@ export class CadastrarProcesso implements OnInit {
   }
 
   // ================== CARGAS ==================
-  private carregarDadosIniciais() {
+  /*private carregarDadosIniciais() {
 
     this.varaService.consultar().subscribe({
       next: (data) => {
@@ -175,7 +175,61 @@ this.etiquetaService.consultar().subscribe({
 
     this.carregando = false;
   }
+*/
+private carregarDadosIniciais() {
+  this.carregando = true;
+  this.mensagemErro = [];
 
+  forkJoin({
+    varas: this.varaService.consultar(),
+    acoes: this.acaoService.consultar(),
+    usuarios: this.usuarioService.consultarUsuarioResponsavel(),
+    qualificacoes: this.qualificacaoService.consultarQualificacoes(),
+    etiquetas: this.etiquetaService.consultar()
+  }).subscribe({
+    next: (res) => {
+
+      const { varas, acoes, usuarios, qualificacoes, etiquetas } = res as {
+        varas: ConsultarVaraResponse[];
+        acoes: ConsultarAcaoResponse[];
+        usuarios: ConsultarUsuarioResponse[];
+        qualificacoes: QualificacaoResponse[];
+        etiquetas: ConsultarEtiquetaResponse[];
+      };
+
+      // 🔥 VARAS + FOROS
+      this.varas = varas;
+      this.varasFiltradas = varas;
+
+      const mapa = new Map<string, string>();
+      varas.forEach(v => {
+        if (v.foroId && v.nomeForo) {
+          mapa.set(v.foroId, v.nomeForo);
+        }
+      });
+
+      this.foros = Array.from(mapa, ([id, nome]) => ({ id, nome }));
+
+      // 🔥 OUTROS DADOS
+      this.acoes = acoes;
+      this.responsaveis = usuarios;
+      this.qualificacoes = qualificacoes;
+      this.tiposetiquetas = etiquetas;
+
+      // 🔥 IMPORTANTE (somente no EDITAR)
+     /* if (this) {
+        this.carregarProcesso();
+      }*/
+    },
+    error: () => {
+      this.mensagemErro = ['Erro ao carregar dados iniciais'];
+      this.carregando = false;
+    },
+    complete: () => {
+      this.carregando = false;
+    }
+  });
+}
   // ================== BUSCAS (NOVO PADRÃO) ==================
   buscarPessoas(nome: string) {
     this.pessoaService.consultarPessoasResumo(nome)

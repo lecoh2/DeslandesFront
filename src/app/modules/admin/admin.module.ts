@@ -32,6 +32,7 @@ import { ConsultarAtendimento } from "./components/atendimento/consultar-atendim
 import { EditarAtendimento } from "./components/atendimento/editar-atendimento/editar-atendimento";
 import { ConsultarCaso } from "./components/caso/consultar-caso/consultar-caso";
 import { ConsultarProcesso } from "./components/processo/consultar-processo/consultar-processo";
+import { EditarProcesso } from "./components/processo/editar-processo/editar-processo";
 
 
 
@@ -45,6 +46,7 @@ import { ConsultarProcesso } from "./components/processo/consultar-processo/cons
         ConsultarPessoas,
         CadastrarProcesso,
         ConsultarProcesso,
+        EditarProcesso,
         CadastrarAtendimento,
         ConsultarAtendimento,
         EditarAtendimento,

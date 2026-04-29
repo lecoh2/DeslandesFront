@@ -22,6 +22,7 @@ import { EditarAtendimento } from "./components/atendimento/editar-atendimento/e
 import { ConsultarCaso } from "./components/caso/consultar-caso/consultar-caso";
 import { ConsultarProcesso } from "./components/processo/consultar-processo/consultar-processo";
 import { EditarCaso } from "./components/caso/editar-caso/editar-caso";
+import { EditarProcesso } from "./components/processo/editar-processo/editar-processo";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -55,6 +56,12 @@ export const routes: Routes = [
               {
                 path: 'cadastrar-processo',
                 component: CadastrarProcesso,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },{
+              path: 'editar-processo/:id',
+                component: EditarProcesso,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
