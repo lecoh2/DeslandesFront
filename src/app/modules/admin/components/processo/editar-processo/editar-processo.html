@@ -13,15 +13,11 @@
             <app-spinner *ngIf="carregando" [show]="true" message="Carregando..."></app-spinner>
 
             <!-- ALERTAS -->
-            <app-alerts *ngIf="!carregando && mensagemSucesso.length"
-                titulo="Sucesso!"
-                [mensagens]="mensagemSucesso"
+            <app-alerts *ngIf="!carregando && mensagemSucesso.length" titulo="Sucesso!" [mensagens]="mensagemSucesso"
                 tipo="success">
             </app-alerts>
 
-            <app-alerts *ngIf="!carregando && mensagemErro.length"
-                titulo="Erro!"
-                [mensagens]="mensagemErro"
+            <app-alerts *ngIf="!carregando && mensagemErro.length" titulo="Erro!" [mensagens]="mensagemErro"
                 tipo="danger">
             </app-alerts>
 
@@ -29,12 +25,10 @@
 
                 <!-- ================= DADOS DO PROCESSO ================= -->
                 <h5 class="mb-3">Dados do Processo</h5>
-   <!-- ================= ETIQUETAS ================= -->
+                <!-- ================= ETIQUETAS ================= -->
                 <div class="mb-3">
                     <label class="form-label">Etiquetas</label>
-                    <app-etiquetas
-                        [etiquetas]="tiposetiquetas"
-                        [(selecionadas)]="etiquetasSelecionadas">
+                    <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
                     </app-etiquetas>
                 </div>
 
@@ -44,29 +38,21 @@
                         <input class="form-control" formControlName="pasta">
                     </div>
                 </div>
-    
+
                 <!-- ================= PESSOAS ================= -->
                 <div class="row mb-3">
 
                     <div class="col-md-6">
-                        <app-autocomplete-pessoa
-                            label="Clientes"
-                            placeholder="Digite o nome do cliente"
-                            [resultados]="pessoasFiltradas"
-                            [(selecionadas)]="pessoasSelecionadas"
-                            [qualificacoes]="qualificacoes"
-                            (buscar)="buscarPessoas($event)">
+                        <app-autocomplete-pessoa label="Clientes" placeholder="Digite o nome do cliente"
+                            [resultados]="pessoasFiltradas" [(selecionadas)]="pessoasSelecionadas"
+                            [qualificacoes]="qualificacoes" (buscar)="buscarPessoas($event)">
                         </app-autocomplete-pessoa>
                     </div>
 
                     <div class="col-md-6">
-                        <app-autocomplete-pessoa
-                            label="Outros envolvidos"
-                            placeholder="Digite o nome do envolvido"
-                            [resultados]="envolvidosFiltradas"
-                            [(selecionadas)]="envolvidosSelecionados"
-                            [qualificacoes]="qualificacoes"
-                            (buscar)="buscarEnvolvidos($event)">
+                        <app-autocomplete-pessoa label="Outros envolvidos" placeholder="Digite o nome do envolvido"
+                            [resultados]="envolvidosFiltradas" [(selecionadas)]="envolvidosSelecionados"
+                            [qualificacoes]="qualificacoes" (buscar)="buscarEnvolvidos($event)">
                         </app-autocomplete-pessoa>
                     </div>
 
@@ -79,7 +65,7 @@
                     </div>
                 </div>
 
-         
+
                 <!-- ================= INSTÂNCIA / PROCESSO ================= -->
                 <div class="row mb-3">
 
@@ -97,9 +83,7 @@
 
                     <div class="col-md-8">
                         <label class="form-label">Número do Processo</label>
-                        <input class="form-control"
-                               formControlName="numeroProcesso"
-                               mask="0000000-00.0000.0.00.0000">
+                        <input class="form-control" formControlName="numeroProcesso" mask="0000000-00.0000.0.00.0000">
                     </div>
 
                 </div>
@@ -107,12 +91,7 @@
                 <!-- ================= SELEÇÕES ================= -->
                 <div class="row mb-3">
 
-                    <div class="col-md-3">
-                        <label class="form-label">Juízo</label>
-                        <input class="form-control"
-                               formControlName="juizo"
-                               placeholder="Nº do juízo">
-                    </div>
+
 
                     <div class="col-md-3">
                         <label class="form-label">Foro</label>
@@ -143,7 +122,11 @@
                             </option>
                         </select>
                     </div>
-
+                    <!---->
+                    <div class="col-md-3">
+                        <label class="form-label">Juízo</label>
+                        <p> {{ juizoFormatado }}</p>
+                    </div>
                 </div>
 
                 <div class="row mb-3">
@@ -157,19 +140,16 @@
                             </option>
                         </select>
                     </div>
-
+                    <div class="col-md-6">
+                        <label class="form-label">Link do Tribunal</label>
+                        <input class="form-control" formControlName="linkTribunal">
+                    </div>
                 </div>
 
                 <!-- ================= DETALHES ================= -->
-                <div class="mb-3">
-                    <label class="form-label">Link do Tribunal</label>
-                    <input class="form-control" formControlName="linkTribunal">
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Objeto</label>
-                    <textarea class="form-control" rows="3" formControlName="objeto"></textarea>
-                </div>
+
+
 
                 <!-- ================= VALORES ================= -->
                 <h5 class="mt-4 mb-3">Valores e Datas</h5>
@@ -192,39 +172,38 @@
                     </div>
 
                 </div>
+                <div class="row mb-3">
 
-                <div class="mb-3">
-                    <label class="form-label">Observação</label>
-                    <textarea class="form-control" rows="3" formControlName="observacao"></textarea>
+                    <div class="col-md-6">
+                        <label class="form-label">Objeto</label>
+                        <textarea class="form-control" rows="3" formControlName="objeto"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Observação</label>
+                        <textarea class="form-control" rows="3" formControlName="observacao"></textarea>
+                    </div>
                 </div>
-
                 <!-- ================= ACESSO ================= -->
-                <div class="mb-3">
+                <div class="col-md-3">
                     <label class="form-label">Acesso</label>
 
                     <div class="d-flex gap-4">
 
                         <div class="form-check">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   formControlName="acesso"
-                                   [value]="acessoEnum.Publico">
+                            <input class="form-check-input" type="radio" formControlName="acesso"
+                                [value]="acessoEnum.Publico">
                             <label class="form-check-label">Público</label>
                         </div>
 
                         <div class="form-check">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   formControlName="acesso"
-                                   [value]="acessoEnum.Privado">
+                            <input class="form-check-input" type="radio" formControlName="acesso"
+                                [value]="acessoEnum.Privado">
                             <label class="form-check-label">Privado</label>
                         </div>
 
                         <div class="form-check">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   formControlName="acesso"
-                                   [value]="acessoEnum.Envolvidos">
+                            <input class="form-check-input" type="radio" formControlName="acesso"
+                                [value]="acessoEnum.Envolvidos">
                             <label class="form-check-label">Envolvidos</label>
                         </div>
 
@@ -232,14 +211,14 @@
                 </div>
 
                 <!-- BOTÃO -->
-              <button type="button" class="btn btn-secondary mt-3 me-2" (click)="irParaLista()">
-          <i class="fas fa-arrow-left"></i> Voltar
-        </button>
+                <button type="button" class="btn btn-secondary mt-3 me-2" (click)="irParaLista()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
 
-        <!-- BOTÃO -->
-        <button type="submit" class="btn btn-primary mt-3" [disabled]="carregando">
-          <i class="fas fa-save"></i> Atualizar Processo
-        </button>
+                <!-- BOTÃO -->
+                <button type="submit" class="btn btn-primary mt-3" [disabled]="carregando">
+                    <i class="fas fa-save"></i> Atualizar Processo
+                </button>
 
             </form>
 

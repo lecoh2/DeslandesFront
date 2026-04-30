@@ -93,7 +93,7 @@ export class CadastrarProcesso implements OnInit {
 
   // ================== INIT ==================
   ngOnInit(): void {
-    this.carregando = true;
+    this.carregando = false;
 
     this.usuarioLogado = this.authHelper.get();
 
@@ -175,9 +175,19 @@ this.etiquetaService.consultar().subscribe({
 
     this.carregando = false;
   }
-*/
+*/get juizoFormatado(): string {
+  const varaId = this.form.value.varaId;
+
+  if (!varaId) return '';
+
+  const vara = this.varas.find(v => v.id === varaId);
+
+  if (!vara) return '';
+
+  return `${vara.nomeVara} - ${vara.nomeForo}`;
+}
 private carregarDadosIniciais() {
-  this.carregando = true;
+  this.carregando = false;
   this.mensagemErro = [];
 
   forkJoin({
@@ -188,16 +198,8 @@ private carregarDadosIniciais() {
     etiquetas: this.etiquetaService.consultar()
   }).subscribe({
     next: (res) => {
+      const { varas, acoes, usuarios, qualificacoes, etiquetas } = res;
 
-      const { varas, acoes, usuarios, qualificacoes, etiquetas } = res as {
-        varas: ConsultarVaraResponse[];
-        acoes: ConsultarAcaoResponse[];
-        usuarios: ConsultarUsuarioResponse[];
-        qualificacoes: QualificacaoResponse[];
-        etiquetas: ConsultarEtiquetaResponse[];
-      };
-
-      // 🔥 VARAS + FOROS
       this.varas = varas;
       this.varasFiltradas = varas;
 
@@ -210,23 +212,16 @@ private carregarDadosIniciais() {
 
       this.foros = Array.from(mapa, ([id, nome]) => ({ id, nome }));
 
-      // 🔥 OUTROS DADOS
       this.acoes = acoes;
       this.responsaveis = usuarios;
       this.qualificacoes = qualificacoes;
       this.tiposetiquetas = etiquetas;
-
-      // 🔥 IMPORTANTE (somente no EDITAR)
-     /* if (this) {
-        this.carregarProcesso();
-      }*/
     },
     error: () => {
       this.mensagemErro = ['Erro ao carregar dados iniciais'];
-      this.carregando = false;
     },
     complete: () => {
-      this.carregando = false;
+      this.carregando = false; // 🔥 GARANTE que sempre para
     }
   });
 }
@@ -307,7 +302,7 @@ private carregarDadosIniciais() {
         this.resetarFormulario();
         this.carregando = false;
         this.mensagemSucesso = [response?.message];
-        this.router.navigate(['/admin/cadastrar-processo']);
+        //this.router.navigate(['/admin/cadastrar-processo']);
       },
       error: (err: HttpErrorResponse) => this.tratarErro(err)
     });
@@ -329,7 +324,7 @@ private carregarDadosIniciais() {
     this.form.reset();
     this.pessoasSelecionadas = [];
     this.envolvidosSelecionados = [];
-
+ this.etiquetasSelecionadas = [];
     if (this.usuarioLogado) {
       this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
     }

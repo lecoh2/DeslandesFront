@@ -175,18 +175,30 @@ private carregarDadosIniciais() {
       this.form.get('varaId')?.setValue(null);
     });
   }
+get juizoFormatado(): string {
+  const varaId = this.form.value.varaId;
 
+  if (!varaId) return '';
+
+  const vara = this.varas.find(v => v.id === varaId);
+
+  if (!vara) return '';
+
+  return `${vara.nomeVara} - ${vara.nomeForo}`;
+}
   // ================= CARREGAR PROCESSO =================
   private carregarProcesso() {
     this.carregando = true;
 
     this.processoService.ObterProcessoPorId(this.id).subscribe({
       next: (res: any) => {
+ console.log('🔥 PROCESSO BACKEND:', res); // 👈 AQUI
 
         // FORM
         this.form.patchValue({
           acaoId: res.acaoId,
           varaId: res.varaId,
+           foroId: res.foroId,
           usuarioResponsavelId: res.usuarioResponsavelId,
           juizo: res.juizo,
           pasta: res.pasta,
@@ -200,7 +212,7 @@ private carregarDadosIniciais() {
           observacao: res.observacao,
           instancia: res.instancia,
           acesso: res.acesso
-        });
+        }, { emitEvent: false });
 
         // CLIENTES
         this.pessoasSelecionadas = (res.grupoClienteProcesso ?? []).map((c: any) => ({

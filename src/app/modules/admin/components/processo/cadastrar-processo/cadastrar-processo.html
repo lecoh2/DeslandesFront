@@ -93,30 +93,27 @@
                 </div>
                 <!-- ================= SELEÇÕES ================= -->
                 <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Juízo</label>
-                        <input class="form-control" formControlName="juizo" placeholder="Nº do juízo">
-                    </div>
-                <div class="col-md-4">
-  <label class="form-label">Foro</label>
-  <select class="form-control" formControlName="foroId">
-    <option [ngValue]="null">Selecione</option>
-    <option *ngFor="let foro of foros" [ngValue]="foro.id">
-      {{ foro.nome }}
-    </option>
-  </select>
-</div>
 
-<div class="col-md-4">
-  <label class="form-label">Vara *</label>
-  <select class="form-control" formControlName="varaId">
-    <option [ngValue]="null">Selecione</option>
-    <option *ngFor="let vara of varasFiltradas" [ngValue]="vara.id">
-      {{ vara.nomeVara }}
-    </option>
-  </select>
-</div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Foro</label>
+                        <select class="form-control" formControlName="foroId">
+                            <option [ngValue]="null">Selecione</option>
+                            <option *ngFor="let foro of foros" [ngValue]="foro.id">
+                                {{ foro.nome }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Vara *</label>
+                        <select class="form-control" formControlName="varaId">
+                            <option [ngValue]="null">Selecione</option>
+                            <option *ngFor="let vara of varasFiltradas" [ngValue]="vara.id">
+                                {{ vara.nomeVara }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Ação</label>
                         <select class="form-control" formControlName="acaoId">
                             <option [ngValue]="null">Selecione</option>
@@ -125,8 +122,14 @@
                             </option>
                         </select>
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Juízo</label>
+                        <p> {{ juizoFormatado }}</p>
+                    </div>
+                </div>
+                <div class="row mb-3">
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Responsável</label>
                         <select class="form-control" formControlName="usuarioResponsavelId">
                             <option [ngValue]="null">Selecione</option>
@@ -135,19 +138,17 @@
                             </option>
                         </select>
                     </div>
-
+                    <div class="col-md-6">
+                        <label class="form-label">Link do Tribunal</label>
+                        <input class="form-control" formControlName="linkTribunal">
+                    </div>
                 </div>
+
 
                 <!-- ================= DETALHES ================= -->
-                <div class="mb-3">
-                    <label class="form-label">Link do Tribunal</label>
-                    <input class="form-control" formControlName="linkTribunal">
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Objeto</label>
-                    <textarea class="form-control" rows="3" formControlName="objeto"></textarea>
-                </div>
+
+
 
                 <!-- ================= VALORES ================= -->
                 <h5 class="mt-4 mb-3">Valores e Datas</h5>
@@ -170,13 +171,17 @@
                     </div>
 
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Observação</label>
-                    <textarea class="form-control" rows="3" formControlName="observacao"></textarea>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Objeto</label>
+                        <textarea class="form-control" rows="3" formControlName="objeto"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Observação</label>
+                        <textarea class="form-control" rows="3" formControlName="observacao"></textarea>
+                    </div>
                 </div>
-
-                <div class="mb-3">
+                <div class="col-md-6">
                     <label class="form-label">Acesso</label>
 
                     <div class="d-flex gap-4">
