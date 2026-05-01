@@ -1,0 +1,70 @@
+.event-sidebar {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 380px;
+  height: 100vh;
+
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+
+  box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  z-index: 2000;
+
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-sidebar.open {
+  right: 0;
+}
+
+/* HEADER */
+.sidebar-header {
+  padding: 15px;
+  border-bottom: 1px solid var(--bs-border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  /* garante alinhamento bonito */
+  gap: 10px;
+}
+
+/* BOTÃO FECHAR */
+.sidebar-header button {
+  border: none;
+  background: transparent;
+  color: var(--bs-body-color);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-header button:hover {
+  background: rgba(0,0,0,0.08);
+}
+
+/* BODY */
+.sidebar-body {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+/* TEXTO + ÍCONES (CORRIGE BAGUNÇA) */
+.sidebar-body p {
+  margin-bottom: 12px;
+  color: var(--bs-body-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ÍCONES FONT AWESOME */
+.sidebar-body i {
+  color: inherit;
+  opacity: 0.85;
+}

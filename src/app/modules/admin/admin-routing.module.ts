@@ -23,6 +23,10 @@ import { ConsultarCaso } from "./components/caso/consultar-caso/consultar-caso";
 import { ConsultarProcesso } from "./components/processo/consultar-processo/consultar-processo";
 import { EditarCaso } from "./components/caso/editar-caso/editar-caso";
 import { EditarProcesso } from "./components/processo/editar-processo/editar-processo";
+import { ConsultarTarefa } from "./components/tarefa/consultar-tarefa/consultar-tarefa";
+import { ConsultarEvento } from "./components/evento/consultar-evento/consultar-evento";
+import { AgendaEventos } from "./components/evento/agenda-evento/agenda-eventos";
+import { Calendario } from "./components/calendario/calendario";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -129,6 +133,13 @@ export const routes: Routes = [
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
             },
+               {
+                path: 'consultar-tarefa',
+                component: ConsultarTarefa,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
                 {
                 path: 'cadastrar-evento',
                 component: CadastrarEvento,
@@ -138,6 +149,20 @@ export const routes: Routes = [
             }, {
                 path: 'editar-evento/:id',
                 component: EditarEvento,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
+              {
+                path: 'consultar-evento',
+                component: ConsultarEvento,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
+              {
+                path: 'agenda-eventos',
+                component: AgendaEventos,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 

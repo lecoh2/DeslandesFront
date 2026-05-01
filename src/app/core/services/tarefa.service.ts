@@ -66,5 +66,9 @@ editarTarefa(id: string, request: any): Observable<any> {
     }
   );
 }
-
+       consultarTarefaPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
+  const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
+  if (searchTerm) params.searchTerm = searchTerm;
+  return this.http.get<any>(`${this.url}/api/v1/tarefa/consultar-tarefa-paginacao`, { params });
+}
 }

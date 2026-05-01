@@ -1,1 +1,176 @@
-<p>consultar-evento works!</p>
+<div class="container-fluid p-0">
+
+  <h1 class="h3 mb-3">Consultar Eventos</h1>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Pesquisa de Eventos</h5>
+    </div>
+
+    <div class="card-body">
+
+      <!-- 🔎 FILTRO -->
+      <div class="d-flex justify-content-between mb-3">
+
+        <input type="text"
+               class="form-control form-control-sm w-50"
+               placeholder="Pesquisar título..."
+               [(ngModel)]="filtro"
+               (keyup.enter)="aplicarFiltro()">
+
+        <select class="form-select form-select-sm w-auto"
+                [(ngModel)]="tamanhoPagina"
+                (change)="aplicarFiltro()">
+          <option *ngFor="let size of [5,10,20,50]" [value]="size">
+            {{ size }} por página
+          </option>
+        </select>
+
+      </div>
+
+      <!-- LOADING -->
+      <app-spinner-consulta *ngIf="carregando"></app-spinner-consulta>
+
+      <!-- ========================= -->
+      <!-- TABELA -->
+      <!-- ========================= -->
+      <table class="table table-striped">
+
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Modalidade</th>
+            <th>Responsáveis</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let item of dataSource">
+
+            <!-- TITULO -->
+            <td>{{ item.titulo }}</td>
+
+            <!-- DATA -->
+            <td>{{ getData(item) }}</td>
+
+            <!-- HORA -->
+            <td>{{ getHora(item) }}</td>
+
+            <!-- MODALIDADE -->
+            <td>{{ getModalidade(item.modalidade) }}</td>
+
+            <!-- ========================= -->
+            <!-- 👥 RESPONSÁVEIS -->
+            <!-- ========================= -->
+            <td>
+
+              <ng-container *ngIf="item.grupoEventoResponsavel?.length > 0">
+
+                {{ item.grupoEventoResponsavel[0].nomeUsuario }}
+
+                <ng-container *ngIf="item.grupoEventoResponsavel.length > 1">
+
+                  <div class="dropdown d-inline ms-2">
+
+                    <a href="#"
+                       data-bs-toggle="dropdown">
+
+                      <span class="badge bg-primary">
+                        ver mais
+                      </span>
+
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                      <li *ngFor="let r of item.grupoEventoResponsavel.slice(1)">
+                        <span class="dropdown-item">
+                          {{ r.nomeUsuario }}
+                        </span>
+                      </li>
+
+                    </ul>
+
+                  </div>
+
+                </ng-container>
+
+              </ng-container>
+
+            </td>
+
+            <!-- STATUS -->
+            <td>
+              <span class="badge"
+                    [ngClass]="{
+                      'bg-secondary': item.statusGeralKanban === 1,
+                      'bg-primary': item.statusGeralKanban === 2,
+                      'bg-success': item.statusGeralKanban === 3,
+                      'bg-danger': item.statusGeralKanban === 4
+                    }">
+
+                {{ getStatus(item.statusGeralKanban) }}
+
+              </span>
+            </td>
+
+            <!-- AÇÕES -->
+            <td class="text-end">
+
+              <a [routerLink]="['/admin/editar-evento', item.id]">
+                <i class="fas fa-pencil-alt"></i>
+              </a>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+      <!-- PAGINAÇÃO -->
+      <ul class="pagination justify-content-center mt-3" *ngIf="totalPaginas > 1">
+
+        <li class="page-item" [class.disabled]="paginaAtual === 1">
+          <a class="page-link" (click)="irParaPagina(1)">Primeira</a>
+        </li>
+
+        <li class="page-item" [class.disabled]="paginaAtual === 1">
+          <a class="page-link" (click)="irParaPagina(paginaAtual - 1)">Anterior</a>
+        </li>
+
+        <li class="page-item"
+            *ngFor="let p of paginasVisiveis"
+            [class.active]="p === paginaAtual">
+
+          <a class="page-link" (click)="irParaPagina(p)">
+            {{ p }}
+          </a>
+
+        </li>
+
+        <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
+          <a class="page-link" (click)="irParaPagina(paginaAtual + 1)">Próxima</a>
+        </li>
+
+        <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
+          <a class="page-link" (click)="irParaPagina(totalPaginas)">Última</a>
+        </li>
+
+      </ul>
+
+      <p class="text-end text-muted">
+        Página {{ paginaAtual }} de {{ totalPaginas }} |
+        Total: {{ totalRegistros }}
+      </p>
+
+    </div>
+  </div>
+
+</div>

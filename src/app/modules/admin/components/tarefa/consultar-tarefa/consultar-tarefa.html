@@ -1,1 +1,186 @@
-<p>consultar-tarefa works!</p>
+<div class="container-fluid p-0">
+
+  <h1 class="h3 mb-3">Consultar Tarefas</h1>
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <div class="card">
+
+        <div class="card-header">
+          <h5 class="card-title">Pesquisa de Tarefas</h5>
+        </div>
+
+        <div class="card-body">
+
+          <!-- 🔎 FILTRO -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <input type="text"
+                   class="form-control form-control-sm w-50"
+                   placeholder="Pesquisar descrição..."
+                   [(ngModel)]="filtro"
+                   (keyup.enter)="aplicarFiltro()">
+
+            <div>
+              <select class="form-select form-select-sm"
+                      [(ngModel)]="tamanhoPagina"
+                      (change)="aplicarFiltro()">
+
+                <option *ngFor="let size of [5,10,20,50]" [value]="size">
+                  {{ size }} por página
+                </option>
+
+              </select>
+            </div>
+
+          </div>
+
+          <!-- 🔥 LOADING -->
+          <app-spinner-consulta
+            *ngIf="carregando"
+            [carregando]="true"
+            message="Consultando..."
+            class="d-inline-block">
+          </app-spinner-consulta>
+
+          <!-- ALERTAS -->
+          <app-alerts
+            *ngIf="!carregando && mensagemSucesso.length > 0"
+            titulo="Sucesso!"
+            [mensagens]="mensagemSucesso"
+            tipo="success">
+          </app-alerts>
+
+          <app-alerts
+            *ngIf="!carregando && mensagemErro.length > 0"
+            titulo="Erro!"
+            [mensagens]="mensagemErro"
+            tipo="danger">
+          </app-alerts>
+
+          <!-- ========================= -->
+          <!-- TABELA -->
+          <!-- ========================= -->
+          <table class="table table-striped w-100">
+
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                <th>Data</th>
+                <th>Prioridade</th>
+                <th>Vínculo</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr *ngFor="let item of dataSource.data">
+
+                <!-- DESCRIÇÃO -->
+                <td>{{ item.descricao }}</td>
+
+                <!-- DATA -->
+                <td>{{ getDataFormatada(item.dataTarefa) }}</td>
+
+                <!-- PRIORIDADE -->
+                <td>
+                  <span class="badge"
+                        [ngClass]="{
+                          'bg-secondary': item.prioridade === 1,
+                          'bg-info': item.prioridade === 2,
+                          'bg-warning text-dark': item.prioridade === 3,
+                          'bg-danger': item.prioridade === 4
+                        }">
+                    {{ getPrioridade(item.prioridade) }}
+                  </span>
+                </td>
+
+                <!-- VÍNCULO -->
+                <td>
+                  {{ getTipoVinculo(item.tipoVinculo) }}
+                </td>
+
+                <!-- STATUS -->
+                <td>
+                  <span class="badge"
+                        [ngClass]="{
+                          'bg-secondary': item.statusGeralKanban === 1,
+                          'bg-primary': item.statusGeralKanban === 2,
+                          'bg-success': item.statusGeralKanban === 3,
+                          'bg-danger': item.statusGeralKanban === 4
+                        }">
+                    {{ getStatus(item.statusGeralKanban) }}
+                  </span>
+                </td>
+
+                <!-- AÇÕES -->
+                <td class="text-end">
+
+                  <a [routerLink]="['/admin/editar-tarefa', item.id]"
+                     title="Editar">
+
+                    <i class="fas fa-pencil-alt fa-lg"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+          <!-- ========================= -->
+          <!-- PAGINAÇÃO -->
+          <!-- ========================= -->
+          <nav *ngIf="totalPaginas > 1">
+
+            <ul class="pagination justify-content-center mt-3">
+
+              <li class="page-item" [class.disabled]="paginaAtual === 1">
+                <a class="page-link" (click)="irParaPagina(1)">Primeira</a>
+              </li>
+
+              <li class="page-item" [class.disabled]="paginaAtual === 1">
+                <a class="page-link" (click)="irParaPagina(paginaAtual - 1)">Anterior</a>
+              </li>
+
+              <li class="page-item"
+                  *ngFor="let p of paginasVisiveis"
+                  [class.active]="p === paginaAtual">
+
+                <a class="page-link" (click)="irParaPagina(p)">
+                  {{ p }}
+                </a>
+
+              </li>
+
+              <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
+                <a class="page-link" (click)="irParaPagina(paginaAtual + 1)">Próxima</a>
+              </li>
+
+              <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
+                <a class="page-link" (click)="irParaPagina(totalPaginas)">Última</a>
+              </li>
+
+            </ul>
+
+          </nav>
+
+          <p class="text-end text-muted">
+            Página {{ paginaAtual }} de {{ totalPaginas }} |
+            Total: {{ totalRegistros }}
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

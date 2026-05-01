@@ -1,0 +1,71 @@
+<div class="container-fluid p-0">
+
+  <h1 class="h3 mb-3">Calendar</h1>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Agenda de Eventos</h5>
+      <h6 class="card-subtitle text-muted">
+        Visualização mensal, semanal e diária
+      </h6>
+    </div>
+
+    <div class="card-body" style="overflow: visible;">
+
+      <!-- FULLCALENDAR -->
+      <full-calendar [options]="calendarOptions"></full-calendar>
+      <!-- SIDEBAR EVENTO -->
+      <div class="event-sidebar" [class.open]="eventoSelecionado">
+
+        <div class="sidebar-header">
+          <h5>
+            <i class="fas fa-calendar-alt me-2"></i>
+            {{ eventoSelecionado?.titulo }}
+          </h5>
+
+<button class="btn btn-sm btn-light d-flex align-items-center justify-content-center"
+        (click)="fecharSidebar()">
+  <i class="fas fa-times"></i>
+</button>
+        </div>
+
+        <div class="sidebar-body" *ngIf="eventoSelecionado">
+
+          <p>
+            <i class="fas fa-map-marker-alt text-danger me-2"></i>
+            Endereço: {{ eventoSelecionado?.endereco }}
+          </p>
+
+          <p>
+            <i class="fas fa-user text-primary me-2"></i>
+            Criador por: {{ eventoSelecionado?.criador }}
+          </p>
+
+          <p>
+            <i class="fas fa-layer-group text-info me-2"></i>
+            Modalidade: {{ getModalidadeTexto(eventoSelecionado?.modalidade) }}
+          </p>
+
+          <p>
+            <i class="fas fa-info-circle text-warning me-2"></i>
+            Status: {{ getStatusTexto(eventoSelecionado?.status) }}
+          </p>
+
+          <hr />
+
+          <p>
+            <i class="fas fa-clock me-2"></i>
+            Início: {{ eventoSelecionado?.start | date:'short' }}
+          </p>
+
+          <p>
+            <i class="fas fa-clock me-2"></i>
+            {{ eventoSelecionado?.end | date:'short' }}
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

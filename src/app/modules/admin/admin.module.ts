@@ -33,12 +33,18 @@ import { EditarAtendimento } from "./components/atendimento/editar-atendimento/e
 import { ConsultarCaso } from "./components/caso/consultar-caso/consultar-caso";
 import { ConsultarProcesso } from "./components/processo/consultar-processo/consultar-processo";
 import { EditarProcesso } from "./components/processo/editar-processo/editar-processo";
+import { ConsultarTarefa } from "./components/tarefa/consultar-tarefa/consultar-tarefa";
+import { ConsultarEvento } from "./components/evento/consultar-evento/consultar-evento";
+import { AgendaEventos } from "./components/evento/agenda-evento/agenda-eventos";
+import { Calendario } from "./components/calendario/calendario";
 
 
 
 
 @NgModule({
     declarations: [//componente do módulo
+        AgendaEventos,
+        Calendario,
         AdminLayout,
         PainelPrincipal,
         CadastrarPessoas,
@@ -56,8 +62,10 @@ import { EditarProcesso } from "./components/processo/editar-processo/editar-pro
         GestaoAtividades,
         CadastrarTarefa,
         EditarTarefa,
+        ConsultarTarefa,
         CadastrarEvento,
         EditarEvento,
+        ConsultarEvento,
     
 
 

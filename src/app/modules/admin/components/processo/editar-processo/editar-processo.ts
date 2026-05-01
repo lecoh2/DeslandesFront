@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
@@ -43,7 +43,7 @@ export class EditarProcesso implements OnInit {
   private pessoaService = inject(PessoaService);
   private qualificacaoService = inject(QualificacoesService);
   private etiquetaService = inject(EtiquetaService);
-
+private cdr = inject(ChangeDetectorRef);
   id!: string;
 
   carregando = false;
@@ -216,21 +216,21 @@ get juizoFormatado(): string {
 
         // CLIENTES
         this.pessoasSelecionadas = (res.grupoClienteProcesso ?? []).map((c: any) => ({
-          id: c.pessoaId,
+          id: c.idPessoa,
           nome: c.nome,
           idQualificacao: c.qualificacaoId
         }));
 
        // ENVOLVIDOS
         this.envolvidosSelecionados = (res.grupoEnvolvidosProcesso ?? []).map((e: any) => ({
-          id: e.pessoaId,
+          id: e.idPessoa,
           nome: e.nome,
           idQualificacao: e.qualificacaoId
         }));
 
         // ETIQUETAS
         this.etiquetasSelecionadas = (res.grupoEtiquetasProcesso ?? []).map((e: any) => ({
-          id: e.etiquetaId,
+          id: e.idEtiqueta,
           nome: e.nome,
           cor: e.cor
         }));
@@ -300,17 +300,19 @@ get juizoFormatado(): string {
   };
 
   this.processoService.editarProcesso(this.id, request).subscribe({
-    next: (res: any) => {
-      this.carregando = false;
+ next: (res: any) => {
+  this.carregando = false;
 
-      this.mensagemSucesso = [
-        res.message ?? 'Processo atualizado com sucesso'
-      ];
+  this.mensagemSucesso = [
+    res.message ?? 'Processo atualizado com sucesso'
+  ];
 
-      setTimeout(() => {
-        this.router.navigate(['/admin/consultar-processo']);
-      }, 3000);
-    },
+  this.cdr.detectChanges(); // 👈 força render
+
+  setTimeout(() => {
+    this.router.navigate(['/admin/consultar-processo']);
+  }, 3000);
+},
     error: (err) => this.tratarErro(err)
   });
 }
