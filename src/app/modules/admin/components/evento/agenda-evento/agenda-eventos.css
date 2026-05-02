@@ -67,4 +67,29 @@
 .sidebar-body i {
   color: inherit;
   opacity: 0.85;
+}.fc .prioridade-1 {
+  background-color: #2ecc71 !important;
+  border-color: #2ecc71 !important;
+  color: #fff !important;
+}
+
+.fc .prioridade-2 {
+  background-color: #f39c12 !important;
+  border-color: #f39c12 !important;
+  color: #fff !important;
+}
+
+.fc .prioridade-3 {
+  background-color: #e67e22 !important;
+  border-color: #e67e22 !important;
+  color: #fff !important;
+}
+
+.fc .prioridade-4 {
+  background-color: #e74c3c !important;
+  border-color: #e74c3c !important;
+  color: #fff !important;
+}.fc-event {
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
