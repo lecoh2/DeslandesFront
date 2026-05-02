@@ -20,7 +20,7 @@ import { CadastrarAtendimento } from "./components/atendimento/cadastrar-atendim
 import { AutocompletePessoaAtendimento } from "./components/autocomplete-pessoas-atendimento/autocomplete-pessoa-atendimento";
 import { Vinculo } from "./components/auto-complete-vinculos-proc-caso-atend/vinculo";
 import { CadastrarCaso } from "./components/caso/cadastrar-caso/cadastrar-caso";
-import { GestaoAtividades } from "./components/gestao-atividades/gestao-atividades";
+import { GestaoAtividades } from "./components/gestao-atividades/gestao/gestao-atividades";
 import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-tarefa/cadastar-tarefa";
 import { CadastrarResponsaveis } from "./components/responsaveis/cadastrar-responsaveis";
 import { AutocompleteListaTarefas } from "./components/auto-complete-lista-tarefas/autocomplete-lista-tarefas";
@@ -35,7 +35,7 @@ import { ConsultarProcesso } from "./components/processo/consultar-processo/cons
 import { EditarProcesso } from "./components/processo/editar-processo/editar-processo";
 import { ConsultarTarefa } from "./components/tarefa/consultar-tarefa/consultar-tarefa";
 import { ConsultarEvento } from "./components/evento/consultar-evento/consultar-evento";
-import { AgendaEventos } from "./components/evento/agenda-evento/agenda-eventos";
+import { Agenda } from "./components/gestao-atividades/agenda/agenda";
 import { Calendario } from "./components/calendario/calendario";
 
 
@@ -43,7 +43,7 @@ import { Calendario } from "./components/calendario/calendario";
 
 @NgModule({
     declarations: [//componente do módulo
-        AgendaEventos,
+        Agenda,
         Calendario,
         AdminLayout,
         PainelPrincipal,

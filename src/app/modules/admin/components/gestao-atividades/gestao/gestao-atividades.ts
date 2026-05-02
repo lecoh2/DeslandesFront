@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { KanbanColuna } from '../../../../core/models/kanban/kanban-coluna';
-import { KanbanService } from '../../../../core/services/kanban.service';
 
-import { ComentarioService } from '../../../../core/services/comenario.service';
-import { CriarComentarioResponse } from '../../../../core/models/comentario/criar-comentario-response';
-import { HistoricoService } from '../../../../core/services/historico.service';
-import { TipoEntidadeEnum } from '../../../../core/models/enums/tipo-entidade/tipo-entidadeEnum';
 import { Router } from '@angular/router';
+import { KanbanColuna } from '../../../../../core/models/kanban/kanban-coluna';
+import { KanbanService } from '../../../../../core/services/kanban.service';
+import { ComentarioService } from '../../../../../core/services/comenario.service';
+import { HistoricoService } from '../../../../../core/services/historico.service';
+import { CriarComentarioResponse } from '../../../../../core/models/comentario/criar-comentario-response';
+import { TipoEntidadeEnum } from '../../../../../core/models/enums/tipo-entidade/tipo-entidadeEnum';
 
 declare var bootstrap: any;
 
@@ -251,11 +251,17 @@ carregarKanban(): void {
       .subscribe({
         next: (res) => {
 
-          this.cardSelecionado = {
-            ...res,
-            responsaveis: res.responsaveis ?? [],
-            etiquetas: res.etiquetas ?? []
-          };
+   
+       this.cardSelecionado = {
+  ...res,
+
+  // 🔥 mantém o vínculo que já veio do Kanban
+  vinculoDescricao: res.vinculoDescricao ?? this.cardSelecionado?.vinculoDescricao,
+  tipoVinculo: res.tipoVinculo ?? this.cardSelecionado?.tipoVinculo,
+
+  responsaveis: res.responsaveis ?? [],
+  etiquetas: res.etiquetas ?? []
+};
 
           this.isLoadingDetalhe = false;
 
@@ -387,5 +393,12 @@ editar(id: string, tipo: string) {
     }
 
   }, 200);
+}getTipoVinculoLabel(tipo?: number | null): string {
+  switch (tipo) {
+    case 1: return 'Processo';
+    case 2: return 'Caso';
+    case 3: return 'Atendimento';
+    default: return '';
+  }
 }
 }

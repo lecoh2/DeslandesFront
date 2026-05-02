@@ -92,4 +92,20 @@
 }.fc-event {
     border-radius: 0 !important;
     box-shadow: none !important;
+}.tipo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 18px !important;   /* 🔥 força aumento */
+  font-weight: 700;
+  padding: 8px 14px;
+
+  border-radius: 4px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+
+  color: #fff;
+}.tipo-badge i {
+  font-size: 20px !important;
 }

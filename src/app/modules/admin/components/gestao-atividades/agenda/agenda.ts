@@ -19,13 +19,13 @@ import { TarefaService } from '../../../../../core/services/tarefa.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
-    selector: 'app-agenda-eventos',
+    selector: 'app-agenda',
     standalone: false,
-    templateUrl: './agenda-eventos.html',
-    styleUrls: ['./agenda-eventos.css'],
+    templateUrl: './agenda.html',
+    styleUrls: ['./agenda.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AgendaEventos implements OnInit {
+export class Agenda implements OnInit {
 
     private eventoService = inject(EventoService);
     private tarefaService = inject(TarefaService);

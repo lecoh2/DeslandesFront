@@ -12,7 +12,7 @@ import { ConsultarPessoas } from "./components/pessoa/consultar-pessoas/consulta
 import { CadastrarProcesso } from "./components/processo/cadastrar-processo/cadastrar-processo";
 import { CadastrarAtendimento } from "./components/atendimento/cadastrar-atendimento/cadastrar-atendimento";
 import { CadastrarCaso } from "./components/caso/cadastrar-caso/cadastrar-caso";
-import { GestaoAtividades } from "./components/gestao-atividades/gestao-atividades";
+import { GestaoAtividades } from "./components/gestao-atividades/gestao/gestao-atividades";
 import { CadastrarTarefa } from "./components/tarefa/cadastrar-tarefa/cadastar-tarefa/cadastar-tarefa";
 import { CadastrarEvento } from "./components/evento/cadastrar-evento/cadastrar-evento";
 import { EditarTarefa } from "./components/tarefa/editar-tarefa/editar-tarefa";
@@ -25,8 +25,8 @@ import { EditarCaso } from "./components/caso/editar-caso/editar-caso";
 import { EditarProcesso } from "./components/processo/editar-processo/editar-processo";
 import { ConsultarTarefa } from "./components/tarefa/consultar-tarefa/consultar-tarefa";
 import { ConsultarEvento } from "./components/evento/consultar-evento/consultar-evento";
-import { AgendaEventos } from "./components/evento/agenda-evento/agenda-eventos";
-import { Calendario } from "./components/calendario/calendario";
+
+import { Agenda } from "./components/gestao-atividades/agenda/agenda";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -160,17 +160,17 @@ export const routes: Routes = [
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
             },
-              {
-                path: 'agenda-eventos',
-                component: AgendaEventos,
-                canActivate: [AuthGuard, NivelGuard],
-                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
-
-            },
              //atividades
               {
                 path: 'gestao-atividades',
                 component: GestaoAtividades,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
+              {
+                path: 'agenda',
+                component: Agenda,
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
