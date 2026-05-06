@@ -5,6 +5,7 @@ import { map, Observable } from "rxjs";
 import { ProcessoResumoResponse } from "../models/processo-resumo/processo-resumo-response";
 import { AtendimentoAgrupadoResponse } from "../models/atendimento/atendimento-agrupodo-response";
 import { ProcessoAgrupadoResponse } from "../models/processo/proceso-agrupado-response";
+import { CasoAgrupadoResponse } from "../models/caso/caso-agrupado-response";
 
 @Injectable({
     providedIn: 'root'
@@ -47,5 +48,8 @@ getUltimosCasos(qtd: number = 5): Observable<any[]> {
   }
     getGraficoProceso(): Observable<ProcessoAgrupadoResponse[]> {
     return this.http.get<ProcessoAgrupadoResponse[]>(`${this.url}/api/v1/processo/consultar-graficos-processo`);
+  }
+     getGraficoCaso(): Observable<CasoAgrupadoResponse[]> {
+    return this.http.get<CasoAgrupadoResponse[]>(`${this.url}/api/v1/caso/consultar-graficos-casos`);
   }
 }

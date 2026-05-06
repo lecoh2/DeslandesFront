@@ -17,6 +17,7 @@ import { AutocompletePessoa } from '../modules/admin/components/autocomplete-pes
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GraficoAtendimento } from './components/graficos/atendimento/grafico-atendimento';
 import { GraficoProcesso } from './components/graficos/processo/grafico-processo';
+import { GraficoCaso } from './components/graficos/caso/grafico-caso';
 
 
 @NgModule({
@@ -29,6 +30,7 @@ import { GraficoProcesso } from './components/graficos/processo/grafico-processo
     ModalGeral,
     GraficoAtendimento,
     GraficoProcesso,
+    GraficoCaso,
 
   ],
   imports: [
@@ -53,6 +55,7 @@ import { GraficoProcesso } from './components/graficos/processo/grafico-processo
     ModalGeral,
     GraficoAtendimento,
     GraficoProcesso,
+    GraficoCaso,
 
 
 
