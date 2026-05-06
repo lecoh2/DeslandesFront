@@ -7,7 +7,7 @@ import { ComentarioService } from '../../../../../core/services/comenario.servic
 import { HistoricoService } from '../../../../../core/services/historico.service';
 import { CriarComentarioResponse } from '../../../../../core/models/comentario/criar-comentario-response';
 import { TipoEntidadeEnum } from '../../../../../core/models/enums/tipo-entidade/tipo-entidadeEnum';
-
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 declare var bootstrap: any;
 
 @Component({
@@ -44,20 +44,20 @@ export class GestaoAtividades implements OnInit {
     pessoaId: null as string | null,
     tipo: null as string | null,
     status: null as string | null
-  }; 
+  };
 
-filtrarPorStatus(): void {
+  filtrarPorStatus(): void {
 
-  if (!this.filtro.status) {
-    this.colunas = structuredClone(this.colunasOriginais);
-    return;
+    if (!this.filtro.status) {
+      this.colunas = structuredClone(this.colunasOriginais);
+      return;
+    }
+
+    this.colunas = this.colunasOriginais.map(coluna => ({
+      ...coluna,
+      cards: coluna.cards.filter(c => Number(c.status) === Number(this.filtro.status))
+    }));
   }
-
-  this.colunas = this.colunasOriginais.map(coluna => ({
-    ...coluna,
-   cards: coluna.cards.filter(c => Number(c.status) === Number(this.filtro.status))
-  }));
-}
   prioridadeLabel: Record<number, string> = {
     1: 'Baixa',
     2: 'Média',
@@ -74,15 +74,15 @@ filtrarPorStatus(): void {
   getPrioridadeLabel(p: number): string {
     return this.prioridadeLabel[p] ?? '---';
   }
-getCorColuna(status: number): string {
-  switch (status) {
-    case 1: return 'bg-secondary';   // A Fazer
-    case 2: return 'bg-primary';     // Em Andamento
-    case 3: return 'bg-success';     // Concluído
-       // Cancelado
-    default: return 'bg-dark';
+  getCorColuna(status: number): string {
+    switch (status) {
+      case 1: return 'bg-secondary';   // A Fazer
+      case 2: return 'bg-primary';     // Em Andamento
+      case 3: return 'bg-success';     // Concluído
+      // Cancelado
+      default: return 'bg-dark';
+    }
   }
-}
   getPrioridadeCor(p: number): string {
     return this.prioridadeCor[p] ?? '#6c757d';
   }
@@ -112,34 +112,34 @@ getCorColuna(status: number): string {
   }
 
   mudarStatus(id: string, status: number) {
-  this.kanbanService.atualizarStatus(id, status)
-    .subscribe(() => {
-      this.carregarKanban(); // 🔥 atualiza tela
-    });
-}
+    this.kanbanService.atualizarStatus(id, status)
+      .subscribe(() => {
+        this.carregarKanban(); // 🔥 atualiza tela
+      });
+  }
   ngOnInit(): void {
 
     this.carregarKanban();
   }
-carregarKanban(): void {
-  this.kanbanService.consultar().subscribe({
-    next: (res) => {
+  carregarKanban(): void {
+    this.kanbanService.consultar().subscribe({
+      next: (res) => {
 
-      this.colunas = res
-        .filter(coluna => coluna.status !== 4) // ❌ remove cancelado
-        .map(coluna => ({
-          ...coluna,
-          cards: (coluna.cards ?? []).map(card => ({
-            ...card,
-            prioridade: card.prioridade ?? null
+        this.colunas = res
+          .filter(coluna => coluna.status !== 4) // ❌ remove cancelado
+          .map(coluna => ({
+            ...coluna,
+            cards: (coluna.cards ?? []).map(card => ({
+              ...card,
+              prioridade: card.prioridade ?? null
+            }))
           }))
-        }))
-        .filter(coluna => coluna.cards.length > 0); // 🔥 remove coluna vazia
+          .filter(coluna => coluna.cards.length > 0); // 🔥 remove coluna vazia
 
-      this.colunasOriginais = structuredClone(this.colunas);
-    }
-  });
-}
+        this.colunasOriginais = structuredClone(this.colunas);
+      }
+    });
+  }
   getStatusLabel(status: number): string {
     switch (status) {
       case 1: return 'A Fazer';
@@ -251,17 +251,17 @@ carregarKanban(): void {
       .subscribe({
         next: (res) => {
 
-   
-       this.cardSelecionado = {
-  ...res,
 
-  // 🔥 mantém o vínculo que já veio do Kanban
-  vinculoDescricao: res.vinculoDescricao ?? this.cardSelecionado?.vinculoDescricao,
-  tipoVinculo: res.tipoVinculo ?? this.cardSelecionado?.tipoVinculo,
+          this.cardSelecionado = {
+            ...res,
 
-  responsaveis: res.responsaveis ?? [],
-  etiquetas: res.etiquetas ?? []
-};
+            // 🔥 mantém o vínculo que já veio do Kanban
+            vinculoDescricao: res.vinculoDescricao ?? this.cardSelecionado?.vinculoDescricao,
+            tipoVinculo: res.tipoVinculo ?? this.cardSelecionado?.tipoVinculo,
+
+            responsaveis: res.responsaveis ?? [],
+            etiquetas: res.etiquetas ?? []
+          };
 
           this.isLoadingDetalhe = false;
 
@@ -365,40 +365,78 @@ carregarKanban(): void {
         }
       });
   }
-editar(id: string, tipo: string) {
+  editar(id: string, tipo: string) {
 
-  const tipoNormalizado = tipo?.toLowerCase();
+    const tipoNormalizado = tipo?.toLowerCase();
 
-  console.log('TIPO RECEBIDO:', tipo);
-  console.log('TIPO NORMALIZADO:', tipoNormalizado);
+    console.log('TIPO RECEBIDO:', tipo);
+    console.log('TIPO NORMALIZADO:', tipoNormalizado);
 
-  const modalElement = document.getElementById('modalDetalhes');
+    const modalElement = document.getElementById('modalDetalhes');
 
-  if (modalElement) {
-    const modal = (window as any).bootstrap?.Modal.getInstance(modalElement);
-    modal?.hide();
-  }
-
-  document.body.classList.remove('modal-open');
-  document.body.style.overflow = '';
-  document.body.style.paddingRight = '';
-  document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-
-  setTimeout(() => {
-
-    if (tipoNormalizado === 'tarefa') {
-      this.router.navigate(['/admin/editar-tarefa', id]);
-    } else {
-      this.router.navigate(['/admin/editar-evento', id]);
+    if (modalElement) {
+      const modal = (window as any).bootstrap?.Modal.getInstance(modalElement);
+      modal?.hide();
     }
 
-  }, 200);
-}getTipoVinculoLabel(tipo?: number | null): string {
-  switch (tipo) {
-    case 1: return 'Processo';
-    case 2: return 'Caso';
-    case 3: return 'Atendimento';
-    default: return '';
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+
+    setTimeout(() => {
+
+      if (tipoNormalizado === 'tarefa') {
+        this.router.navigate(['/admin/editar-tarefa', id]);
+      } else {
+        this.router.navigate(['/admin/editar-evento', id]);
+      }
+
+    }, 200);
+  } getTipoVinculoLabel(tipo?: number | null): string {
+    switch (tipo) {
+      case 1: return 'Processo';
+      case 2: return 'Caso';
+      case 3: return 'Atendimento';
+      default: return '';
+    }
   }
+  drop(event: CdkDragDrop<any[]>, colunaDestino: any): void {
+
+  const card = event.item.data;
+
+  //  mesma coluna → só reordena
+  if (event.previousContainer === event.container) {
+    moveItemInArray(
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex
+    );
+    return;
+  }
+
+  // 🔹 mudou de coluna → move visualmente
+  transferArrayItem(
+    event.previousContainer.data,
+    event.container.data,
+    event.previousIndex,
+    event.currentIndex
+  );
+
+  // 🔥 novo status vindo da coluna destino
+  const novoStatus = colunaDestino.status;
+
+  // 🔥 chama seu backend já existente
+  this.kanbanService.atualizarStatus(card.id, novoStatus)
+    .subscribe({
+      next: () => {
+        // atualiza local sem reload
+        card.status = novoStatus;
+      },
+      error: () => {
+        // rollback simples (seguro)
+        this.carregarKanban();
+      }
+    });
 }
 }

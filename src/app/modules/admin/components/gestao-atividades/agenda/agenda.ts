@@ -82,51 +82,52 @@ export class Agenda implements OnInit {
                 info.el.title =
                     `${info.event.title} | Prioridade: ${p['prioridadeTexto'] ?? '-'}`;
             }
+
         },
 
-       eventContent: (arg) => {
+        eventContent: (arg) => {
 
-    const p: any = arg.event.extendedProps || {};
-    const isEvento = p['type'] === 'evento';
+            const p: any = arg.event.extendedProps || {};
+            const isEvento = p['type'] === 'evento';
 
-    const cor = isEvento
-        ? this.getCorStatus(Number(p['status'] ?? 0))
-        : this.getCorPrioridade(Number(p['prioridade'] ?? 0));
+            const cor = isEvento
+                ? this.getCorStatus(Number(p['status'] ?? 0))
+                : this.getCorPrioridade(Number(p['prioridade'] ?? 0));
 
-    const label = isEvento ? 'Evento' : 'Tarefa';
+            const label = isEvento ? 'EVENTO:' : 'TAREFA:';
 
-    const subInfo = isEvento
-        ? (p['endereco'] ?? '')
-        : this.getPrioridadeTexto(Number(p['prioridade'] ?? 0));
+            const prioridadeTexto = this.getPrioridadeTexto(Number(p['prioridade'] ?? 0));
 
-    return {
-        html: `
-        <div style="
-            font-size:12px;
-            padding:6px 8px;
-           
-            background:#1f2937;
-            color:#e5e7eb;
-            border-left:4px solid ${cor};
-            box-shadow:0 2px 6px rgba(0,0,0,.15);
-            line-height:1.2;
-        ">
+
+
+            const subInfo = isEvento
+                ? `End: ${p['endereco'] ?? ''}`
+                : this.getPrioridadeTexto(Number(p['prioridade'] ?? 0));
+
+            const statusTexto = this.getStatusTexto(Number(p['status'] ?? 0));
+            return {
+                html: `
+<div style="
+    font-size:12px;
+    padding:6px 8px;
+    background:#1f2937;
+    color:#e5e7eb;
+    border-left:4px solid ${cor};
+    line-height:1.2;
+">
 
             <div style="
                 display:flex;
                 align-items:center;
                 justify-content:space-between;
                 gap:6px;
-                font-weight:600;
+                
             ">
                 <span style="
-                    font-size:10px;
-                    padding:2px 6px;
-                   
-                    background:${cor};
+                    font-size:10px;   
                     color:#fff;
-                    text-transform:uppercase;
-                    letter-spacing:.5px;
+                    text-transform: capitalize;
+                    
                 ">
                     ${label}
                 </span>
@@ -136,21 +137,25 @@ export class Agenda implements OnInit {
                 </span>
             </div>
 
-            <div style="
-                font-size:11px;
-                opacity:.8;
-                margin-top:3px;
-                white-space:nowrap;
-                overflow:hidden;
-                text-overflow:ellipsis;
-            ">
-                ${subInfo}
-            </div>
-
+   <div style="
+    font-size:11px;
+    margin-top:3px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    color:${isEvento ? '#e5e7eb' : cor};
+    
+">
+    ${isEvento ? subInfo : `Prioridade: ${subInfo}`}
+</div>
+<div style="font-size:11px;">
+    Status: ${statusTexto}
+</div>
         </div>
+        
         `
-    };
-}
+            };
+        }
     };
 
     ngOnInit(): void {
@@ -162,38 +167,38 @@ export class Agenda implements OnInit {
     // =========================
     onEventClick(info: any) {
 
-    const e = info.event;
-    const p: any = e.extendedProps || {};
+        const e = info.event;
+        const p: any = e.extendedProps || {};
 
-  const responsaveis = (p['responsaveis'] ?? []).map((r: any) => r.nomeUsuario);
+        const responsaveis = (p['responsaveis'] ?? []).map((r: any) => r.nomeUsuario);
 
-this.ngZone.run(() => {
+        this.ngZone.run(() => {
 
-    this.eventoSelecionado = {
-        id: e.id,
-        titulo: e.title,
-        start: e.start,
-        end: e.end,
+            this.eventoSelecionado = {
+                id: e.id,
+                titulo: e.title,
+                start: e.start,
+                end: e.end,
 
-        type: p['type'],
+                type: p['type'],
 
-        endereco: p['endereco'],
-        criador: p['criador'],
-        modalidade: p['modalidade'],
-        status: p['status'],
+                endereco: p['endereco'],
+                criador: p['criador'],
+                modalidade: p['modalidade'],
+                status: p['status'],
 
-        prioridade: p['prioridade'],
-        prioridadeTexto: p['prioridadeTexto'],
+                prioridade: p['prioridade'],
+                prioridadeTexto: p['prioridadeTexto'],
 
-        // 🔥 AQUI A CORREÇÃO REAL
-        responsaveis: [...responsaveis]
-    };
+                // 🔥 AQUI A CORREÇÃO REAL
+                responsaveis: [...responsaveis]
+            };
 
-    this.eventoSelecionado = { ...this.eventoSelecionado };
+            this.eventoSelecionado = { ...this.eventoSelecionado };
 
-    this.cdr.detectChanges();
-});
-}
+            this.cdr.detectChanges();
+        });
+    }
 
     fecharSidebar() {
         this.eventoSelecionado = null;
@@ -245,35 +250,35 @@ this.ngZone.run(() => {
                 // =========================
                 // TAREFAS (CORRIGIDO FINAL)
                 // =========================
-const tarefasMapeadas = (tarefas?.items ?? []).map((t: any) => {
-    console.log('TAREFA RAW:', t);
-    console.log('RESPONSAVEIS RAW:', t.grupoTarefaResponsaveis);
+                const tarefasMapeadas = (tarefas?.items ?? []).map((t: any) => {
+                    console.log('TAREFA RAW:', t);
+                    console.log('RESPONSAVEIS RAW:', t.grupoTarefaResponsaveis);
 
-    const prioridade = Number(t.prioridade ?? 0);
+                    const prioridade = Number(t.prioridade ?? 0);
 
-    return {
-        id: String(t.id),
-        title: t.descricao,
-        start: new Date(t.dataTarefa),
+                    return {
+                        id: String(t.id),
+                        title: t.descricao,
+                        start: new Date(t.dataTarefa),
 
-        backgroundColor: this.getCorPrioridade(prioridade),
-        borderColor: this.getCorPrioridade(prioridade),
+                        backgroundColor: this.getCorPrioridade(prioridade),
+                        borderColor: this.getCorPrioridade(prioridade),
 
-        extendedProps: {
-            type: 'tarefa',
+                        extendedProps: {
+                            type: 'tarefa',
 
-            prioridade,
-            prioridadeTexto: this.getPrioridadeTexto(prioridade),
+                            prioridade,
+                            prioridadeTexto: this.getPrioridadeTexto(prioridade),
 
-            status: Number(t.statusGeralKanban ?? 0),
+                            status: Number(t.statusGeralKanban ?? 0),
 
-            // 🔥 CORREÇÃO AQUI
-            responsaveis: (t.grupoTarefaResponsaveis ?? []).map((r: any) => ({
-                nomeUsuario: r.nome
-            }))
-        }
-    };
-});
+                            // 🔥 CORREÇÃO AQUI
+                            responsaveis: (t.grupoTarefaResponsaveis ?? []).map((r: any) => ({
+                                nomeUsuario: r.nome
+                            }))
+                        }
+                    };
+                });
 
                 // =========================
                 // AGENDA FINAL
@@ -341,12 +346,12 @@ const tarefasMapeadas = (tarefas?.items ?? []).map((t: any) => {
         }
     }
     getModalidadeTexto(valor: number): string {
-    switch (Number(valor)) {
-        case 1: return 'Presencial';
-        case 2: return 'Online';
-        case 3: return 'Híbrido';
-        case 4: return 'Não se aplica';
-        default: return 'Desconhecido';
+        switch (Number(valor)) {
+            case 1: return 'Presencial';
+            case 2: return 'Online';
+            case 3: return 'Híbrido';
+            case 4: return 'Não se aplica';
+            default: return 'Desconhecido';
+        }
     }
-}
 }

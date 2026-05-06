@@ -37,12 +37,14 @@ import { ConsultarTarefa } from "./components/tarefa/consultar-tarefa/consultar-
 import { ConsultarEvento } from "./components/evento/consultar-evento/consultar-evento";
 import { Agenda } from "./components/gestao-atividades/agenda/agenda";
 import { Calendario } from "./components/calendario/calendario";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 
 
 
 
 @NgModule({
     declarations: [//componente do módulo
+
         Agenda,
         Calendario,
         AdminLayout,
@@ -66,7 +68,7 @@ import { Calendario } from "./components/calendario/calendario";
         CadastrarEvento,
         EditarEvento,
         ConsultarEvento,
-    
+
 
 
         //autocomplete
@@ -75,6 +77,7 @@ import { Calendario } from "./components/calendario/calendario";
         AutocompleteListaTarefas,
         CadastrarResponsaveis,
         Vinculo,
+
         //siderbar, navbar, footer
         Siderbar,
         Navbar,
@@ -86,8 +89,9 @@ import { Calendario } from "./components/calendario/calendario";
         FormsModule,
         ReactiveFormsModule,
         RouterModule,
-        SharedModule,  
-              
+        SharedModule,
+        DragDropModule,
+
         NgxMaskDirective,
         FullCalendarModule,
     ]

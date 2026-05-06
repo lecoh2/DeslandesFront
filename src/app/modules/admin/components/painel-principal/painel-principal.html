@@ -1,110 +1,42 @@
 <div class="container-fluid">
-  <div class="row mb-2 mb-xl-3">
-    <div class="col-auto d-none d-sm-block">
-      <h3>DESLANDES</h3>
-    </div>
 
-    <div class="col-auto ms-auto text-end mt-n1">
-
-      <div class="dropdown me-2 d-inline-block position-relative">
-        <div class="dropdown-menu dropdown-menu-end">
-          <h6 class="dropdown-header">Settings</h6>
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Separated link</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
-      <div class="card illustration flex-fill">
-        <div class="card-body p-0 d-flex flex-fill">
-          <div class="row g-0 w-100">
-            <div class="col-12">
-              <div class="illustration-text p-3 m-1">
-                <h4 class="illustration-text">{{ saudacaoUsuario }} de volta, <span>{{ nomeUsuario }}</span></h4>
-                <p class="mb-0"></p>
-              </div>
-            </div>
-            <div class="col-6 align-self-end text-end">
-            <img src="assets/appdeslandes/img/illustrations/customer-support.png" alt="Customer Support"
-              class="img-fluid illustration-img">
-
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
-      <div class="card flex-fill">
-        <div class="card-body py-4">
-          <div class="d-flex align-items-start">
-            <div class="flex-grow-1">
-              <h3 class="mb-2">Total de atendimentos: <strong>{{ totalGeral }}</strong><br></h3>
-              <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-success"> {{
-              totalAnoAtual }}</span></p>
-              <div class="mb-0">
-              </div>
-            </div>
-            <div class="d-inline-block ms-3">
-              <div class="stat " style="background: #4bbf73;">
-                <i class="align-middle text-white fas fa-fw fa-book-reader"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
-      <div class="card flex-fill">
-        <div class="card-body py-4">
-          <div class="d-flex align-items-start">
-            <div class="flex-grow-1">
-              <h3 class="mb-2">Total de reclamacao: {{ totalGeralReclamacao }}<br></h3>
-              <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-danger"> {{
-              totalAnoAtualReclamacao }}</span></p>
-              <div class="mb-0">
-              </div>
-            </div>
-            <div class="d-inline-block ms-3">
-              <div class="stat " style="background: #d9534f;">
-                <i class="align-middle text-white fas fa-fw fa-bullhorn"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
-      <div class="card flex-fill">
-        <div class="card-body py-4">
-          <div class="d-flex align-items-start">
-            <div class="flex-grow-1">
-              <h3 class="mb-2">Total de audiência: {{ totalGeralAudiencia }}<br></h3>
-              <p class="mb-2">Em {{ currentYear }} um total de: <span class="badge bg-info"> {{
-              totalAnoAtualAudiencia }}</span></p>
-
-              <div class="mb-0">
-
-              </div>
-            </div>
-            <div class="d-inline-block ms-3">
-              <div class="stat " style="background: #1f9bcf;">
-                <i class="align-middle text-white fas fa-fw fa-users-cog"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- HEADER -->
+  <div class="row mb-3">
+    <div class="col-auto">
+      <h3>Procon Duque de Caxias</h3>
     </div>
   </div>
 
+  <!-- CARDS -->
+  <div class="row mb-3">
+
+    <div class="col-12 col-md-6 col-xl-3 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body">
+          <h5>Bem vindo(a) de volta,</h5>
+          <strong>{{ nomeUsuario }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body">
+          <h6>Total atendimentos</h6>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3 d-flex">
+
+    </div>
+
+
+  </div>
   <div class="row">
-    <div class="col-12 col-lg-12 d-flex">
+    <!-- TABELA -->
+    <div class="col-12 col-lg-8 d-flex">
       <div class="card flex-fill w-100">
         <div class="card-header">
           <div class="card-actions float-end">
@@ -120,21 +52,219 @@
               </div>
             </div>
           </div>
-          <h5 class="card-title mb-0">5 Últimos Atendimentos em {{currentYear}}</h5>
+          <h5 class="card-title mb-0">5 Últimos Processos em {{currentYear}}</h5>
         </div>
         <div class="card flex-fill">
 
-          <table class="table table-striped mb-0">
+
+
+
+          <!-- SEM DADOS -->
+          <div *ngIf="!consultaProcesso?.length" class="p-3 text-center text-muted">
+            Nenhum processo encontrado
+          </div>
+          <!-- <h2>STATUS: {{ consultaProcesso?.length }}</h2>-->
+
+
+          <!-- TABELA -->
+          <table class="table table-striped mb-0" *ngIf="consultaProcesso?.length">
+
             <thead>
               <tr>
-                <th>Codigo</th>
-                <th class="d-none d-xxl-table-cell">Reclamantes</th>
-                <th class="d-none d-xl-table-cell">Reclamadas</th>
-                <th>Status</th>
-                <th>Prazo</th>
-                <th>Dt. Atendimento</th>
-                <th class="d-none d-xl-table-cell text-end">Ações</th>
+                <th>Pasta</th>
+                <th>Número</th>
+
+                <th>Cliente</th>
+
+                <th class="text-end">Ações</th>
               </tr>
             </thead>
+
             <tbody>
-           
+              <tr *ngFor="let processo of consultaProcesso; trackBy: trackById">
+
+                <td>{{ processo?.pasta }}</td>
+                <td>{{ processo?.numeroProcesso }}</td>
+
+
+                <!-- CLIENTES -->
+                <td>
+                  <ng-container *ngIf="processo?.grupoClientesProcesso as clientes">
+
+                    <ng-container *ngIf="(clientes?.length ?? 0) > 0; else semCliente">
+                      {{ clientes[0]?.nome ?? 'Sem nome' }}
+
+                      <span *ngIf="(clientes?.length ?? 0) > 1" class="text-muted">
+                        (+{{ clientes.length - 1 }})
+                      </span>
+                    </ng-container>
+
+                  </ng-container>
+
+                  <ng-template #semCliente>
+                    <span class="text-muted">Nenhum</span>
+                  </ng-template>
+                </td>
+
+                <!-- ENVOLVIDOS -->
+
+
+                <!-- AÇÕES -->
+                <td class="text-end">
+                  <a [routerLink]="['/admin/editar-processo', processo?.id]" class="me-2">
+                    <i class="fas fa-pencil-alt"></i>
+                  </a>
+
+                  <a [href]="urlBase + '/api/processo/export-pdf?codigo=' + processo?.id" target="_blank">
+                    <i class="fas fa-print"></i>
+                  </a>
+                </td>
+
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xl-4 d-flex">
+      <div class="card flex-fill w-100">
+        <div class="card-header">
+          <div class="card-actions float-end">
+            <div class="dropdown position-relative">
+              <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
+                <i class="align-middle" data-lucide="more-horizontal"></i>
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </div>
+          </div>
+
+          <h5 class="card-title mb-0">5 Últimas Tarefas</h5>
+        </div>
+
+        <div class="card-body">
+
+          <ul *ngFor="let tarefa of consultarTarefas" class="timeline">
+            <li class="timeline-item">
+
+              <!-- TOPO: DESCRIÇÃO + STATUS -->
+              <div class="d-flex justify-content-between align-items-center mb-2">
+
+                <span class="badge rounded-pill badge-subtle-primary">
+                  <strong>{{ tarefa.descricao }}</strong>
+                </span>
+
+                <span class="badge" [ngClass]="{
+    'badge-subtle-primary': tarefa.statusGeralKanban === 1,
+    'badge-subtle-warning': tarefa.statusGeralKanban === 2,
+    'badge-subtle-success': tarefa.statusGeralKanban === 3,
+    'badge-subtle-danger': tarefa.statusGeralKanban === 4
+  }">
+
+                  {{ statusKanbanMap[tarefa.statusGeralKanban] }}
+
+                </span>
+
+              </div>
+
+              <!-- PRIORIDADE -->
+              <div class="d-flex align-items-center gap-2">
+
+                <strong>Prioridade:</strong>
+
+                <span class="badge" [ngClass]="{
+      'badge-subtle-success': tarefa.prioridade === 1,
+      'badge-subtle-warning': tarefa.prioridade === 2,
+      'badge-subtle-danger': tarefa.prioridade === 3,
+      'badge-subtle-dark': tarefa.prioridade === 4
+    }">
+
+                  {{ prioridadeMap[tarefa.prioridade] ?? 'Indefinida' }}
+
+                </span>
+
+
+
+              </div>
+
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+   <div class="row">
+        <div class="col-12 col-xl-4 d-none d-xl-flex">
+            <div class="card flex-fill w-100">
+                <div class="card-header">
+                    <div class="card-actions float-end">
+                        <div class="dropdown position-relative">
+                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
+                                <i class="align-middle" data-lucide="more-horizontal"></i>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="card-title mb-0">Atendimentos em {{currentYear}}</h5>
+                </div>
+                <div class="card-body d-flex">
+                    <div class="align-self-center w-100">
+                        <app-graficoAtendimento></app-graficoAtendimento>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4 d-flex">
+            <div class="card flex-fill w-100">
+                <div class="card-header">
+
+                    <h5 class="card-title mb-0">Processos em {{currentYear}}</h5>
+                </div>
+                <div class="card-body d-flex">
+                    <div class="align-self-center w-100">
+                       <app-graficoProcesso></app-graficoProcesso>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-4 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <div class="card-actions float-end">
+                        <div class="dropdown position-relative">
+                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
+                                <i class="align-middle" data-lucide="more-horizontal"></i>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="card-title mb-0">Audiências em {{currentYear}}</h5>
+                </div>
+                <div class="card-body d-flex">
+                    <div class="align-self-center w-100">
+                        <!--<app-doughnut></app-doughnut>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

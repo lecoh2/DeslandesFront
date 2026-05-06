@@ -32,6 +32,7 @@
               {{ eventoSelecionado?.type === 'evento' ? 'Evento' : 'Tarefa' }}
 
             </div>
+            
 
           </div>
 
@@ -39,7 +40,29 @@
             (click)="fecharSidebar()">
             <i class="fas fa-times"></i>
           </button>
+<div class="mt-2 w-100 d-flex gap-2">
 
+  <!-- EDITAR EVENTO -->
+ <a
+  *ngIf="eventoSelecionado?.type === 'evento'"
+  class="btn btn-sm btn-primary w-100"
+  [routerLink]="['/admin/editar-evento', eventoSelecionado?.id]">
+
+  <i class="fas fa-pen me-1"></i>
+  Editar Evento
+</a>
+
+  <!-- EDITAR TAREFA -->
+<a
+  *ngIf="eventoSelecionado?.type === 'tarefa'"
+  class="btn btn-sm btn-warning w-100"
+  [routerLink]="['/admin/editar-tarefa', eventoSelecionado?.id]">
+
+  <i class="fas fa-pen me-1"></i>
+  Editar Tarefa
+</a>
+
+</div>
         </div>
 
         <!-- BODY -->

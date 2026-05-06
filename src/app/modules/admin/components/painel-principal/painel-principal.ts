@@ -1,76 +1,105 @@
-import { Component, inject } from '@angular/core';
-import { AuthHelper } from '../../../../core/helpers/auth.helper';
-import { environment } from '../../../../../environments/environment';
-
-
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { environment } from '../../../../../environments/environment.development';
 import { AccessService } from '../../../../core/services/access.service';
+import { AuthHelper } from '../../../../core/helpers/auth.helper';
+import { DashboardService } from '../../../../core/services/dashboard.service';
+import { ProcessoResumoResponse } from '../../../../core/models/processo-resumo/processo-resumo-response';
+import { ObterTarefaResponse } from '../../../../core/models/tarefa/obter-tarefa-response';
 
 @Component({
   selector: 'app-painel-principal',
   standalone: false,
   templateUrl: './painel-principal.html',
-  styleUrl: './painel-principal.css'
+  styleUrls: ['./painel-principal.css']
 })
-export class PainelPrincipal {
-    constructor(public access: AccessService
-    ) { }
+export class PainelPrincipal implements OnInit {
 
-  authHelper = inject(AuthHelper);
-  totalGeral: number = 0;
-  totalAnoAtual: number = 0;
-  totalGeralReclamacao: number = 0;
-  totalAnoAtualReclamacao: number = 0;
+  constructor(public access: AccessService) { }
+
+  private dashboardService = inject(DashboardService);
+  private authHelper = inject(AuthHelper);
+  private cdr = inject(ChangeDetectorRef);
+  consultaProcesso: ProcessoResumoResponse[] = [];
+  consultarTarefas: ObterTarefaResponse[] = [];
+
   urlBase = environment.apiDeslandes;
-  totalGeralAudiencia: number = 0;
-  totalAnoAtualAudiencia: number = 0;
-  currentYear: number = new Date().getFullYear(); // <- adiciona isso
-  nomeUsuario: string = '';
-  sexoUsuario: string = '';
-  //atributos 
-  //dashboard: DasboardResponse[] = [];
 
-  //evendo executado ao abrir o componente
-  get saudacaoUsuario(): string {
-    if (!this.sexoUsuario) return 'Bem-vindo(a)';
-    return this.sexoUsuario.toLowerCase() === 'feminino' ? 'Bem-vinda' : 'Bem-vindo';
+  currentYear = new Date().getFullYear();
+
+  nomeUsuario = '';
+  sexoUsuario = '';
+
+  ngOnInit(): void {
+    this.carregarUsuario();
+    this.carregarProcessos();
+    this.carregarTarefas();;
   }
-ngOnInit() {
-  const usuario = this.authHelper.get();
 
-  console.log('Usuário logado:', usuario);
+  private carregarUsuario(): void {
+    const usuario = this.authHelper.get();
 
-  if (usuario) {
-    this.nomeUsuario = usuario.nomeUsuario;
-    this.sexoUsuario = usuario.sexo ?? 'Masculino';
-  } else {
-    this.nomeUsuario = 'Usuário';
+    this.nomeUsuario = usuario?.nomeUsuario ?? 'Usuário';
+    this.sexoUsuario = usuario?.sexo ?? 'Masculino';
+  }
+
+  private carregarProcessos(): void {
+    this.dashboardService.getUltimosProcessos()
+      .subscribe({
+        next: (res) => {
+
+          this.consultaProcesso = res ?? [];
+
+          // 🔥 força 1 ciclo de render depois do async inicial
+          this.cdr.markForCheck();
+        }
+      });
+  } private carregarTarefas(): void {
+    this.dashboardService.getUltimasTarefas()
+      .subscribe({
+        next: (res) => {
+ console.log('RES TAREFAS:', res);
+          this.consultarTarefas = res ?? [];
+
+          // 🔥 força 1 ciclo de render depois do async inicial
+          this.cdr.markForCheck();
+        }
+      });
+  }
+  trackById(index: number, item: ProcessoResumoResponse) {
+    return item?.id ?? index;
+  }
+  getStatusLabel(status: number): string {
+    switch (status) {
+      case 1: return 'A Fazer';
+      case 2: return 'Em Andamento';
+      case 3: return 'Concluído';
+      case 4: return 'Cancelado';
+      default: return '---';
+    }
+  }getPrioridadeLabel(prioridade: number): string {
+  switch (prioridade) {
+    case 1: return 'Baixa';
+    case 2: return 'Média';
+    case 3: return 'Alta';
+    case 4: return 'Urgente';
+    default: return 'Indefinida';
   }
 }
-formatarCpf(cpf?: string): string {
-    if (!cpf) return '';
-    const cleaned = cpf.replace(/\D/g, '');
-    if (cleaned.length !== 11) return cpf;
-    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-  }
-
-  formatarCnpj(cnpj?: string): string {
-    if (!cnpj) return '';
-    const cleaned = cnpj.replace(/\D/g, '');
-    if (cleaned.length !== 14) return cnpj;
-    return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-  }
-  formatarData(data?: string | Date): string {
-    if (!data) return '';
-
-    const d = typeof data === 'string' ? new Date(data) : data;
-
-    if (isNaN(d.getTime())) return ''; // data inválida
-
-    const dia = String(d.getDate()).padStart(2, '0');
-    const mes = String(d.getMonth() + 1).padStart(2, '0'); // meses de 0 a 11
-    const ano = d.getFullYear();
-
-    return `${dia}/${mes}/${ano}`;
-  }
-    
+ /* getsaudacaoUsuario(): string {
+    return this.sexoUsuario?.toLowerCase() === 'feminino'
+      ? 'Bem-vinda'
+      : 'Bem-vindo';
+  }*/
+prioridadeMap: Record<number, string> = {
+  1: 'Baixa',
+  2: 'Média',
+  3: 'Alta',
+  4: 'Urgente'
+};
+statusKanbanMap: Record<number, string> = {
+  1: 'A Fazer',
+  2: 'Em Andamento',
+  3: 'Concluído',
+  4: 'Cancelado'
+};
 }

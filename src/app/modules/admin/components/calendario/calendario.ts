@@ -45,7 +45,7 @@ export class Calendario implements OnInit {
     events: [],
 
     eventClick: (info) => {
-      alert(`📅 Evento: ${info.event.title}`);
+      alert(`Evento: ${info.event.title}`);
     },
 
     dateClick: (info) => {
@@ -84,7 +84,7 @@ export class Calendario implements OnInit {
 
         console.log('EVENTOS FORMATADOS:', eventos);
 
-        // 🔥 atualização correta (evita bug Angular)
+        //  atualização correta (evita bug Angular)
         this.calendarOptions = {
           ...this.calendarOptions,
           events: eventos
@@ -96,7 +96,7 @@ export class Calendario implements OnInit {
     });
   }
 
-  // 🚀 CONVERSÃO CORRETA (AQUI É O SEGREDO)
+  //  CONVERSÃO CORRETA (AQUI É O SEGREDO)
   converterParaDate(data: string, hora: string): Date {
 
     if (!data) return null as any;

@@ -15,6 +15,9 @@ import { TextoDeslandesAnimado } from './components/texto-deslandes-animado/text
 import { ModalGeral } from './components/modal-geral/modal-geral';
 import { AutocompletePessoa } from '../modules/admin/components/autocomplete-pessoas/autocomplete-pessoas';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { GraficoAtendimento } from './components/graficos/atendimento/grafico-atendimento';
+import { GraficoProcesso } from './components/graficos/processo/grafico-processo';
+
 
 @NgModule({
   declarations: [
@@ -24,7 +27,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     Alerts,
     TextoDeslandesAnimado,
     ModalGeral,
-  
+    GraficoAtendimento,
+    GraficoProcesso,
+
   ],
   imports: [
     CommonModule,
@@ -32,11 +37,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatPaginatorModule,
     MatTableModule,
 
+   
     // 👇 ADICIONA AQUI
     NgxMaskDirective,
     NgxMaskPipe,
-     FormsModule,            // 🔥 ESSENCIAL
-    ReactiveFormsModule  
+    FormsModule,            // 🔥 ESSENCIAL
+    ReactiveFormsModule
   ],
   exports: [
     Spinner,
@@ -45,7 +51,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     LogoAnimada,
     TextoDeslandesAnimado,
     ModalGeral,
-   
+    GraficoAtendimento,
+    GraficoProcesso,
+
+
 
     NgxPaginationModule,
     MatPaginatorModule,
@@ -56,4 +65,4 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NgxMaskPipe
   ]
 })
-export class SharedModule {}
+export class SharedModule { }

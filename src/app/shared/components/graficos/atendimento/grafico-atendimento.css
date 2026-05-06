@@ -1,0 +1,33 @@
+#chartjs-dashboard-graficoAtendimento {
+ width: 100% !important;
+  height: 70vh; /* 70% da altura da tela */
+}
+
+/* Área total do card */
+.card-grafico {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Gráfico com altura fixa */
+.chart-container {
+  position: relative;
+  height: 280px;
+}
+
+/* 🔥 TABELA COM SCROLL */
+.table-area {
+  max-height: 220px;      /* limite de crescimento */
+  overflow-y: auto;       /* barra de rolagem vertical */
+  overflow-x: hidden;
+}
+
+/* opcional: melhora aparência da barra */
+.table-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-area::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: 4px;
+}
