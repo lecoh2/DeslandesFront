@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+
+declare var bootstrap: any;
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
@@ -14,7 +21,7 @@ import { inject, OnInit } from "@angular/core";
 import { InstanciaEnum } from "../../../../../core/models/enums/intancia/instanciaEnum";
 import { AcessoEnum } from "../../../../../core/models/enums/acesso/acesoEnum";
 import { HttpErrorResponse } from '@angular/common/http';
-import { forkJoin, catchError, of} from 'rxjs';
+import { forkJoin, catchError, of } from 'rxjs';
 import { ConsultarVaraResponse } from '../../../../../core/models/vara/consultar-vara-response';
 import { ConsultarAcaoResponse } from '../../../../../core/models/acao/consultar-acao-response';
 import { ConsultarUsuarioResponse } from '../../../../../core/models/usuario/consultar-usuarios.response';
@@ -22,16 +29,21 @@ import { QualificacaoResponse } from '../../../../../core/models/qualificacao/qu
 import { ConsultarEtiquetaResponse } from '../../../../../core/models/etiqueta/consultar-etiqueta-response';
 import { PessoaSelecionada } from '../../../../../core/models/pessoa/pessoa-selecionada';
 import { PessoaResumo } from '../../../../../core/models/pessoa/pessoa-resumo';
+import { HistoricoService } from '../../../../../core/services/historico.service';
+import { TipoEntidadeEnum } from '../../../../../core/models/enums/tipo-entidade/tipo-entidadeEnum';
+
+
 @Component({
   selector: 'app-editar-processo',
-  standalone:false,
+  standalone: false,
   templateUrl: './editar-processo.html',
   styleUrl: './editar-processo.css',
 })
 
 
 export class EditarProcesso implements OnInit {
-
+ @ViewChild('modalHistorico')
+  modalHistorico!: ElementRef;
   private builder = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -43,7 +55,10 @@ export class EditarProcesso implements OnInit {
   private pessoaService = inject(PessoaService);
   private qualificacaoService = inject(QualificacoesService);
   private etiquetaService = inject(EtiquetaService);
-private cdr = inject(ChangeDetectorRef);
+  private historicoService = inject(HistoricoService);
+  private cdr = inject(ChangeDetectorRef);
+  historico: any[] = [];
+  carregandoHistorico = false;
   id!: string;
 
   carregando = false;
@@ -52,7 +67,7 @@ private cdr = inject(ChangeDetectorRef);
 
   foros: { id: string, nome: string }[] = [];
 
-  varas: ConsultarVaraResponse[] = [];  
+  varas: ConsultarVaraResponse[] = [];
   varasFiltradas: ConsultarVaraResponse[] = [];
 
   acoes: ConsultarAcaoResponse[] = [];
@@ -67,7 +82,7 @@ private cdr = inject(ChangeDetectorRef);
   pessoasSelecionadas: PessoaSelecionada[] = [];
   pessoasFiltradas: PessoaResumo[] = [];
 
-envolvidosSelecionados: PessoaSelecionada[] = [];
+  envolvidosSelecionados: PessoaSelecionada[] = [];
   envolvidosFiltradas: PessoaResumo[] = [];
 
   instanciaEnum = InstanciaEnum;
@@ -92,62 +107,62 @@ envolvidosSelecionados: PessoaSelecionada[] = [];
     instancia: [null],
     acesso: [null],
   });
-private carregarDadosIniciais() {
-  this.carregando = true;
-  this.mensagemErro = [];
+  private carregarDadosIniciais() {
+    this.carregando = true;
+    this.mensagemErro = [];
 
-  forkJoin({
-    varas: this.varaService.consultar(),
-    acoes: this.acaoService.consultar(),
-    usuarios: this.usuarioService.consultarUsuarioResponsavel(),
-    qualificacoes: this.qualificacaoService.consultarQualificacoes(),
-    etiquetas: this.etiquetaService.consultar()
-  }).subscribe({
-    next: (res) => {
+    forkJoin({
+      varas: this.varaService.consultar(),
+      acoes: this.acaoService.consultar(),
+      usuarios: this.usuarioService.consultarUsuarioResponsavel(),
+      qualificacoes: this.qualificacaoService.consultarQualificacoes(),
+      etiquetas: this.etiquetaService.consultar()
+    }).subscribe({
+      next: (res) => {
 
-      const { varas, acoes, usuarios, qualificacoes, etiquetas } = res as {
-        varas: ConsultarVaraResponse[];
-        acoes: ConsultarAcaoResponse[];
-        usuarios: ConsultarUsuarioResponse[];
-        qualificacoes: QualificacaoResponse[];
-        etiquetas: ConsultarEtiquetaResponse[];
-      };
+        const { varas, acoes, usuarios, qualificacoes, etiquetas } = res as {
+          varas: ConsultarVaraResponse[];
+          acoes: ConsultarAcaoResponse[];
+          usuarios: ConsultarUsuarioResponse[];
+          qualificacoes: QualificacaoResponse[];
+          etiquetas: ConsultarEtiquetaResponse[];
+        };
 
-      // 🔥 VARAS + FOROS
-      this.varas = varas;
-      this.varasFiltradas = varas;
+        // 🔥 VARAS + FOROS
+        this.varas = varas;
+        this.varasFiltradas = varas;
 
-      const mapa = new Map<string, string>();
-      varas.forEach(v => {
-        if (v.foroId && v.nomeForo) {
-          mapa.set(v.foroId, v.nomeForo);
+        const mapa = new Map<string, string>();
+        varas.forEach(v => {
+          if (v.foroId && v.nomeForo) {
+            mapa.set(v.foroId, v.nomeForo);
+          }
+        });
+
+        this.foros = Array.from(mapa, ([id, nome]) => ({ id, nome }));
+
+        // 🔥 OUTROS DADOS
+        this.acoes = acoes;
+        this.responsaveis = usuarios;
+        this.qualificacoes = qualificacoes;
+        this.tiposetiquetas = etiquetas;
+
+        // 🔥 IMPORTANTE (somente no EDITAR)
+        if (this.id) {
+          this.carregarProcesso();
         }
-      });
-
-      this.foros = Array.from(mapa, ([id, nome]) => ({ id, nome }));
-
-      // 🔥 OUTROS DADOS
-      this.acoes = acoes;
-      this.responsaveis = usuarios;
-      this.qualificacoes = qualificacoes;
-      this.tiposetiquetas = etiquetas;
-
-      // 🔥 IMPORTANTE (somente no EDITAR)
-      if (this.id) {
-        this.carregarProcesso();
+      },
+      error: () => {
+        this.mensagemErro = ['Erro ao carregar dados iniciais'];
+        this.carregando = false;
+      },
+      complete: () => {
+        this.carregando = false;
       }
-    },
-    error: () => {
-      this.mensagemErro = ['Erro ao carregar dados iniciais'];
-      this.carregando = false;
-    },
-    complete: () => {
-      this.carregando = false;
-    }
-  });
-}irParaLista(): void {
-  this.router.navigate(['/admin/consultar-processo']);
-}
+    });
+  } irParaLista(): void {
+    this.router.navigate(['/admin/consultar-processo']);
+  }
   buscarPessoas(nome: string) {
     this.pessoaService.consultarPessoasResumo(nome)
       .pipe(catchError(() => of([])))
@@ -175,30 +190,30 @@ private carregarDadosIniciais() {
       this.form.get('varaId')?.setValue(null);
     });
   }
-get juizoFormatado(): string {
-  const varaId = this.form.value.varaId;
+  get juizoFormatado(): string {
+    const varaId = this.form.value.varaId;
 
-  if (!varaId) return '';
+    if (!varaId) return '';
 
-  const vara = this.varas.find(v => v.id === varaId);
+    const vara = this.varas.find(v => v.id === varaId);
 
-  if (!vara) return '';
+    if (!vara) return '';
 
-  return `${vara.nomeVara} - ${vara.nomeForo}`;
-}
+    return `${vara.nomeVara} - ${vara.nomeForo}`;
+  }
   // ================= CARREGAR PROCESSO =================
   private carregarProcesso() {
     this.carregando = true;
 
     this.processoService.ObterProcessoPorId(this.id).subscribe({
       next: (res: any) => {
- console.log('🔥 PROCESSO BACKEND:', res); // 👈 AQUI
+        console.log('🔥 PROCESSO BACKEND:', res); // 👈 AQUI
 
         // FORM
         this.form.patchValue({
           acaoId: res.acaoId,
           varaId: res.varaId,
-           foroId: res.foroId,
+          foroId: res.foroId,
           usuarioResponsavelId: res.usuarioResponsavelId,
           juizo: res.juizo,
           pasta: res.pasta,
@@ -221,7 +236,7 @@ get juizoFormatado(): string {
           idQualificacao: c.qualificacaoId
         }));
 
-       // ENVOLVIDOS
+        // ENVOLVIDOS
         this.envolvidosSelecionados = (res.grupoEnvolvidosProcesso ?? []).map((e: any) => ({
           id: e.idPessoa,
           nome: e.nome,
@@ -244,79 +259,79 @@ get juizoFormatado(): string {
     });
   }
   onSubmit(): void {
-  this.mensagemErro = [];
-  this.mensagemSucesso = [];
+    this.mensagemErro = [];
+    this.mensagemSucesso = [];
 
-  if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    if (this.pessoasSelecionadas.some(p => !p.idQualificacao)) {
+      this.mensagemErro = ['Selecione a qualificação para todos os clientes.'];
+      return;
+    }
+
+    if (this.envolvidosSelecionados.some(e => !e.idQualificacao)) {
+      this.mensagemErro = ['Selecione a qualificação para todos os envolvidos.'];
+      return;
+    }
+
+    this.carregando = true;
+
+    const f = this.form.value;
+    const limpar = (v: any) => v ?? undefined;
+
+    const request = {
+      acaoId: limpar(f.acaoId),
+      varaId: f.varaId!,
+      usuarioResponsavelId: limpar(f.usuarioResponsavelId),
+      juizo: limpar(f.juizo),
+      pasta: limpar(f.pasta),
+      titulo: limpar(f.titulo),
+      numeroProcesso: limpar(f.numeroProcesso),
+      linkTribunal: limpar(f.linkTribunal),
+      objeto: limpar(f.objeto),
+      valorCausa: limpar(f.valorCausa),
+      distribuido: limpar(f.distribuido),
+      valorCondenacao: limpar(f.valorCondenacao),
+      observacao: limpar(f.observacao),
+      instancia: limpar(f.instancia),
+      acesso: limpar(f.acesso),
+
+      grupoClienteProcesso: this.pessoasSelecionadas.map(p => ({
+        idPessoa: p.id,
+        idQualificacao: p.idQualificacao
+      })),
+
+      grupoEnvolvidosProcesso: this.envolvidosSelecionados.map(e => ({
+        idPessoa: e.id,
+        idQualificacao: e.idQualificacao
+      })),
+
+      grupoEtiquetasProcesso: this.etiquetasSelecionadas.map(e => ({
+        etiquetaId: e.id
+      }))
+    };
+
+    this.processoService.editarProcesso(this.id, request).subscribe({
+      next: (res: any) => {
+        this.carregando = false;
+
+        this.mensagemSucesso = [
+          res.message ?? 'Processo atualizado com sucesso'
+        ];
+
+        this.cdr.detectChanges(); // 👈 força render
+
+        setTimeout(() => {
+          this.router.navigate(['/admin/consultar-processo']);
+        }, 3000);
+      },
+      error: (err) => this.tratarErro(err)
+    });
   }
-
-  if (this.pessoasSelecionadas.some(p => !p.idQualificacao)) {
-    this.mensagemErro = ['Selecione a qualificação para todos os clientes.'];
-    return;
-  }
-
-  if (this.envolvidosSelecionados.some(e => !e.idQualificacao)) {
-    this.mensagemErro = ['Selecione a qualificação para todos os envolvidos.'];
-    return;
-  }
-
-  this.carregando = true;
-
-  const f = this.form.value;
-  const limpar = (v: any) => v ?? undefined;
-
-  const request = {
-    acaoId: limpar(f.acaoId),
-    varaId: f.varaId!,
-    usuarioResponsavelId: limpar(f.usuarioResponsavelId),
-    juizo: limpar(f.juizo),
-    pasta: limpar(f.pasta),
-    titulo: limpar(f.titulo),
-    numeroProcesso: limpar(f.numeroProcesso),
-    linkTribunal: limpar(f.linkTribunal),
-    objeto: limpar(f.objeto),
-    valorCausa: limpar(f.valorCausa),
-    distribuido: limpar(f.distribuido),
-    valorCondenacao: limpar(f.valorCondenacao),
-    observacao: limpar(f.observacao),
-    instancia: limpar(f.instancia),
-    acesso: limpar(f.acesso),
-
-    grupoClienteProcesso: this.pessoasSelecionadas.map(p => ({
-      idPessoa: p.id,
-      idQualificacao: p.idQualificacao
-    })),
-
-    grupoEnvolvidosProcesso: this.envolvidosSelecionados.map(e => ({
-      idPessoa: e.id,
-      idQualificacao: e.idQualificacao
-    })),
-
-    grupoEtiquetasProcesso: this.etiquetasSelecionadas.map(e => ({
-      etiquetaId: e.id
-    }))
-  };
-
-  this.processoService.editarProcesso(this.id, request).subscribe({
- next: (res: any) => {
-  this.carregando = false;
-
-  this.mensagemSucesso = [
-    res.message ?? 'Processo atualizado com sucesso'
-  ];
-
-  this.cdr.detectChanges(); // 👈 força render
-
-  setTimeout(() => {
-    this.router.navigate(['/admin/consultar-processo']);
-  }, 3000);
-},
-    error: (err) => this.tratarErro(err)
-  });
-}
-private tratarErro(err: HttpErrorResponse) {
+  private tratarErro(err: HttpErrorResponse) {
     this.mensagemErro = [];
 
     const e = err.error;
@@ -333,4 +348,119 @@ private tratarErro(err: HttpErrorResponse) {
 
     this.carregando = false;
   }
+
+abrirHistoricoProcesso(processoId: string) {
+
+  this.carregandoHistorico = true;
+  this.historico = [];
+
+  const modal =
+    new bootstrap.Modal(
+      this.modalHistorico.nativeElement
+    );
+
+  modal.show();
+
+  this.historicoService
+    .ConsultarHistorico(
+      TipoEntidadeEnum.Processo,
+      processoId
+    )
+    .subscribe({
+
+      next: (res) => {
+
+        this.historico = (res ?? []).map(h => ({
+          ...h,
+          antes: h.dadosAntes
+            ? JSON.parse(h.dadosAntes)
+            : null,
+
+          depois: h.dadosDepois
+            ? JSON.parse(h.dadosDepois)
+            : null
+        }));
+
+        this.carregandoHistorico = false;
+
+        this.cdr.detectChanges();
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+        this.carregandoHistorico = false;
+      }
+
+    });
+}
+
+getMudancas(h: any): { campo: string, antes: any, depois: any }[] {
+    if (!h.antes || !h.depois) return [];
+
+    const mudancas: any[] = [];
+
+    Object.keys(h.depois).forEach(key => {
+      const antes = h.antes[key];
+      const depois = h.depois[key];
+
+      if (JSON.stringify(antes) !== JSON.stringify(depois)) {
+        mudancas.push({ campo: key, antes, depois });
+      }
+    });
+
+    return mudancas;
+  } formatarValor(valor: any, campo: string): string {
+
+    if (valor === null || valor === undefined) return '-';
+
+    // ARRAY (Responsáveis)
+    if (Array.isArray(valor)) {
+      return valor.join(', ');
+    }
+
+    // BOOLEAN
+    if (typeof valor === 'boolean') {
+      return valor ? 'Sim' : 'Não';
+    }
+
+    // STATUS
+
+    // DATA
+    if (campo.toLowerCase().includes('data')) {
+      return new Date(valor).toLocaleDateString('pt-BR');
+    }
+
+    // HORA
+    if (campo.toLowerCase().includes('hora')) {
+      return valor;
+    }
+
+    return valor.toString();
+  }
+  
+ formatarCampo(campo: string): string {
+
+  const map: any = {
+    Titulo: 'Título',
+    Pasta: 'Pasta',
+    NumeroProcesso: 'Número do Processo',
+    LinkTribunal: 'Link Tribunal',
+    Objeto: 'Objeto',
+    ValorCausa: 'Valor da Causa',
+    ValorCondenacao: 'Valor da Condenação',
+    Distribuido: 'Distribuído',
+    Observacao: 'Observação',
+    Instancia: 'Instância',
+    Acesso: 'Acesso',
+    NomeVara: 'Vara',
+    NomeForo: 'Foro',
+    Clientes: 'Clientes',
+    Envolvidos: 'Envolvidos',
+    Etiquetas: 'Etiquetas'
+  };
+
+  return map[campo] || campo;
+}
 }

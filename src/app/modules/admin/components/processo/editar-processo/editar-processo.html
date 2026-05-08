@@ -26,6 +26,19 @@
                 <!-- ================= DADOS DO PROCESSO ================= -->
                 <h5 class="mb-3">Dados do Processo</h5>
                 <!-- ================= ETIQUETAS ================= -->
+<div class="d-flex justify-content-end mb-3">
+
+  <button
+    type="button"
+    class="btn btn-light bg-white border"
+    (click)="abrirHistoricoProcesso(id)">
+
+    <i class="fas fa-history me-2"></i>
+    Histórico
+
+  </button>
+
+</div>
                 <div class="mb-3">
                     <label class="form-label">Etiquetas</label>
                     <app-etiquetas [etiquetas]="tiposetiquetas" [(selecionadas)]="etiquetasSelecionadas">
@@ -224,4 +237,95 @@
 
         </div>
     </div>
+<div
+  #modalHistorico
+  class="modal fade"
+  tabindex="-1"
+  aria-hidden="true"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false">
+
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Histórico do Processo
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal">
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- LOADING -->
+      <div *ngIf="carregandoHistorico">
+          Carregando histórico...
+        </div>
+
+        <!-- HISTÓRICO -->
+        <ul
+          class="timeline"
+          >
+
+          <li
+  *ngFor="let h of historico"
+  class="timeline-item pb-4 mb-4 border-bottom">
+
+            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+
+              <strong>
+                {{ h.observacao || 'Atualização' }}
+              </strong>
+
+              <small class="text-muted">
+                {{ h.usuarioNome || 'Sistema' }}
+              </small>
+
+              <span class="text-muted small">
+                {{ h.dataAlteracao | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+
+            </div>
+
+<div
+  *ngFor="let m of getMudancas(h)"
+  class="mb-2">
+
+              <strong>
+                {{ formatarCampo(m.campo) }}
+              </strong>
+
+              <div>
+
+                <span class="text-danger text-decoration-line-through">
+                  {{ formatarValor(m.antes, m.campo) }}
+                </span>
+
+                <i class="fas fa-arrow-right mx-2"></i>
+
+                <span class="text-success">
+                  {{ formatarValor(m.depois, m.campo) }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 </div>
