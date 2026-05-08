@@ -2,45 +2,43 @@
 
   <!-- HEADER -->
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Gestão de Atividades</h1>
+    <h1 class="h3 mb-0 fw-bold">Gestão de Atividades</h1>
   </div>
 
   <!-- 🔎 FILTROS -->
-  <div class="card mb-3 shadow-sm border-0">
-    <div class="card-body">
-      <div class="row g-2">
+  <div class="card shadow-sm border-0 mb-3">
+    <div class="card-body py-3">
 
-        <div class="col-md-3">
-          <label class="form-label small text-muted">Status</label>
-          <select class="form-select" [(ngModel)]="filtro.status">
+      <div class="row g-3 align-items-end">
+
+        <!-- STATUS -->
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Status</label>
+          <select class="form-select shadow-sm" [(ngModel)]="filtro.status">
             <option [ngValue]="null">Todos</option>
             <option [ngValue]="1">A Fazer</option>
             <option [ngValue]="2">Em Andamento</option>
             <option [ngValue]="3">Concluído</option>
-
           </select>
         </div>
+        <!--<div class="col-md-3"> <label class="form-label small text-muted">
+  Tipo</label> <select class="form-select" [(ngModel)]="filtro.tipo">
+     <option [ngValue]="null">Todos</option>
+      <option [ngValue]="'Tarefa'">Tarefa</option>
+       <option [ngValue]="'Evento'">Evento</option> </select> </div>-->
+        <!-- BOTÕES -->
+        <div class="col-md-4 d-flex gap-2">
 
-        <div class="col-md-3">
-          <label class="form-label small text-muted">Tipo</label>
-          <select class="form-select" [(ngModel)]="filtro.tipo">
-            <option [ngValue]="null">Todos</option>
-            <option [ngValue]="'Tarefa'">Tarefa</option>
-            <option [ngValue]="'Evento'">Evento</option>
-          </select>
-        </div>
-
-        <div class="col-md-3 d-flex align-items-end">
-          <button class="btn btn-primary w-100" (click)="filtrarPorStatus()">
-            <i class="fas fa-filter me-1"></i>
+          <button class="btn btn-primary w-100 shadow-sm" (click)="filtrarPorStatus()">
+            <i class="fas fa-filter me-2"></i>
             Filtrar
           </button>
-        </div>
 
-        <div class="col-md-3 d-flex align-items-end">
-          <button class="btn btn-outline-secondary w-100" (click)="limparFiltro()">
+          <button class="btn btn-outline-info w-100" (click)="limparFiltro()">
+            <i class="fas fa-eraser me-2"></i>
             Limpar
           </button>
+
         </div>
 
       </div>
@@ -315,7 +313,7 @@
                     {{ r.nomeUsuario }}
                   </span>
                 </div>
-   <hr>
+                <hr>
                 <!-- PRIORIDADE -->
                 <div *ngIf="cardSelecionado?.tipo === 'Tarefa'">
 

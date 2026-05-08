@@ -131,25 +131,20 @@ export class Vinculo {
     this.selecionado.emit(item);
   }
 
-  getLabel(item: any): string {
+getLabel(item: any): string {
 
-    if (!item) return '';
+  if (!item) return '';
 
-    if (item.numeroProcesso)
-      return `${item.numeroProcesso} - ${item.titulo ?? ''}`;
-
-    if (item.pasta)
-      return item.pasta;
-
-    if (item.assunto)
-      return item.assunto;
-
-    if (item.titulo)
-      return item.titulo;
-
-    return '';
+  if (item.assunto) {
+    return item.assunto; // atendimento
   }
 
+  if (item.pasta) {
+    return item.pasta; // processo e caso
+  }
+
+  return '';
+}
   abrir() {
     const v = (this.control.value ?? '').toString();
 

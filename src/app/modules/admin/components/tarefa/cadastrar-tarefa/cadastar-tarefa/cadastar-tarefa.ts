@@ -95,8 +95,20 @@ export class CadastrarTarefa implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.usuarioLogado = this.authHelper.get();
+
     this.carregarDados();
+
+    // 🔥 LIMPA VÍNCULOS AO TROCAR TIPO
+    this.form.get('tipoVinculo')?.valueChanges.subscribe(() => {
+
+      this.resultadosVinculo = [];
+
+      this.vinculoSelecionado = null;
+
+      this.limparVinculos();
+    });
   }
 
   carregarDados() {
@@ -125,9 +137,9 @@ export class CadastrarTarefa implements OnInit {
     this.listasTarefa = this.listasTarefa.filter((_, i) => i !== index);
   }
 
-atualizarDescricaoLista(index: number, valor: string) {
-  this.listasTarefa[index].descricao = valor;
-}
+  atualizarDescricaoLista(index: number, valor: string) {
+    this.listasTarefa[index].descricao = valor;
+  }
 
   // =========================
   // RESPONSÁVEIS
@@ -168,20 +180,35 @@ atualizarDescricaoLista(index: number, valor: string) {
     request$.subscribe(res => this.resultadosVinculo = res);
   }
 
-  selecionarVinculo(item: any) {
+  selecionarVinculo(item: VinculoAutoComplete) {
+
     const tipo = this.form.get('tipoVinculo')?.value;
+
+    // 🔥 limpa tudo antes
+    this.limparVinculos();
 
     this.resultadosVinculo = [];
 
-    this.form.patchValue({
-      processoId: null,
-      casoId: null,
-      atendimentoId: null
-    });
+    this.vinculoSelecionado = item;
 
-    if (tipo === 'processo') this.form.patchValue({ processoId: item.id });
-    else if (tipo === 'caso') this.form.patchValue({ casoId: item.id });
-    else this.form.patchValue({ atendimentoId: item.id });
+    if (tipo === 'processo') {
+
+      this.form.patchValue({
+        processoId: item.id
+      });
+    }
+    else if (tipo === 'caso') {
+
+      this.form.patchValue({
+        casoId: item.id
+      });
+    }
+    else if (tipo === 'atendimento') {
+
+      this.form.patchValue({
+        atendimentoId: item.id
+      });
+    }
   }
 
   // =========================
@@ -196,15 +223,30 @@ atualizarDescricaoLista(index: number, valor: string) {
       this.form.markAllAsTouched();
       return;
     }
-if (this.listasTarefa.length === 0) {
-  this.mensagemErro = ['Adicione pelo menos um item na lista de tarefas.'];
-  return;
-}
+    if (this.listasTarefa.length === 0) {
+      this.mensagemErro = ['Adicione pelo menos um item na lista de tarefas.'];
+      return;
+    }
     this.carregando = true;
 
     const f = this.form.value;
     const limpar = (v: any) => v ?? undefined;
+    const quantidadeVinculos = [
+      f.processoId,
+      f.casoId,
+      f.atendimentoId
+    ].filter(Boolean).length;
 
+    if (quantidadeVinculos > 1) {
+
+      this.mensagemErro = [
+        'A tarefa não pode possuir mais de um vínculo.'
+      ];
+
+      this.carregando = false;
+
+      return;
+    }
     const request: CadastrarTarefaRequest = {
       descricao: limpar(f.descricao) ?? '',
       dataTarefa: limpar(f.dataTarefa),
@@ -243,16 +285,24 @@ if (this.listasTarefa.length === 0) {
       error: err => this.tratarErro(err)
     });
   }
-buscarListaTarefas(termo: string) {
-  this.tarefaService.consultarListaTarefaAutoComplete(termo)
-    .subscribe(res => this.listaFiltradas = res);
-}
-resetar() {
-  this.form.reset();
-  this.responsaveisSelecionados = [];
-  this.etiquetasSelecionadas = [];
-  this.listasTarefa = [];
-}
+  buscarListaTarefas(termo: string) {
+    this.tarefaService.consultarListaTarefaAutoComplete(termo)
+      .subscribe(res => this.listaFiltradas = res);
+  }
+  resetar() {
+
+    this.form.reset();
+
+    this.responsaveisSelecionados = [];
+
+    this.etiquetasSelecionadas = [];
+
+    this.listasTarefa = [];
+
+    this.resultadosVinculo = [];
+
+    this.vinculoSelecionado = null;
+  }
 
   tratarErro(err: HttpErrorResponse) {
     const e = err.error;
@@ -270,5 +320,17 @@ resetar() {
     }
 
     this.carregando = false;
+  }
+  private limparVinculos(): void {
+
+    this.form.patchValue({
+      processoId: null,
+      casoId: null,
+      atendimentoId: null
+    });
+
+    this.vinculoSelecionado = null;
+
+    this.resultadosVinculo = [];
   }
 }

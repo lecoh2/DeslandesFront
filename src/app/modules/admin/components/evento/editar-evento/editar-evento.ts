@@ -55,8 +55,7 @@ export class EditarEvento implements OnInit {
   mensagemSucesso: string[] = [];
 
   resultadosVinculo: VinculoAutoComplete[] = [];
-  vinculoSelecionado: any = null;
-
+  vinculoSelecionado: VinculoAutoComplete | null = null;
   responsaveis: ConsultarUsuarioResponse[] = [];
   responsaveisFiltrados: ConsultarUsuarioResponse[] = [];
   responsaveisSelecionados: ConsultarUsuarioResponse[] = [];
@@ -107,14 +106,9 @@ export class EditarEvento implements OnInit {
 
     // 🔥 limpa vínculo ao trocar tipo
     this.form.get('tipoVinculo')?.valueChanges.subscribe(() => {
-      this.resultadosVinculo = [];
-      this.vinculoSelecionado = null;
 
-      this.form.patchValue({
-        processoId: null,
-        casoId: null,
-        atendimentoId: null
-      });
+      this.limparVinculos();
+
     });
   }
 
@@ -132,99 +126,97 @@ export class EditarEvento implements OnInit {
       error: () => this.mensagemErro = ['Erro ao carregar responsáveis']
     });
   }
-carregarEvento() {
-  this.carregando = true;
+  carregarEvento() {
+    this.carregando = true;
 
-  this.eventoService.ObterEventoPorId(this.id).subscribe({
-    next: res => {
+    this.eventoService.ObterEventoPorId(this.id).subscribe({
+      next: res => {
 
-      console.log('EVENTO COMPLETO:', res);
+        console.log('EVENTO COMPLETO:', res);
+this.resultadosVinculo = [];
+      let tipo: 'processo' | 'caso' | 'atendimento' | null = null;
 
-      const tipo =
-        res.processoId ? 'processo' :
-        res.casoId ? 'caso' :
-        res.atendimentoId ? 'atendimento' : null;
+if (res.processoId != null) tipo = 'processo';
+else if (res.casoId != null) tipo = 'caso';
+else if (res.atendimentoId != null) tipo = 'atendimento';
 
-      // =========================
-      // FORM PRINCIPAL
-      // =========================
-      this.form.patchValue({
-        titulo: res.titulo,
-        endereco: res.endereco,
-        observacao: res.observacao,
+        // =========================
+        // FORM PRINCIPAL
+        // =========================
+        this.form.patchValue({
+          titulo: res.titulo,
+          endereco: res.endereco,
+          observacao: res.observacao,
 
-        dataInicial: res.dataInicial ? res.dataInicial.split('T')[0] : null,
-        dataFinal: res.dataFinal ? res.dataFinal.split('T')[0] : null,
+          dataInicial: res.dataInicial ? res.dataInicial.split('T')[0] : null,
+          dataFinal: res.dataFinal ? res.dataFinal.split('T')[0] : null,
 
-        horaInicial: res.horaInicial,
-        horaFinal: res.horaFinal,
+          horaInicial: res.horaInicial,
+          horaFinal: res.horaFinal,
 
-        diaInteiro: res.diaInteiro,
+          diaInteiro: res.diaInteiro,
 
-        statusGeralKanban: res.statusGeralKanban,
-        modalidade: res.modalidade,
+          statusGeralKanban: res.statusGeralKanban,
+          modalidade: res.modalidade,
 
-        processoId: res.processoId,
-        casoId: res.casoId,
-        atendimentoId: res.atendimentoId,
+          processoId: res.processoId,
+          casoId: res.casoId,
+          atendimentoId: res.atendimentoId,
 
-        tipoVinculo: tipo
-      });
+          tipoVinculo: tipo
 
-      // =========================
-      // ETIQUETAS
-      // =========================
-      this.etiquetasSelecionadas =
-        res.grupoEventoEtiquetas?.map((x: any) => ({
-          id: x.etiquetaId,
-          nome: x.nome,
-          cor: x.cor
-        })) ?? [];
+        }, { emitEvent: false });
 
-      // =========================
-      // RESPONSÁVEIS
-      // =========================
-      this.responsaveisSelecionados =
-        res.grupoEventoResponsaveis?.map((x: any) => ({
-          id: x.usuarioId,
-          nomeUsuario: x.nomeUsuario ?? '',
-          idPessoa: x.idPessoa ?? ''
-        })) ?? [];
+        // =========================
+        // ETIQUETAS
+        // =========================
+        this.etiquetasSelecionadas =
+          res.grupoEventoEtiquetas?.map((x: any) => ({
+            id: x.etiquetaId,
+            nome: x.nome,
+            cor: x.cor
+          })) ?? [];
 
-      // =========================
-      // VÍNCULO VISUAL (🔥 AJUSTE IMPORTANTE)
-      // =========================
-      this.vinculoSelecionado = null;
+        // =========================
+        // RESPONSÁVEIS
+        // =========================
+        this.responsaveisSelecionados =
+          res.grupoEventoResponsaveis?.map((x: any) => ({
+            id: x.usuarioId,
+            nomeUsuario: x.nomeUsuario ?? '',
+            idPessoa: x.idPessoa ?? ''
+          })) ?? [];
 
-      if (res.processoId) {
-        this.vinculoSelecionado = {
-          id: res.processoId,
-          numeroProcesso: res.processoNumero,
-          titulo: res.processoPasta
-        };
+        // =========================
+        // VÍNCULO VISUAL (🔥 AJUSTE IMPORTANTE)
+        // =========================
+        this.vinculoSelecionado = res.processoId
+          ? {
+            id: res.processoId,
+            pasta: res.processoPasta
+          } as ProcessoAutoComplete
+          : res.casoId
+            ? {
+              id: res.casoId,
+              pasta: res.casoPasta
+            } as CasoAutoComplete
+            : res.atendimentoId
+              ? {
+                id: res.atendimentoId,
+                assunto: res.atendimentoAssunto
+              } as AtendimentoAutoComplete
+              : null;
+
+
+        this.carregando = false;
+      },
+
+      error: () => {
+        this.mensagemErro = ['Erro ao carregar evento'];
+        this.carregando = false;
       }
-      else if (res.casoId) {
-        this.vinculoSelecionado = {
-          id: res.casoId,
-          pasta: res.casoPasta
-        };
-      }
-      else if (res.atendimentoId) {
-        this.vinculoSelecionado = {
-          id: res.atendimentoId,
-          assunto: res.atendimentoAssunto
-        };
-      }
-
-      this.carregando = false;
-    },
-
-    error: () => {
-      this.mensagemErro = ['Erro ao carregar evento'];
-      this.carregando = false;
-    }
-  });
-}
+    });
+  }
   buscarVinculo(termo: string) {
     const tipo = this.form.get('tipoVinculo')?.value;
 
@@ -246,16 +238,37 @@ carregarEvento() {
     request$.subscribe(res => this.resultadosVinculo = res);
   }
 
-  selecionarVinculo(item: any) {
-    this.form.patchValue({
-      processoId: null,
-      casoId: null,
-      atendimentoId: null
-    });
+  selecionarVinculo(item: VinculoAutoComplete) {
 
-    if ('assunto' in item) this.form.patchValue({ atendimentoId: item.id });
-    else if ('numeroProcesso' in item) this.form.patchValue({ processoId: item.id });
-    else this.form.patchValue({ casoId: item.id });
+    const tipo = this.form.get('tipoVinculo')?.value;
+
+    // 🔥 limpa tudo antes
+    this.limparVinculos();
+
+    this.resultadosVinculo = [];
+
+    this.vinculoSelecionado = item;
+
+    const id = item.id ?? null;
+
+    if (tipo === 'processo') {
+
+      this.form.patchValue({
+        processoId: id
+      });
+    }
+    else if (tipo === 'caso') {
+
+      this.form.patchValue({
+        casoId: id
+      });
+    }
+    else if (tipo === 'atendimento') {
+
+      this.form.patchValue({
+        atendimentoId: id
+      });
+    }
   }
 
   buscarResponsaveis(termo: string) {
@@ -263,67 +276,82 @@ carregarEvento() {
       .filter(r => r.nomeUsuario.toLowerCase().includes(termo.toLowerCase()));
   }
 
-onSubmit() {
-  if (this.form.invalid) return;
+  onSubmit() {
+    if (this.form.invalid) return;
 
-  this.carregando = true;
+    this.carregando = true;
 
-  const f = this.form.value;
+    const f = this.form.value;
+    const quantidadeVinculos = [
+      f.processoId,
+      f.casoId,
+      f.atendimentoId
+    ].filter(Boolean).length;
 
-  const request = {
-    titulo: f.titulo ?? '',
-    endereco: f.endereco ?? '',
-    observacao: f.observacao ?? '',
+    if (quantidadeVinculos > 1) {
 
-    dataInicial: f.dataInicial || null,
-    dataFinal: f.dataFinal || null,
+      this.mensagemErro = [
+        'O evento não pode possuir mais de um vínculo.'
+      ];
 
-    horaInicial: f.horaInicial || null,
-    horaFinal: f.horaFinal || null,
+      this.carregando = false;
 
-    diaInteiro: f.diaInteiro ?? false,
+      return;
+    }
+    const request = {
+      titulo: f.titulo ?? '',
+      endereco: f.endereco ?? '',
+      observacao: f.observacao ?? '',
 
-    statusGeralKanban: f.statusGeralKanban,
-    modalidade: f.modalidade,
+      dataInicial: f.dataInicial || null,
+      dataFinal: f.dataFinal || null,
 
-    intervaloRecorrencia: f.intervaloRecorrencia,
-    tipoRecorrencia: f.tipoRecorrencia,
-    dataFimRecorrencia: f.dataFimRecorrencia || null,
-    quantidadeOcorrencias: f.quantidadeOcorrencias,
+      horaInicial: f.horaInicial || null,
+      horaFinal: f.horaFinal || null,
 
-    processoId: f.processoId ?? null,
-    casoId: f.casoId ?? null,
-    atendimentoId: f.atendimentoId ?? null,
-    grupoEventoEtiquetas: this.etiquetasSelecionadas.map(e => ({
-  etiquetaId: e.id!
-})),
-grupoEventoResponsavel: this.responsaveisSelecionados
-  .filter(r => r.id)
-  .map(r => ({
-    UsuarioId: r.id
-  }))
-  };
+      diaInteiro: f.diaInteiro ?? false,
 
-  this.eventoService.editarEvento(this.id, request)
-    .pipe(
-      finalize(() => {
-        this.carregando = false;
-        this.cdr.detectChanges();
-      })
-    )
-    .subscribe({
-      next: (res) => {
-        this.carregando = false;
-        this.mensagemSucesso = [res.message];
+      statusGeralKanban: f.statusGeralKanban,
+      modalidade: f.modalidade,
 
-        setTimeout(() => {
-          this.router.navigate(['/admin/gestao-atividades']);
-        }, 3000);
-      },
-      error: (err: HttpErrorResponse) => this.tratarErro(err)
-    });
-   
-}
+      intervaloRecorrencia: f.intervaloRecorrencia,
+      tipoRecorrencia: f.tipoRecorrencia,
+      dataFimRecorrencia: f.dataFimRecorrencia || null,
+      quantidadeOcorrencias: f.quantidadeOcorrencias,
+
+      processoId: f.processoId ?? null,
+      casoId: f.casoId ?? null,
+      atendimentoId: f.atendimentoId ?? null,
+      grupoEventoEtiquetas: this.etiquetasSelecionadas.map(e => ({
+        etiquetaId: e.id!
+      })),
+      grupoEventoResponsavel: this.responsaveisSelecionados
+        .filter(r => r.id)
+        .map(r => ({
+          UsuarioId: r.id
+        }))
+    };
+
+    this.eventoService.editarEvento(this.id, request)
+      .pipe(
+        finalize(() => {
+          this.carregando = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.carregando = false;
+          this.mensagemSucesso = [res.message];
+
+          setTimeout(() => {
+            this.router.navigate(['/admin/gestao-atividades']);
+          }, 3000);
+        },
+        error: (err: HttpErrorResponse) => this.tratarErro(err)
+      });
+
+  }
 
   private tratarErro(err: HttpErrorResponse) {
     this.mensagemErro = [];
@@ -341,5 +369,16 @@ grupoEventoResponsavel: this.responsaveisSelecionados
     }
 
     this.carregando = false;
+  } private limparVinculos(): void {
+
+    this.form.patchValue({
+      processoId: null,
+      casoId: null,
+      atendimentoId: null
+    });
+
+    this.vinculoSelecionado = null;
+
+    this.resultadosVinculo = [];
   }
 }

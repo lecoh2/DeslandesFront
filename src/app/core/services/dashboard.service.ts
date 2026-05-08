@@ -26,6 +26,38 @@ getUltimosProcessos(qtd: number = 5): Observable<any[]> {
     { params: { quantidade: qtd } }
   );
 }
+getUltimosProcessosAnoAtual(): Observable<number> {
+  return this.http.get<number>(
+    `${this.url}/api/v1/processo/contar-processo-anoatual`
+  );
+}
+getTotalProcessos(): Observable<number> {
+  return this.http.get<number>(
+    `${this.url}/api/v1/processo/contar-processos-total`
+  );
+}
+
+getUltimosAtendimentoAnoAtual(): Observable<number> {
+  return this.http.get<number>(
+    `${this.url}/api/v1/atendimento/contar-atendimento-anoatual`
+  );
+}
+getTotalAtendimento(): Observable<number> {
+  return this.http.get<number>(
+    `${this.url}/api/v1/atendimento/contar-atendimento-total`
+  );
+}
+getUltimosCasoAnoAtual(): Observable<number> {
+  return this.http.get<number>(
+    `${this.url}/api/v1/caso/contar-caso-anoatual`
+  );
+}
+getTotalCaso(): Observable<number> {
+  return this.http.get<number>(
+    `${this.url}/api/v1/caso/contar-caso-total`
+  );
+}
+
 getUltimasTarefas(qtd: number = 5): Observable<any[]> {
   return this.http.get<any[]>(
     `${this.url}/api/v1/tarefa/ultimas-tarefas?quantidade=${qtd}`

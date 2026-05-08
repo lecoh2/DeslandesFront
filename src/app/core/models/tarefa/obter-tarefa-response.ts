@@ -18,9 +18,10 @@ export interface ObterTarefaResponse {
   processoId?: string | null;
   casoId?: string | null;
   atendimentoId?: string | null;
-processoPasta?: string;
-casoPasta?: string;
-atendimentoAssunto?: string;
+  processoPasta?: string;
+  casoPasta?: string;
+  numeroProcesso?: string;
+  atendimentoAssunto?: string;
   listasTarefa: ListaTarefasResponse[];
   grupoTarefaResponsaveis: GrupoTarefaResponsavelResponse[];
   grupoTarefasEtiquetas: GrupoEtiquetaRequest[];

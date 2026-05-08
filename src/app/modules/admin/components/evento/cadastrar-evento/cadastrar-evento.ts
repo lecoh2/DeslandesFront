@@ -46,6 +46,7 @@ export class CadastrarEvento implements OnInit {
   mensagemSucesso: string[] = [];
   carregando = false;
   resultadosVinculo: VinculoAutoComplete[] = [];
+vinculoSelecionado: VinculoAutoComplete | null = null;
   // 🔥 RESPONSÁVEIS (igual tarefa)
   responsaveis: ConsultarUsuarioResponse[] = [];
   responsaveisFiltrados: ConsultarUsuarioResponse[] = [];
@@ -76,11 +77,10 @@ export class CadastrarEvento implements OnInit {
     modalidade: [0],
     dataFimRecorrencia: [''],
     quantidadeOcorrencias: [0],
-
-    tipoVinculo: ['' as 'processo' | 'caso' | 'atendimento'],
-    processoId: [null],
-    casoId: [null],
-    atendimentoId: [null]
+tipoVinculo: this.builder.control<'processo' | 'caso' | 'atendimento' | null>(null),
+    processoId: this.builder.control<string | null>(null),
+    casoId: this.builder.control<string | null>(null),
+    atendimentoId: this.builder.control<string | null>(null),
   });
 
   get podeEnviar(): boolean {
@@ -88,8 +88,17 @@ export class CadastrarEvento implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.usuarioLogado = this.authHelper.get();
+
     this.carregarDados();
+
+    // 🔥 LIMPA VÍNCULOS AO TROCAR TIPO
+    this.form.get('tipoVinculo')?.valueChanges.subscribe(() => {
+
+      this.limparVinculos();
+
+    });
   }
 
   carregarDados() {
@@ -123,22 +132,37 @@ export class CadastrarEvento implements OnInit {
 
     request$.subscribe(res => this.resultadosVinculo = res);
   }
+selecionarVinculo(item: VinculoAutoComplete) {
 
-  selecionarVinculo(item: any) {
-    const tipo = this.form.get('tipoVinculo')?.value as string;
+  const tipo = this.form.get('tipoVinculo')?.value;
 
-    this.resultadosVinculo = [];
+  this.limparVinculos();
 
+  this.vinculoSelecionado = item;
+
+  const id = item.id ?? null;
+
+  if (tipo === 'processo') {
     this.form.patchValue({
-      processoId: null,
-      casoId: null,
-      atendimentoId: null
+      processoId: id
     });
-
-    if (tipo === 'processo') this.form.patchValue({ processoId: item.id });
-    else if (tipo === 'caso') this.form.patchValue({ casoId: item.id });
-    else this.form.patchValue({ atendimentoId: item.id });
   }
+
+  else if (tipo === 'caso') {
+    this.form.patchValue({
+      casoId: id
+    });
+  }
+
+  else if (tipo === 'atendimento') {
+    this.form.patchValue({
+      atendimentoId: id
+    });
+  }
+
+  // 🔥 IMPORTANTE: evita estado inconsistente
+  this.resultadosVinculo = [];
+}
 
   // =========================
   // 🔍 BUSCAR RESPONSÁVEIS (IGUAL TAREFA)
@@ -171,6 +195,22 @@ export class CadastrarEvento implements OnInit {
     this.carregando = true;
 
     const f = this.form.value;
+    const quantidadeVinculos = [
+      f.processoId,
+      f.casoId,
+      f.atendimentoId
+    ].filter(Boolean).length;
+
+    if (quantidadeVinculos > 1) {
+
+      this.mensagemErro = [
+        'O evento não pode possuir mais de um vínculo.'
+      ];
+
+      this.carregando = false;
+
+      return;
+    }
     const limpar = (v: any) => v ?? undefined;
     const request: CriarEventoRequest = {
       titulo: f.titulo ?? '',
@@ -207,9 +247,17 @@ export class CadastrarEvento implements OnInit {
       })),
 
       // 🔥 VÍNCULO (ANTES NÃO IA)
-      processoId: limpar(f.processoId),
-      casoId: limpar(f.casoId),
-      atendimentoId: limpar(f.atendimentoId),
+     processoId: this.vinculoSelecionado && 'numeroProcesso' in this.vinculoSelecionado
+  ? this.vinculoSelecionado.id
+  : null,
+
+casoId: this.vinculoSelecionado && 'pasta' in this.vinculoSelecionado && !('assunto' in this.vinculoSelecionado)
+  ? this.vinculoSelecionado.id
+  : null,
+
+atendimentoId: this.vinculoSelecionado && 'assunto' in this.vinculoSelecionado
+  ? this.vinculoSelecionado.id
+  : null,
     };
 
     console.log("REQUEST CORRIGIDO:", request);
@@ -257,5 +305,17 @@ export class CadastrarEvento implements OnInit {
   private montarDataHora(data?: string | null, hora?: string | null): string | undefined {
     if (!data || !hora) return undefined;
     return new Date(`${data}T${hora}:00`).toISOString();
+  }
+  private limparVinculos(): void {
+
+    this.form.patchValue({
+      processoId: null,
+      casoId: null,
+      atendimentoId: null
+    });
+
+    this.vinculoSelecionado = null;
+
+    this.resultadosVinculo = [];
   }
 }

@@ -100,6 +100,7 @@ export class GestaoAtividades implements OnInit {
     }
   }
   limparFiltro(): void {
+
     this.filtro = {
       periodo: null,
       atribuicao: null,
@@ -108,9 +109,45 @@ export class GestaoAtividades implements OnInit {
       status: null
     };
 
-    this.colunas = structuredClone(this.colunasOriginais);
+    this.aplicarFiltro(); // 🔥 NÃO usa structuredClone direto
   }
+  aplicarFiltro(): void {
 
+  let dados = structuredClone(this.colunasOriginais);
+
+  const statusFiltro = this.filtro.status
+    ? Number(this.filtro.status)
+    : null;
+
+  const tipoFiltro = (this.filtro.tipo ?? '')
+    .toString()
+    .trim()
+    .toLowerCase();
+
+  dados = dados.map(coluna => {
+
+    let cards = coluna.cards ?? [];
+
+    if (statusFiltro != null) {
+      cards = cards.filter(c => Number(c.status) === statusFiltro);
+    }
+
+    if (tipoFiltro) {
+      cards = cards.filter(c =>
+        (c.tipo ?? '').toString().trim().toLowerCase() === tipoFiltro
+      );
+    }
+
+    return {
+      ...coluna,
+      cards
+    };
+  })
+  // 🔥 ISSO AQUI RESOLVE O BUG VISUAL
+  .filter(coluna => coluna.cards.length > 0);
+
+  this.colunas = dados;
+}
   mudarStatus(id: string, status: number) {
     this.kanbanService.atualizarStatus(id, status)
       .subscribe(() => {
@@ -119,24 +156,40 @@ export class GestaoAtividades implements OnInit {
   }
   ngOnInit(): void {
 
+    this.filtro = {
+      periodo: null,
+      atribuicao: null,
+      pessoaId: null,
+      tipo: null,
+      status: null
+    };
+
     this.carregarKanban();
   }
   carregarKanban(): void {
+
     this.kanbanService.consultar().subscribe({
       next: (res) => {
 
-        this.colunas = res
-          .filter(coluna => coluna.status !== 4) // ❌ remove cancelado
-          .map(coluna => ({
-            ...coluna,
-            cards: (coluna.cards ?? []).map(card => ({
-              ...card,
-              prioridade: card.prioridade ?? null
-            }))
-          }))
-          .filter(coluna => coluna.cards.length > 0); // 🔥 remove coluna vazia
+        const colunas = res
+          .filter(c => c.status !== 4)
+          .map(card => ({
+            ...card,
+            prioridade: card.prioridade ?? null,
 
-        this.colunasOriginais = structuredClone(this.colunas);
+            // 🔥 NORMALIZA TIPO AQUI
+            tipo: (card.tipo ?? '').toString().trim().toLowerCase()
+          }))
+          .filter(c => c.cards.length > 0);
+
+        this.colunasOriginais = structuredClone(colunas);
+
+        // 🔥 força microtask para garantir render Angular
+        setTimeout(() => {
+          this.aplicarFiltro();
+          this.cdr.detectChanges();
+        });
+
       }
     });
   }
@@ -403,40 +456,40 @@ export class GestaoAtividades implements OnInit {
   }
   drop(event: CdkDragDrop<any[]>, colunaDestino: any): void {
 
-  const card = event.item.data;
+    const card = event.item.data;
 
-  //  mesma coluna → só reordena
-  if (event.previousContainer === event.container) {
-    moveItemInArray(
+    //  mesma coluna → só reordena
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+      return;
+    }
+
+    // 🔹 mudou de coluna → move visualmente
+    transferArrayItem(
+      event.previousContainer.data,
       event.container.data,
       event.previousIndex,
       event.currentIndex
     );
-    return;
+
+    // 🔥 novo status vindo da coluna destino
+    const novoStatus = colunaDestino.status;
+
+    // 🔥 chama seu backend já existente
+    this.kanbanService.atualizarStatus(card.id, novoStatus)
+      .subscribe({
+        next: () => {
+          // atualiza local sem reload
+          card.status = novoStatus;
+        },
+        error: () => {
+          // rollback simples (seguro)
+          this.carregarKanban();
+        }
+      });
   }
-
-  // 🔹 mudou de coluna → move visualmente
-  transferArrayItem(
-    event.previousContainer.data,
-    event.container.data,
-    event.previousIndex,
-    event.currentIndex
-  );
-
-  // 🔥 novo status vindo da coluna destino
-  const novoStatus = colunaDestino.status;
-
-  // 🔥 chama seu backend já existente
-  this.kanbanService.atualizarStatus(card.id, novoStatus)
-    .subscribe({
-      next: () => {
-        // atualiza local sem reload
-        card.status = novoStatus;
-      },
-      error: () => {
-        // rollback simples (seguro)
-        this.carregarKanban();
-      }
-    });
-}
 }

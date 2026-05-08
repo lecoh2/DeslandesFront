@@ -1,38 +1,107 @@
 <div class="container-fluid">
-
-  <!-- HEADER -->
-  <div class="row mb-3">
-    <div class="col-auto">
+  <div class="row mb-2 mb-xl-3">
+    <div class="col-auto d-none d-sm-block">
       <h3>Procon Duque de Caxias</h3>
     </div>
+
+    <div class="col-auto ms-auto text-end mt-n1">
+
+      <div class="dropdown me-2 d-inline-block position-relative">
+        <div class="dropdown-menu dropdown-menu-end">
+          <h6 class="dropdown-header">Settings</h6>
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <!-- CARDS -->
-  <div class="row mb-3">
-
-    <div class="col-12 col-md-6 col-xl-3 d-flex">
+  <div class="row">
+    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
       <div class="card flex-fill">
-        <div class="card-body">
-          <h5>Bem vindo(a) de volta,</h5>
-          <strong>{{ nomeUsuario }}</strong>
+        <div class="card-body py-4">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2">Bem-vindo(a), <strong>{{ nomeUsuario }}</strong><br></h3>
+           
+              <div class="mb-0">
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+             <div class="stat bg-primary">
+                <i class="align-middle text-white fas fa-user align-middle"></i>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="col-12 col-md-6 col-xl-3 d-flex">
+    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
       <div class="card flex-fill">
-        <div class="card-body">
-          <h6>Total atendimentos</h6>
-
+        <div class="card-body py-4">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2">Total de Processos: <strong>{{ totalProcessos }}</strong><br></h3>
+              <p class="mb-2">Em {{ currentYear }} um total de: {{ totalProcessosAnoAtual }}<span
+                  class="badge bg-success">
+                </span></p>
+              <div class="mb-0">
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+               <div class="stat bg-success">
+                <i class="align-middle text-white fas fa-balance-scale align-middle"></i>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="col-12 col-md-6 col-xl-3 d-flex">
-
+    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body py-4">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2">Total de Atendimentos: <strong>{{ totalAtendimento }}</strong><br></h3>
+              <p class="mb-2">Em {{ currentYear }} um total de: {{ totalAtendimentoAnoAtual }}<span
+                  class="badge bg-danger">
+                </span></p>
+              <div class="mb-0">
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+                <div class="stat bg-danger">
+                <i class="align-middle text-white fas fa-fw fa-bullhorn"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body py-4">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2">Total de Casos: <strong>{{ totalCaso }}</strong><br></h3>
+              <p class="mb-2">Em {{ currentYear }} um total de: {{ totalCasosAnoAtual }}<span class="badge bg-info">
+                </span></p>
 
+              <div class="mb-0">
 
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+                <div class="stat bg-info">
+                <i class="align-middle text-white fas fa-fw fa-users-cog"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="row">
     <!-- TABELA -->
@@ -67,7 +136,7 @@
 
 
           <!-- TABELA -->
-          <table class="table table-striped mb-0" *ngIf="consultaProcesso?.length">
+          <table class="table table-striped mb-0 " *ngIf="consultaProcesso?.length">
 
             <thead>
               <tr>
@@ -83,20 +152,80 @@
             <tbody>
               <tr *ngFor="let processo of consultaProcesso; trackBy: trackById">
 
-                <td>{{ processo?.pasta }}</td>
+                <td class="align-middle">
+
+                  <!-- TEXTO RESUMIDO -->
+                  <span>
+                    {{ limitarTexto(processo?.pasta ?? '', 30) }}
+                  </span>
+
+                  <!-- BOTÃO VER MAIS -->
+                  <div *ngIf="precisaVerMais(processo?.pasta, 50)" class="d-inline-block ms-2 dropdown">
+
+                    <button class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dropdown-toggle" type="button"
+                      data-bs-toggle="dropdown" aria-expanded="false">
+
+                      Ver mais
+
+                    </button>
+
+                    <!-- DROPDOWN -->
+                    <div class="dropdown-menu p-3 shadow border-0"
+                      style="min-width: 400px; max-width: 600px; white-space: normal;">
+
+                      <div class="small text-muted mb-1">
+                        Pasta completa
+                      </div>
+
+                      <div>
+                        {{ processo?.pasta }}
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </td>
                 <td>{{ processo?.numeroProcesso }}</td>
 
 
                 <!-- CLIENTES -->
-                <td>
+                <td class="text-nowrap position-relative">
+
                   <ng-container *ngIf="processo?.grupoClientesProcesso as clientes">
 
                     <ng-container *ngIf="(clientes?.length ?? 0) > 0; else semCliente">
-                      {{ clientes[0]?.nome ?? 'Sem nome' }}
 
-                      <span *ngIf="(clientes?.length ?? 0) > 1" class="text-muted">
-                        (+{{ clientes.length - 1 }})
+                      <!-- CLIENTE PRINCIPAL -->
+                      <span>
+                        {{ clientes[0]?.nome ?? 'Sem nome' }}
                       </span>
+
+                      <!-- BOTÃO -->
+                      <div *ngIf="clientes.length > 1" class="d-inline-block ms-2 dropdown">
+
+                        <button class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dropdown-toggle"
+                          type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="fas fa-users me-1"></i>
+                          +{{ clientes.length - 1 }}
+
+                        </button>
+
+                        <!-- DROPDOWN -->
+                        <ul class="dropdown-menu shadow border-0">
+
+                          <li *ngFor="let c of clientes.slice(1)">
+
+                            <span class="dropdown-item small">
+                              {{ c.nome }}
+                            </span>
+
+                          </li>
+
+                        </ul>
+
+                      </div>
+
                     </ng-container>
 
                   </ng-container>
@@ -104,6 +233,7 @@
                   <ng-template #semCliente>
                     <span class="text-muted">Nenhum</span>
                   </ng-template>
+
                 </td>
 
                 <!-- ENVOLVIDOS -->
@@ -200,71 +330,71 @@
     </div>
 
   </div>
-   <div class="row">
-        <div class="col-12 col-xl-4 d-none d-xl-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
+  <div class="row">
+    <div class="col-12 col-xl-4 d-none d-xl-flex">
+      <div class="card flex-fill w-100">
+        <div class="card-header">
+          <div class="card-actions float-end">
+            <div class="dropdown position-relative">
+              <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
+                <i class="align-middle" data-lucide="more-horizontal"></i>
+              </a>
 
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">Atendimentos em {{currentYear}}</h5>
-                </div>
-                <div class="card-body d-flex">
-                    <div class="align-self-center w-100">
-                        <app-graficoAtendimento></app-graficoAtendimento>
-
-                    </div>
-                </div>
+              <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
             </div>
+          </div>
+          <h5 class="card-title mb-0">Atendimentos em {{currentYear}}</h5>
         </div>
+        <div class="card-body d-flex">
+          <div class="align-self-center w-100">
+            <app-graficoAtendimento></app-graficoAtendimento>
 
-        <div class="col-12 col-lg-4 d-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
-
-                    <h5 class="card-title mb-0">Processos em {{currentYear}}</h5>
-                </div>
-                <div class="card-body d-flex">
-                    <div class="align-self-center w-100">
-                       <app-graficoProcesso></app-graficoProcesso>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-        <div class="col-12 col-lg-6 col-xl-4 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">Casos em {{currentYear}}</h5>
-                </div>
-                <div class="card-body d-flex">
-                    <div class="align-self-center w-100">
-                        <app-graficoCaso></app-graficoCaso>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <div class="col-12 col-lg-4 d-flex">
+      <div class="card flex-fill w-100">
+        <div class="card-header">
+
+          <h5 class="card-title mb-0">Processos em {{currentYear}}</h5>
+        </div>
+        <div class="card-body d-flex">
+          <div class="align-self-center w-100">
+            <app-graficoProcesso></app-graficoProcesso>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xl-4 d-flex">
+      <div class="card flex-fill">
+        <div class="card-header">
+          <div class="card-actions float-end">
+            <div class="dropdown position-relative">
+              <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
+                <i class="align-middle" data-lucide="more-horizontal"></i>
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </div>
+          </div>
+          <h5 class="card-title mb-0">Casos em {{currentYear}}</h5>
+        </div>
+        <div class="card-body d-flex">
+          <div class="align-self-center w-100">
+            <app-graficoCaso></app-graficoCaso>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

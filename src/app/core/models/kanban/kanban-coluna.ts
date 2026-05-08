@@ -5,4 +5,6 @@ export interface KanbanColuna {
   nome: string;
   cor: string;
   cards: KanbanCard[];
+  prioridade?: number | null;
+ tipo: string | null;
 }
