@@ -42,7 +42,7 @@ import { TipoEntidadeEnum } from '../../../../../core/models/enums/tipo-entidade
 
 
 export class EditarProcesso implements OnInit {
- @ViewChild('modalHistorico')
+  @ViewChild('modalHistorico')
   modalHistorico!: ElementRef;
   private builder = inject(FormBuilder);
   private router = inject(Router);
@@ -349,54 +349,54 @@ export class EditarProcesso implements OnInit {
     this.carregando = false;
   }
 
-abrirHistoricoProcesso(processoId: string) {
+  abrirHistoricoProcesso(processoId: string) {
 
-  this.carregandoHistorico = true;
-  this.historico = [];
+    this.carregandoHistorico = true;
+    this.historico = [];
 
-  const modal =
-    new bootstrap.Modal(
-      this.modalHistorico.nativeElement
-    );
+    const modal =
+      new bootstrap.Modal(
+        this.modalHistorico.nativeElement
+      );
 
-  modal.show();
+    modal.show();
 
-  this.historicoService
-    .ConsultarHistorico(
-      TipoEntidadeEnum.Processo,
-      processoId
-    )
-    .subscribe({
+    this.historicoService
+      .ConsultarHistorico(
+        TipoEntidadeEnum.Processo,
+        processoId
+      )
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        this.historico = (res ?? []).map(h => ({
-          ...h,
-          antes: h.dadosAntes
-            ? JSON.parse(h.dadosAntes)
-            : null,
+          this.historico = (res ?? []).map(h => ({
+            ...h,
+            antes: h.dadosAntes
+              ? JSON.parse(h.dadosAntes)
+              : null,
 
-          depois: h.dadosDepois
-            ? JSON.parse(h.dadosDepois)
-            : null
-        }));
+            depois: h.dadosDepois
+              ? JSON.parse(h.dadosDepois)
+              : null
+          }));
 
-        this.carregandoHistorico = false;
+          this.carregandoHistorico = false;
 
-        this.cdr.detectChanges();
-      },
+          this.cdr.detectChanges();
+        },
 
-      error: (err) => {
+        error: (err) => {
 
-        console.error(err);
+          console.error(err);
 
-        this.carregandoHistorico = false;
-      }
+          this.carregandoHistorico = false;
+        }
 
-    });
-}
+      });
+  }
 
-getMudancas(h: any): { campo: string, antes: any, depois: any }[] {
+  getMudancas(h: any): { campo: string, antes: any, depois: any }[] {
     if (!h.antes || !h.depois) return [];
 
     const mudancas: any[] = [];
@@ -439,28 +439,28 @@ getMudancas(h: any): { campo: string, antes: any, depois: any }[] {
 
     return valor.toString();
   }
-  
- formatarCampo(campo: string): string {
 
-  const map: any = {
-    Titulo: 'Título',
-    Pasta: 'Pasta',
-    NumeroProcesso: 'Número do Processo',
-    LinkTribunal: 'Link Tribunal',
-    Objeto: 'Objeto',
-    ValorCausa: 'Valor da Causa',
-    ValorCondenacao: 'Valor da Condenação',
-    Distribuido: 'Distribuído',
-    Observacao: 'Observação',
-    Instancia: 'Instância',
-    Acesso: 'Acesso',
-    NomeVara: 'Vara',
-    NomeForo: 'Foro',
-    Clientes: 'Clientes',
-    Envolvidos: 'Envolvidos',
-    Etiquetas: 'Etiquetas'
-  };
+  formatarCampo(campo: string): string {
 
-  return map[campo] || campo;
-}
+    const map: any = {
+      Titulo: 'Título',
+      Pasta: 'Pasta',
+      NumeroProcesso: 'Número do Processo',
+      LinkTribunal: 'Link Tribunal',
+      Objeto: 'Objeto',
+      ValorCausa: 'Valor da Causa',
+      ValorCondenacao: 'Valor da Condenação',
+      Distribuido: 'Distribuído',
+      Observacao: 'Observação',
+      Instancia: 'Instância',
+      Acesso: 'Acesso',
+      NomeVara: 'Vara',
+      NomeForo: 'Foro',
+      Clientes: 'Clientes',
+      Envolvidos: 'Envolvidos',
+      Etiquetas: 'Etiquetas'
+    };
+
+    return map[campo] || campo;
+  }
 }

@@ -1,6 +1,10 @@
+declare var bootstrap: any;
+
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
+  ViewChild,
   inject,
   OnInit
 } from '@angular/core';
@@ -52,6 +56,10 @@ import { ObterAtendimentoResponse } from '../../../../../core/models/atendimento
 
 import { AutenticarUsuarioResponse } from '../../../../../core/models/usuario/autenticar-usuario.response';
 
+import { HistoricoService } from '../../../../../core/services/historico.service';
+
+import { TipoEntidadeEnum } from '../../../../../core/models/enums/tipo-entidade/tipo-entidadeEnum';
+
 type VinculoAutoComplete =
   | ProcessoAutoComplete
   | CasoAutoComplete
@@ -64,6 +72,9 @@ type VinculoAutoComplete =
   styleUrls: ['./editar-atendimento.css']
 })
 export class EditarAtendimento implements OnInit {
+
+  @ViewChild('modalHistorico')
+  modalHistorico!: ElementRef;
 
   // =========================
   // INJEÇÕES
@@ -88,6 +99,8 @@ export class EditarAtendimento implements OnInit {
 
   private cdr = inject(ChangeDetectorRef);
 
+  private historicoService = inject(HistoricoService);
+private carregandoFormulario = false;
   // =========================
   // ESTADO
   // =========================
@@ -99,8 +112,14 @@ export class EditarAtendimento implements OnInit {
 
   mensagemSucesso: string[] = [];
 
+  historico: any[] = [];
+
+  carregandoHistorico = false;
+
   id!: string;
 
+  carregandoInicial = true;
+vinculoAlterado = false;
   // =========================
   // VÍNCULO
   // =========================
@@ -144,7 +163,7 @@ export class EditarAtendimento implements OnInit {
 
     casoId: this.fb.control<string | null>(null),
 
-    atendimentoId: this.fb.control<string | null>(null),
+    atendimentoPaiId: this.fb.control<string | null>(null),
 
     responsavelId: this.fb.control<string | null>(null)
   });
@@ -173,17 +192,38 @@ export class EditarAtendimento implements OnInit {
 
     this.inicializarAutocomplete();
 
-    // 🔥 RESET AO TROCAR TIPO
-    this.form.get('tipoVinculo')?.valueChanges.subscribe(() => {
+    // 🔥 RESET SOMENTE APÓS CARREGAMENTO
+/*this.form.get('tipoVinculo')?.valueChanges.subscribe(tipo => {
 
-      this.resultadosVinculo = [];
+  if (this.carregandoInicial || this.carregandoFormulario) {
+    return;
+  }
 
-      this.vinculoSelecionado = null;
+  const processoId = this.form.get('processoId')?.value;
+  const casoId = this.form.get('casoId')?.value;
+  const atendimentoPaiId = this.form.get('atendimentoPaiId')?.value;
 
-      this.filtroVinculo.setValue('');
+  const tipoAtual =
+    processoId ? 'processo'
+    : casoId ? 'caso'
+    : atendimentoPaiId ? 'atendimento'
+    : null;
 
-      this.limparVinculos();
-    });
+  // 🔥 não limpa se o tipo continuar o mesmo
+  if (tipo === tipoAtual) {
+    return;
+  }
+
+  this.resultadosVinculo = [];
+
+  this.vinculoSelecionado = null;
+
+this.filtroVinculo.setValue('', {
+  emitEvent: false
+});
+
+  this.limparVinculos();
+});*/
   }
 
   // =========================
@@ -199,19 +239,16 @@ export class EditarAtendimento implements OnInit {
   // =========================
   // LIMPAR VÍNCULOS
   // =========================
-  private limparVinculos(): void {
+ private limparVinculos(): void {
 
-    this.form.patchValue({
-      processoId: null,
-      casoId: null,
-      atendimentoId: null
-    });
-
-    this.vinculoSelecionado = null;
-
-    this.resultadosVinculo = [];
-  }
-
+  this.form.patchValue({
+    processoId: null,
+    casoId: null,
+    atendimentoPaiId: null
+  }, {
+    emitEvent: false
+  });
+}
   // =========================
   // CARREGAR DADOS
   // =========================
@@ -238,130 +275,144 @@ export class EditarAtendimento implements OnInit {
   // =========================
   private carregarAtendimento() {
 
-    this.carregando = true;
+  this.carregando = true;
 
-    this.atendimentoService
-      .ObterAtendimentoPorId(this.id)
-      .subscribe({
+  this.atendimentoService
+    .ObterAtendimentoPorId(this.id)
+    .subscribe({
 
-        next: (res: ObterAtendimentoResponse) => {
+      next: (res: ObterAtendimentoResponse) => {
 
-          // =========================
-          // FORM
-          // =========================
-          this.form.patchValue({
+        this.carregandoFormulario = true;
 
-            assunto: res.assunto,
+        // =========================
+        // TIPO VÍNCULO
+        // =========================
+        let tipo:
+          | 'processo'
+          | 'caso'
+          | 'atendimento'
+          | null = null;
 
-            registro: res.registro,
-
-            processoId: res.processoId,
-
-            casoId: res.casoId,
-
-            atendimentoId: res.atendimentoPaiId,
-
-            responsavelId: res.responsavelId
-          });
-
-          // =========================
-          // TIPO VÍNCULO
-          // =========================
-          let tipo:
-            | 'processo'
-            | 'caso'
-            | 'atendimento'
-            | null = null;
-
-          if (res.processoId)
-            tipo = 'processo';
-
-          else if (res.casoId)
-            tipo = 'caso';
-
-          else if (res.atendimentoPaiId)
-            tipo = 'atendimento';
-
-          this.form.patchValue({
-            tipoVinculo: tipo
-          });
-
-          // =========================
-          // VÍNCULO VISUAL
-          // =========================
-          if (res.processoId) {
-
-            this.vinculoSelecionado = {
-              id: res.processoId,
-              pasta: res.processoPasta ?? ''
-            } as ProcessoAutoComplete;
-          }
-
-          else if (res.casoId) {
-
-            this.vinculoSelecionado = {
-              id: res.casoId,
-              pasta: res.casoPasta ?? ''
-            } as CasoAutoComplete;
-          }
-
-          else if (res.atendimentoPaiId) {
-
-            this.vinculoSelecionado = {
-              id: res.atendimentoPaiId,
-              assunto: res.atendimentoAssunto ?? ''
-            } as AtendimentoAutoComplete;
-          }
-
-          else {
-
-            this.vinculoSelecionado = null;
-          }
-
-          // =========================
-          // CLIENTES
-          // =========================
-          this.pessoasSelecionadas =
-            res.grupoAtendimentoCliente?.map((c: any) => ({
-
-              id: c.pessoaId,
-
-              nome: c.nome ?? '',
-
-              documento: '',
-
-              tipo: 'Fisica'
-
-            })) || [];
-
-          // =========================
-          // ETIQUETAS
-          // =========================
-          this.etiquetasSelecionadas =
-            res.grupoAtendimentoEtiqueta?.map(e => ({
-
-              id: e.etiquetaId,
-
-              nome: e.nome,
-
-              cor: e.cor
-
-            })) || [];
-
-          this.carregando = false;
-        },
-
-        error: () => {
-
-          this.mensagemErro = [
-            'Erro ao carregar atendimento'
-          ];
-
-          this.carregando = false;
+        if (res.processoId) {
+          tipo = 'processo';
         }
-      });
-  }
+        else if (res.casoId) {
+          tipo = 'caso';
+        }
+        else if (res.atendimentoPaiId) {
+          tipo = 'atendimento';
+        }
 
+        // =========================
+        // FORM
+        // =========================
+        this.form.patchValue({
+
+          assunto: res.assunto,
+
+          registro: res.registro,
+
+          processoId: res.processoId,
+
+          casoId: res.casoId,
+
+          atendimentoPaiId: res.atendimentoPaiId,
+
+          responsavelId: res.responsavelId,
+
+          tipoVinculo: tipo
+
+        }, {
+          emitEvent: false
+        });
+
+        // =========================
+        // VÍNCULO VISUAL
+        // =========================
+        if (res.processoId) {
+
+          this.vinculoSelecionado = {
+            id: res.processoId,
+            pasta: res.processoPasta ?? ''
+          } as ProcessoAutoComplete;
+        }
+
+        else if (res.casoId) {
+
+          this.vinculoSelecionado = {
+            id: res.casoId,
+            pasta: res.casoPasta ?? ''
+          } as CasoAutoComplete;
+        }
+
+        else if (res.atendimentoPaiId) {
+
+          this.vinculoSelecionado = {
+            id: res.atendimentoPaiId,
+            assunto: res.atendimentoAssunto ?? ''
+          } as AtendimentoAutoComplete;
+        }
+
+        else {
+
+          this.vinculoSelecionado = null;
+        }
+
+        // =========================
+        // CLIENTES
+        // =========================
+        this.pessoasSelecionadas =
+          res.grupoAtendimentoCliente?.map((c: any) => ({
+
+            id: c.pessoaId,
+
+            nome: c.nome ?? '',
+
+            documento: '',
+
+            tipo: 'Fisica'
+
+          })) || [];
+
+        // =========================
+        // ETIQUETAS
+        // =========================
+        this.etiquetasSelecionadas =
+          res.grupoAtendimentoEtiqueta?.map(e => ({
+
+            id: e.etiquetaId,
+
+            nome: e.nome,
+
+            cor: e.cor
+
+          })) || [];
+
+        // 🔥 IMPORTANTE
+        this.carregandoFormulario = false;
+
+        this.carregando = false;
+
+        this.carregandoInicial = false;
+
+        this.cdr.detectChanges();
+      },
+
+      error: () => {
+
+        this.carregandoFormulario = false;
+
+        this.mensagemErro = [
+          'Erro ao carregar atendimento'
+        ];
+
+        this.carregando = false;
+
+        this.carregandoInicial = false;
+      }
+    });
+}
   // =========================
   // AUTOCOMPLETE
   // =========================
@@ -417,36 +468,37 @@ export class EditarAtendimento implements OnInit {
   // =========================
   // SELECIONAR VÍNCULO
   // =========================
-  selecionarVinculo(item: VinculoAutoComplete) {
+selecionarVinculo(item: VinculoAutoComplete) {
 
-    this.vinculoSelecionado = item;
+  this.vinculoAlterado = true;
 
-    this.resultadosVinculo = [];
+  this.vinculoSelecionado = item;
 
-    this.limparVinculos();
+  this.resultadosVinculo = [];
 
-    if ('numeroProcesso' in item) {
+  const tipo = this.form.get('tipoVinculo')?.value;
 
-      this.form.patchValue({
-        processoId: item.id
-      });
+  this.form.patchValue({
+    processoId: null,
+    casoId: null,
+    atendimentoPaiId: null
+  }, { emitEvent: false });
 
-      return;
-    }
-
-    if ('assunto' in item) {
-
-      this.form.patchValue({
-        atendimentoId: item.id
-      });
-
-      return;
-    }
-
-    this.form.patchValue({
-      casoId: item.id
-    });
+  if (tipo === 'processo') {
+    this.form.patchValue({ processoId: item.id }, { emitEvent: false });
+    return;
   }
+
+  if (tipo === 'caso') {
+    this.form.patchValue({ casoId: item.id }, { emitEvent: false });
+    return;
+  }
+
+  if (tipo === 'atendimento') {
+    this.form.patchValue({ atendimentoPaiId: item.id }, { emitEvent: false });
+    return;
+  }
+}
 
   // =========================
   // BUSCAR PESSOAS
@@ -534,37 +586,39 @@ export class EditarAtendimento implements OnInit {
 
     const formValue = this.form.value;
 
-    const request = {
+    const request: any = {
 
-      assunto: formValue.assunto!,
+  assunto: formValue.assunto!,
 
-      registro:
-        formValue.registro ?? undefined,
+  registro:
+    formValue.registro ?? undefined,
 
-      processoId:
-        formValue.processoId ?? undefined,
+  responsavelId:
+    formValue.responsavelId ?? undefined,
 
-      casoId:
-        formValue.casoId ?? undefined,
+  grupoAtendimentoEtiqueta:
+    this.etiquetasSelecionadas.map(e => ({
+      etiquetaId: e.id
+    })),
 
-      atendimentoId:
-        formValue.atendimentoId ?? undefined,
+  grupoAtendimentoCliente:
+    this.pessoasSelecionadas.map(p => ({
+      pessoaId: p.id
+    }))
+};
 
-      responsavelId:
-        formValue.responsavelId ?? undefined,
+// 🔥 só envia vínculo se usuário alterou
+if (this.vinculoAlterado) {
 
-      grupoAtendimentoEtiqueta:
-        this.etiquetasSelecionadas.map(e => ({
+  request.processoId =
+    formValue.processoId ?? null;
 
-          etiquetaId: e.id
-        })),
+  request.casoId =
+    formValue.casoId ?? null;
 
-      grupoAtendimentoCliente:
-        this.pessoasSelecionadas.map(p => ({
-
-          pessoaId: p.id
-        }))
-    };
+  request.atendimentoPaiId =
+    formValue.atendimentoPaiId ?? null;
+}
 
     this.atendimentoService
       .atualizarAtendimento(this.id, request)
@@ -605,27 +659,24 @@ export class EditarAtendimento implements OnInit {
   // =========================
   // LABEL AUTOCOMPLETE
   // =========================
-getLabel(item: VinculoAutoComplete & { tipo?: string }): string {
+  getLabel(item: VinculoAutoComplete): string {
 
-  if (!item) return '';
+    if (!item) return '';
 
-  if (item.tipo === 'processo') {
+    if ('pasta' in item) {
 
-    const cnj = this.formatarCNJ((item as any).numeroProcesso);
+     
 
-    return `${cnj} - ${(item as any).pasta ?? ''}`;
+      return `${item.pasta ?? ''}`;
+    }
+
+    if ('assunto' in item) {
+      return item.assunto ?? '';
+    }
+
+    return (item as CasoAutoComplete).pasta ?? '';
   }
 
-  if (item.tipo === 'caso') {
-    return (item as any).pasta ?? '';
-  }
-
-  if (item.tipo === 'atendimento') {
-    return (item as any).assunto ?? '';
-  }
-
-  return '';
-}
   // =========================
   // FORMATAR CNJ
   // =========================
@@ -677,5 +728,180 @@ getLabel(item: VinculoAutoComplete & { tipo?: string }): string {
     }
 
     this.carregando = false;
+  }
+
+  // =========================
+  // HISTÓRICO
+  // =========================
+  abrirHistoricoProcesso(processoId: string) {
+
+    this.carregandoHistorico = true;
+
+    this.historico = [];
+
+    const modal =
+      new bootstrap.Modal(
+        this.modalHistorico.nativeElement
+      );
+
+    modal.show();
+
+    this.historicoService
+      .ConsultarHistorico(
+        TipoEntidadeEnum.Atendimento,
+        processoId
+      )
+      .subscribe({
+
+        next: (res) => {
+
+          this.historico = (res ?? []).map(h => ({
+            ...h,
+            antes: h.dadosAntes
+              ? JSON.parse(h.dadosAntes)
+              : null,
+
+            depois: h.dadosDepois
+              ? JSON.parse(h.dadosDepois)
+              : null
+          }));
+
+          this.carregandoHistorico = false;
+
+          this.cdr.detectChanges();
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+          this.carregandoHistorico = false;
+        }
+
+      });
+  }
+
+  // =========================
+  // MUDANÇAS
+  // =========================
+  getMudancas(h: any): {
+    campo: string,
+    antes: any,
+    depois: any
+  }[] {
+
+    if (!h.antes || !h.depois)
+      return [];
+
+    const mudancas: any[] = [];
+
+    Object.keys(h.depois).forEach(key => {
+
+      const antes = h.antes[key];
+
+      const depois = h.depois[key];
+
+      if (
+        JSON.stringify(antes)
+        !==
+        JSON.stringify(depois)
+      ) {
+
+        mudancas.push({
+          campo: key,
+          antes,
+          depois
+        });
+      }
+    });
+
+    return mudancas;
+  }
+
+  // =========================
+  // FORMATAR VALOR
+  // =========================
+  formatarValor(
+    valor: any,
+    campo: string
+  ): string {
+
+    if (
+      valor === null
+      || valor === undefined
+    ) {
+      return '-';
+    }
+
+    // ARRAY
+    if (Array.isArray(valor)) {
+
+      return valor.join(', ');
+    }
+
+    // BOOLEAN
+    if (typeof valor === 'boolean') {
+
+      return valor ? 'Sim' : 'Não';
+    }
+
+    // DATA
+    if (
+      campo
+        .toLowerCase()
+        .includes('data')
+    ) {
+
+      return new Date(valor)
+        .toLocaleDateString('pt-BR');
+    }
+
+    // HORA
+    if (
+      campo
+        .toLowerCase()
+        .includes('hora')
+    ) {
+
+      return valor;
+    }
+
+    return valor.toString();
+  }
+
+  // =========================
+  // FORMATAR CAMPO
+  // =========================
+  formatarCampo(campo: string): string {
+
+    const map: any = {
+
+      // ================= DADOS PRINCIPAIS =================
+      Assunto: 'Assunto',
+      Registro: 'Registro',
+
+      // ================= VÍNCULO =================
+      Processo: 'Processo',
+      Caso: 'Caso',
+      AtendimentoPai: 'Atendimento Vinculado',
+
+      // ================= CLIENTES =================
+      Clientes: 'Clientes',
+
+      // ================= ETIQUETAS =================
+      Etiquetas: 'Etiquetas',
+
+      // ================= FALLBACKS =================
+      assunto: 'Assunto',
+      registro: 'Registro',
+      processo: 'Processo',
+      caso: 'Caso',
+      atendimentoPai: 'Atendimento Vinculado',
+      clientes: 'Clientes',
+      etiquetas: 'Etiquetas',
+      observacao: 'Observação'
+    };
+
+    return map[campo] || campo;
   }
 }
