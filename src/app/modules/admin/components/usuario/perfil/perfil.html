@@ -1,0 +1,114 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">
+    <i class="align-middle me-2 fas fa-fw fa-bullhorn"></i> Perfil do Usuário
+    <span class="badge bg-success">{{ usuarioLogado?.nomeUsuario }}</span>
+  </h1>
+
+  <app-spinner-consulta *ngIf="carregandoConsulta" [carregando]="true" message="Consultando..."
+    class="d-inline-block"></app-spinner-consulta>
+
+  <div class="mt-3">
+    <app-alerts *ngIf="mensagemSucesso.length > 0" titulo="Sucesso!" [mensagens]="mensagemSucesso" tipo="success"
+      icone="fas fa-check-circle fa-lg">
+    </app-alerts>
+
+    <app-alerts *ngIf="mensagemErro.length > 0" titulo="Erro!" [mensagens]="mensagemErro" tipo="danger"
+      icone="fas fa-times-circle fa-lg">
+    </app-alerts>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 col-xl-3">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Detalhes do perfil</h5>
+        </div>
+
+        <div class="card-body text-center">
+          <h5 class="card-title mb-0">
+            Nome: <span class="badge bg-info">{{ form.get('nomeUsuario')?.value }}</span>
+          </h5>
+          <div class="text-muted mb-2">
+            Login: <span class="badge bg-warning text-dark">{{ form.get('login')?.value }}</span>
+          </div>
+
+          <div class="text-center mb-3">
+            <img [src]="fotoUsuario" alt="Foto do usuário" class="img-fluid rounded-circle border"
+              style="width: 120px; height: 120px; object-fit: cover;">
+            <br>
+            <button class="btn btn-primary btn-sm mt-2" (click)="abrirUpload()">
+              <i class="fa-solid fa-camera me-2"></i>
+              Selecionar Foto
+            </button>
+
+            <input type="file" #fileInput hidden (change)="onFileSelected($event)" accept="image/*">
+          </div>
+
+       <button class="btn btn-success w-100" [disabled]="!fotoSelecionada" (click)="uploadFoto()">
+  <i class="fa-solid fa-floppy-disk me-2"></i>
+  Salvar Foto
+</button>
+
+
+          <div *ngIf="mensagemSucesso.length > 0" class="alert alert-success mt-2">
+            <div *ngFor="let msg of mensagemSucesso">{{ msg }}</div>
+          </div>
+          <div *ngIf="mensagemErro.length > 0" class="alert alert-danger mt-2">
+            <div *ngFor="let msg of mensagemErro">{{ msg }}</div>
+          </div>
+        </div>
+
+        <hr class="my-0" />
+
+        <div class="card-body">
+          <h5 class="h6 card-title">Setores</h5>
+          <ng-container *ngIf="setores?.length; else nenhumSetor">
+            <span *ngFor="let setor of setores; let i = index" class="badge me-1 my-1 text-decoration-none"
+              [ngClass]="coresBadge[i % coresBadge.length]">
+              {{ setor.nomeSetor || setor.setor?.nomeSetor }}
+            </span>
+          </ng-container>
+          <ng-template #nenhumSetor>
+            <span class="text-muted">Nenhum setor vinculado.</span>
+          </ng-template>
+        </div>
+
+        <hr class="my-0" />
+
+        <div class="card-body">
+          <h5 class="h6 card-title">Níveis de Acesso</h5>
+          <ng-container *ngIf="niveis?.length; else nenhumNivel">
+            <span *ngFor="let nivel of niveis; let i = index" class="badge me-1 my-1 text-decoration-none"
+              [ngClass]="coresBadge[i % coresBadge.length]">
+              {{ nivel.nomeNivel || nivel.nivel?.nomeNivel }}
+            </span>
+          </ng-container>
+          <ng-template #nenhumNivel>
+            <span class="text-muted">Nenhum nível vinculado.</span>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8 col-xl-9">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Meus Dados</h5>
+        </div>
+        <div class="card-body h-100">
+          <small class="float-end">Usuário desde {{ form.get('dataCadastro')?.value | date:'dd/MM/yyyy' }}</small>
+          <strong>{{ form.get('nomeUsuario')?.value }}</strong>
+
+          <hr />
+          <strong>Email:</strong> {{ form.get('email')?.value }}
+          <hr />
+          <strong>Telefone(s):</strong> {{ form.get('telefone')?.value }}
+          <hr />
+          <strong>Gênero:</strong> {{ form.get('genero')?.value }}
+          <hr />
+          <strong>Endereço:</strong> {{ form.get('endereco')?.value }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

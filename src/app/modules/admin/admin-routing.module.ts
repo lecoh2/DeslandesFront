@@ -27,6 +27,10 @@ import { ConsultarTarefa } from "./components/tarefa/consultar-tarefa/consultar-
 import { ConsultarEvento } from "./components/evento/consultar-evento/consultar-evento";
 
 import { Agenda } from "./components/gestao-atividades/agenda/agenda";
+import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
+import { Perfil } from "./components/usuario/perfil/perfil";
+import { EditarUsuario } from "./components/usuario/editar-usuario/editar-usuario";
+import { ConsultarUsuarios } from "./components/usuario/consultar-usuarios/consultar-usuarios";
 //import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
 
 
@@ -174,6 +178,32 @@ export const routes: Routes = [
                 canActivate: [AuthGuard, NivelGuard],
                 data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
 
+            },
+              //usuario
+              {
+                path: 'criar-usuario',
+                component: CriarUsuario,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+
+            },
+            {
+                path: 'consultar-usuarios',
+                component: ConsultarUsuarios,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador'] } // quem pode acessar
+            }, {
+                path: 'editar-usuario/:id',
+                component: EditarUsuario,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador'] } // quem pode acessar
+            },
+            {
+                path: 'perfil',
+                component: Perfil,
+                canActivate: [AuthGuard, NivelGuard],
+                data: { niveis: ['Super Administrador', 'Administrador', 'Administração', 'Coordenador', 'Conciliador', 'Estagiários'] }
+                // quem pode acessar
             },
 
             { path: '', redirectTo: 'painel-principal', pathMatch: 'full' }

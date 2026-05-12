@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+declare var bootstrap: any;
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -20,7 +21,8 @@ import { CasoService } from '../../../../../core/services/caso.service';
 import { AtendimentoService } from '../../../../../core/services/atendimento.service';
 import { finalize } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { HistoricoService } from '../../../../../core/services/historico.service';
+import { TipoEntidadeEnum } from '../../../../../core/models/enums/tipo-entidade/tipo-entidadeEnum';
 @Component({
   selector: 'app-editar-tarefa',
   standalone: false,
@@ -28,7 +30,8 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrl: './editar-tarefa.css'
 })
 export class EditarTarefa implements OnInit {
-
+  @ViewChild('modalHistorico')
+  modalHistorico!: ElementRef;
   private fb = inject(FormBuilder);
   private tarefaService = inject(TarefaService);
   private etiquetaService = inject(EtiquetaService);
@@ -40,12 +43,15 @@ export class EditarTarefa implements OnInit {
   private casoService = inject(CasoService);
   private atendimentoService = inject(AtendimentoService);
   private cdr = inject(ChangeDetectorRef);
+  private historicoService = inject(HistoricoService);
   id!: string;
   tipoVinculoEnum = TipoVinculoEnum;
   vinculoSelecionado: any = null;
   mensagemErro: string[] = [];
   mensagemSucesso: string[] = [];
   carregando = false;
+  historico: any[] = [];
+  carregandoHistorico = false;
   listaFiltradas: ListaTarefasResponse[] = [];
   statusEnum = StatusGeralKanbanEnum;
   prioridadeEnum = PrioridadeTarefaEnum;
@@ -421,5 +427,140 @@ export class EditarTarefa implements OnInit {
     this.vinculoSelecionado = null;
 
     this.resultadosVinculo = [];
+  }
+  abrirHistoricoProcesso(processoId: string) {
+
+    this.carregandoHistorico = true;
+
+    this.historico = [];
+
+    const modal =
+      new bootstrap.Modal(
+        this.modalHistorico.nativeElement
+      );
+
+    modal.show();
+
+    this.historicoService
+      .ConsultarHistorico(
+        TipoEntidadeEnum.Tarefa,
+        processoId
+      )
+      .subscribe({
+
+        next: (res) => {
+
+          this.historico = (res ?? []).map(h => ({
+            ...h,
+            antes: h.dadosAntes
+              ? JSON.parse(h.dadosAntes)
+              : null,
+
+            depois: h.dadosDepois
+              ? JSON.parse(h.dadosDepois)
+              : null
+          }));
+
+          this.carregandoHistorico = false;
+
+          this.cdr.detectChanges();
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+          this.carregandoHistorico = false;
+        }
+
+      });
+  }
+    // =========================
+  // FORMATAR VALOR
+  // =========================
+
+ formatarCampo(campo: string): string {
+    const map: any = {
+      Titulo: 'Título',
+      DataInicial: 'Data Inicial',
+      DataFinal: 'Data Final',
+      HoraInicial: 'Hora Inicial',
+      HoraFinal: 'Hora Final',
+      DiaInteiro: 'Dia Inteiro',
+      Endereco: 'Endereço',
+      Observacao: 'Observação',
+      Modalidade: 'Modalidade',
+      StatusGeralKanban: 'Status',
+      Responsaveis: 'Responsáveis'
+    };
+
+    return map[campo] || campo;
+  }
+
+  formatarValor(valor: any, campo: string): string {
+
+    if (valor === null || valor === undefined) return '-';
+
+    // ARRAY (Responsáveis)
+    if (Array.isArray(valor)) {
+      return valor.join(', ');
+    }
+
+    // BOOLEAN
+    if (typeof valor === 'boolean') {
+      return valor ? 'Sim' : 'Não';
+    }
+
+    // STATUS
+    if (campo === 'StatusGeralKanban') {
+      return this.getStatusLabel(valor);
+    }
+    // 🔥 MODALIDADE (AQUI)
+    if (campo === 'Modalidade') {
+      return this.getModalidadeLabel(valor);
+    }
+    // DATA
+    if (campo.toLowerCase().includes('data')) {
+      return new Date(valor).toLocaleDateString('pt-BR');
+    }
+
+    // HORA
+    if (campo.toLowerCase().includes('hora')) {
+      return valor;
+    }
+
+    return valor.toString();
+  } getStatusLabel(status: number): string {
+    switch (status) {
+      case 1: return 'A Fazer';
+      case 2: return 'Em Andamento';
+      case 3: return 'Concluído';
+      case 4: return 'Cancelado';
+      default: return '---';
+    }
+  }
+  getModalidadeLabel(status: number): string {
+    switch (status) {
+      case 1: return 'Presencial';
+      case 2: return 'Online';
+      case 3: return 'Hibrido ';
+      case 4: return 'Nao se aplica';
+      default: return '---';
+    }
+  } getMudancas(h: any): { campo: string, antes: any, depois: any }[] {
+    if (!h.antes || !h.depois) return [];
+
+    const mudancas: any[] = [];
+
+    Object.keys(h.depois).forEach(key => {
+      const antes = h.antes[key];
+      const depois = h.depois[key];
+
+      if (JSON.stringify(antes) !== JSON.stringify(depois)) {
+        mudancas.push({ campo: key, antes, depois });
+      }
+    });
+
+    return mudancas;
   }
 }

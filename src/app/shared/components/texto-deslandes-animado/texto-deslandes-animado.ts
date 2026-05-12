@@ -8,7 +8,7 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrls: ['./texto-deslandes-animado.css']
 })
 export class TextoDeslandesAnimado implements OnInit {
-  @Input() frase: string = 'Sistema de Controle de Processos Judiciais';
+  @Input() frase: string = 'Sistema de Controle de Processos';
   textoExibido: string = '';
   private index = 0;
 

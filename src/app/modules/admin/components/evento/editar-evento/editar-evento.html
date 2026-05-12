@@ -4,8 +4,8 @@
 
   <div class="card">
     <div class="card-header">
-    <h1 class="h3 mb-3">Editar Evento</h1>
-<h5 class="card-title">Editar Evento</h5>
+      <h1 class="h3 mb-3">Editar Evento</h1>
+      <h5 class="card-title">Editar Evento</h5>
       <h6 class="card-subtitle text-muted">Preencha os dados</h6>
     </div>
 
@@ -17,10 +17,19 @@
       <app-alerts *ngIf="mensagemErro.length" tipo="danger" [mensagens]="mensagemErro"></app-alerts>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="d-flex justify-content-end mb-3">
+
+          <button type="button" class="btn btn-light bg-white border" (click)="abrirHistoricoProcesso(id)">
+
+            <i class="fas fa-history me-2"></i>
+            Histórico
+
+          </button>
+
+        </div>
         <div class="mb-3">
           <label class="form-label">Etiquetas</label>
-          <app-etiquetas [etiquetas]="grupoEventoEtiquetas"
-           [(selecionadas)]="etiquetasSelecionadas">
+          <app-etiquetas [etiquetas]="grupoEventoEtiquetas" [(selecionadas)]="etiquetasSelecionadas">
           </app-etiquetas>
         </div>
         <!-- TÍTULO -->
@@ -50,10 +59,10 @@
             <label class="form-label">Observação</label>
             <textarea class="form-control" formControlName="observacao"></textarea>
           </div>
-                 <div class="col-md-4">
+          <div class="col-md-4">
             <label class="form-label">Modalidade</label>
             <select class="form-select" formControlName="modalidade">
-               <option [ngValue]="0">Escolha</option>
+              <option [ngValue]="0">Escolha</option>
               <option [ngValue]="1">Presencial</option>
               <option [ngValue]="2">Online</option>
               <option [ngValue]="3">Hibrido</option>
@@ -73,19 +82,19 @@
             <span *ngIf="form.get('dataInicial')?.hasError('required')">
               A data inicial é obrigatória.
             </span>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Hora Inicial*</label>
-              <input type="time" class="form-control" formControlName="horaInicial">
-            </div>
-            <div *ngIf="form.get('horaInicial')?.touched && form.get('horaInicial')?.invalid" class="text-danger mt-1">
-              <span *ngIf="form.get('horaInicial')?.hasError('required')">
-                A hora inicial é obrigatória.
-              </span>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Hora Inicial*</label>
+            <input type="time" class="form-control" formControlName="horaInicial">
+          </div>
+          <div *ngIf="form.get('horaInicial')?.touched && form.get('horaInicial')?.invalid" class="text-danger mt-1">
+            <span *ngIf="form.get('horaInicial')?.hasError('required')">
+              A hora inicial é obrigatória.
+            </span>
 
-            </div>
+          </div>
 
-          
+
         </div>
         <!-- HORÁRIOS -->
         <div class="row mb-3">
@@ -123,33 +132,27 @@
         </div>
 
 
-     <!-- TIPO VÍNCULO -->
-                <div class="row mb-3">
-                    <!-- ITEM DINÂMICO -->
-                    <div class="col-md-4">
-                        <label class="form-label">Tipo de Vínculo</label>
-                        <select class="form-control" formControlName="tipoVinculo">
-                            <option [ngValue]="null">Selecione</option>
-                            <option value="processo">Processo</option>
-                            <option value="caso">Caso</option>
-                            <option value="atendimento">Atendimento</option>
-                        </select>
-                    </div>
+        <!-- TIPO VÍNCULO -->
+        <div class="row mb-3">
+          <!-- ITEM DINÂMICO -->
+          <div class="col-md-4">
+            <label class="form-label">Tipo de Vínculo</label>
+            <select class="form-control" formControlName="tipoVinculo">
+              <option [ngValue]="null">Selecione</option>
+              <option value="processo">Processo</option>
+              <option value="caso">Caso</option>
+              <option value="atendimento">Atendimento</option>
+            </select>
+          </div>
 
-                    <div class="col-md-8">
-                        <label class="form-label">Buscar vínculo</label>
-<app-vinculo
-  [resultados]="resultadosVinculo"
-  [vinculoSelecionado]="vinculoSelecionado"
-  (buscar)="buscarVinculo($event)"
-  (selecionado)="selecionarVinculo($event)">
-</app-vinculo>
+          <div class="col-md-8">
+            <label class="form-label">Buscar vínculo</label>
+            <app-vinculo [resultados]="resultadosVinculo" [vinculoSelecionado]="vinculoSelecionado"
+              (buscar)="buscarVinculo($event)" (selecionado)="selecionarVinculo($event)">
+            </app-vinculo>
 
-                    </div>
-                </div>
-
-
-
+          </div>
+        </div>
         <!-- RECORRÊNCIA -->
         <div class="row mb-3">
           <div class="col-md-4">
@@ -175,18 +178,17 @@
         </div>
         <!-- STATUS -->
         <div class="row mb-3">
-      <div class="col-md-6">
-                        <label class="form-label">Status</label>
-          <select class="form-select" formControlName="statusGeralKanban"
-        style="pointer-events: none;">
-  
-  <option [ngValue]="statusEnum.A_Fazer">A Fazer</option>
-  <option [ngValue]="statusEnum.Em_Andamento">Em Andamento</option>
-  <option [ngValue]="statusEnum.Concluido">Concluído</option>
-  <option [ngValue]="statusEnum.Cancelado">Cancelado</option>
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select class="form-select" formControlName="statusGeralKanban" style="pointer-events: none;">
 
-</select>
-                    </div>
+              <option [ngValue]="statusEnum.A_Fazer">A Fazer</option>
+              <option [ngValue]="statusEnum.Em_Andamento">Em Andamento</option>
+              <option [ngValue]="statusEnum.Concluido">Concluído</option>
+              <option [ngValue]="statusEnum.Cancelado">Cancelado</option>
+
+            </select>
+          </div>
           <div class="col-md-6">
             <label class="form-label">Responsável</label>
             <app-selecionar-responsaveis [resultados]="responsaveisFiltrados"
@@ -197,20 +199,92 @@
 
         <!-- RESPONSÁVEIS -->
         <!-- BOTÃO -->
-          <button type="button" class="btn btn-secondary mt-3 me-2" (click)="irParaLista()">
+        <button type="button" class="btn btn-secondary mt-3 me-2" (click)="irParaLista()">
           <i class="fas fa-arrow-left"></i> Voltar
         </button>
-      <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
-  <i class="align-middle me-2 fas fa-save fa-lg"></i>
-  Atualizar Evento
-</button>
-
-
-
-
- 
+        <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+          <i class="align-middle me-2 fas fa-save fa-lg"></i>
+          Atualizar Evento
+        </button>
       </form>
+     
+    </div>
+  </div>
+    <div #modalHistorico class="modal fade" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+    data-bs-keyboard="false">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">
+            Histórico de Eventos
+          </h5>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal">
+          </button>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- LOADING -->
+          <div *ngIf="carregandoHistorico">
+            Carregando histórico...
+          </div>
+
+          <!-- HISTÓRICO -->
+          <ul class="timeline">
+
+            <li *ngFor="let h of historico" class="timeline-item pb-4 mb-4 border-bottom">
+
+              <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+
+                <strong>
+                  {{ h.observacao || 'Atualização' }}
+                </strong>
+
+                <small class="text-muted">
+                  Usuario que fez a alteração: <strong>{{ h.usuarioNome || 'Sistema' }}</strong>
+                </small>
+
+                <span class="text-muted small">
+                  Data da altereçao: <strong>{{ h.dataAlteracao | date:'dd/MM/yyyy HH:mm' }}</strong>
+                </span>
+
+              </div>
+
+              <div *ngFor="let m of getMudancas(h)" class="mb-2">
+
+                <strong>
+                  {{ formatarCampo(m.campo) }}
+                </strong>
+
+                <div>
+
+                  <span class="text-danger text-decoration-line-through">
+                    {{ formatarValor(m.antes, m.campo) }}
+                  </span>
+
+                  <i class="fas fa-arrow-right mx-2"></i>
+
+                  <span class="text-success">
+                    {{ formatarValor(m.depois, m.campo) }}
+                  </span>
+
+                </div>
+
+              </div>
+
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
 
     </div>
+
   </div>
 </div>

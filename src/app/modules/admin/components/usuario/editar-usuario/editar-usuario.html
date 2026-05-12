@@ -1,0 +1,301 @@
+<div class="container-fluid p-0">
+    <h1 class="h3 mb-3"><i class="align-middle me-2 fas fa-fw fa-bullhorn"></i> Editar Usuario <span
+            class="badge badge-subtle-success">{{ usuarioLogado?.nomeUsuario }}
+        </span> </h1>
+
+
+    <div class="d-flex justify-content-end me-3 mb-3">
+
+    </div>
+    <app-spinner-consulta *ngIf="carregandoConsulta" [carregando]="true" message="Consultando..."
+        class="d-inline-block">
+    </app-spinner-consulta>
+    <div class="mt-3">
+
+
+        <app-alerts *ngIf="!carregandoCadastro && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+        <app-alerts *ngIf="!carregandoCadastro && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+    </div>
+    <div class="row">
+
+        <div class="col-12 col-sm-6 col-xxl-6 d-flex">
+            <div class="card flex-fill">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2 fs-5">Grupo de setor(s)</h3>
+
+                            <!-- Lista de representantes fisicos -->
+                            <ul class="list-unstyled ps-0 lista-pequena">
+                                <li *ngFor="let r of grupoSetores.controls; let i = index" class="px-2 py-1 mb-1">
+                                    <span>{{ r.value.nomeSetor }}</span>
+                                    <button type="button" class="border-0 bg-transparent"
+                                        (click)="removerSetores(i)">
+                                        <i class="fas fa-fw fa-trash-alt text-muted"></i>
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- Total de reclamantes -->
+                            <div class="mb-2 fs-6">
+                                Total: <span class="badge bg-success text-white fs-6">{{
+                                    grupoSetores.length }}</span>
+                            </div>
+
+                            <!-- Botão de adicionar -->
+                            <div class="row mt-2">
+                                <div class="col-12 text-start">
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#taskModalSetor">
+                                        <i class="fas fa-plus-circle me-1 fs-6"></i>Setor(s)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                      <div class="d-inline-block ms-3">
+
+
+    <div class="stat d-flex justify-content-center align-items-center bg-warning text-white" 
+       style="width: 60px; height: 60px; border-radius: 50%;">
+    <i class="fas fa-building"></i>
+
+  </div>
+</div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+     <div class="col-12 col-sm-6 col-xxl-6 d-flex">
+            <div class="card flex-fill">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2 fs-5">Grupo de Nivel(s)</h3>
+
+                            <!-- Lista de representantes fisicos -->
+                            <ul class="list-unstyled ps-0 lista-pequena">
+                                <li *ngFor="let n of grupoNiveis.controls; let i = index" class="px-2 py-1 mb-1">
+                                    <span>{{ n.value.nomeNivel }}</span>
+                                    <button type="button" class="border-0 bg-transparent"
+                                        (click)="removerNivel(i)">
+                                        <i class="fas fa-fw fa-trash-alt text-muted"></i>
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- Total de reclamantes -->
+                            <div class="mb-2 fs-6">
+                                Total: <span class="badge bg-success text-white fs-6">{{
+                                    grupoNiveis.length }}</span>
+                            </div>
+
+                            <!-- Botão de adicionar -->
+                            <div class="row mt-2">
+                                <div class="col-12 text-start">
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#taskModalNivel">
+                                        <i class="fas fa-plus-circle me-1 fs-6"></i>Nivel(s)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="d-inline-block ms-3">
+  <div class="stat d-flex justify-content-center align-items-center bg-primary text-white" 
+       style="width: 60px; height: 60px; border-radius: 50%;">
+    <i class="fas fa-level-up-alt me-1"></i>
+    <i class="fas fa-level-down-alt"></i>
+  </div>
+
+  </div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user">
+            <div class="row">
+
+
+                <!-- Protocolo -->
+                <div class="col-md-3">
+                    <label for="login" class="form-label">Login</label>
+                    <input type="text" id="login" class="form-control" formControlName="login"
+                        placeholder="Digite o login" />
+                    <div *ngIf="form.get('login')?.touched && form.get('login')?.invalid" class="text-danger">
+                        <span *ngIf="form.get('login')?.hasError('required')">O Login é de
+                            preenchimento
+                            obrigatório.</span>
+                    </div>
+                </div>
+                <!-- senha -->
+                <div class="col-md-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" id="senha" class="form-control" formControlName="senha"
+                        placeholder="Digite a senha" />
+                    <div *ngIf="form.get('senha')?.touched && form.get('senha')?.invalid" class="text-danger">
+                        <span *ngIf="form.get('senha')?.hasError('required')">A senha é obrigatória.</span>
+                        <span *ngIf="form.get('senha')?.hasError('senhaFraca')">{{
+                            form.get('senha')?.getError('senhaFraca') }}</span>
+                    </div>
+                </div>
+
+                <!-- Confirmar Senha -->
+                <div class="col-md-3">
+                    <label for="confirmarSenha" class="form-label">Confirmar Senha</label>
+                    <input type="password" id="confirmarSenha" class="form-control" formControlName="confirmarSenha"
+                        placeholder="Confirme a senha" />
+
+                    <div *ngIf="form.get('confirmarSenha')?.touched" class="text-danger">
+                        <span *ngIf="form.get('confirmarSenha')?.hasError('required')">
+                            A confirmação da senha é obrigatória.
+                        </span>
+                        <span *ngIf="form.hasError('senhasDiferentes')">
+                            As senhas não coincidem.
+                        </span>
+                    </div>
+                </div>
+
+
+                <!-- Fato (Editor Quill) -->
+
+
+                <!-- Botão Salvar -->
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                        <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+
+<!-- Modal Setor -->
+<div class="modal fade" id="taskModalSetor" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar novo(s) Setor(s)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body mx-3">
+
+                <div class="mb-3 col-md-12 position-relative">
+                    <label class="form-label" for="setorInput">Setor</label>
+                    <input type="text" id="setorInput" class="form-control form-control-lg" placeholder="Digite o nome"
+                        autocomplete="off" [formControl]="setorControl" (focus)="mostrarSugestoesSetor = true"
+                        (blur)="ocultarSugestoesComDelaySetor()" />
+                    <ul *ngIf="mostrarSugestoesSetor && setoresFiltrados.length > 0"
+                        class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                        <li *ngFor="let setor of setoresFiltrados"
+                            class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                            (mousedown)="selecionarSetor(setor)">
+                            {{ setor.nomeSetor }} <i class="fas fa-user-plus text-muted"></i>
+                        </li>
+                    </ul>
+
+                    <div *ngIf="setoresSelecionados.length > 0" class="form-text text-success mt-2">
+                        <h6 class="card-subtitle text-muted">Setor(s) selecionadas:</h6>
+                        <ul class="lista-sem-bolinha">
+                            <li *ngFor="let s of setoresSelecionados"
+                                class="d-flex justify-content-between align-items-center mb-1 small px-1 py-0">
+                                <span>{{ s.nomeSetor }} </span>
+                                <button type="button" class="border-0 bg-transparent p-0"
+                                    (click)="removerSetorSelecionado(s)">
+                                    <i class="fas fa-fw fa-trash-alt text-muted fa-2x text-danger"></i>
+                                </button>
+
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="text-danger" *ngIf="form.get('reclamante')?.touched && form.get('reclamante')?.invalid">
+                        <span *ngIf="form.get('reclamante')?.hasError('required')">O nome do reclamante é
+                            obrigatório.</span>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <app-spinner-consulta *ngIf="carregandoConsulta" [carregando]="true" message="Consultando..."
+                        class="d-inline-block">
+                    </app-spinner-consulta>
+                    <app-spinner *ngIf="carregandoCadastro" [show]="true" message="Cadastrando ..."
+                        class="d-inline-block"></app-spinner>
+
+                    <app-alerts *ngIf="!carregandoCadastro && mensagemSucesso.length > 0" class="w-100"
+                        titulo="Sucesso!" [mensagens]="mensagemSucesso" tipo="success"
+                        icone="fas fa-check-circle fa-lg"></app-alerts>
+
+                    <app-alerts *ngIf="!carregandoCadastro && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                        [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" (click)="fecharModalEAtualizarSetor()">
+                    Fechar
+                </button>
+                <button class="btn btn-primary" (click)="salvarSetor()">
+                    <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Nivel -->
+
+<div class="modal fade" id="taskModalNivel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar novo(s) Nivel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body mx-3">
+                <div class="mb-3 col-md-12 position-relative">
+                    <label class="form-label" for="nivelInput">Nivel</label>
+                    <input type="text" id="nivelInput" class="form-control form-control-lg" placeholder="Digite o nome"
+                        autocomplete="off" [formControl]="nivelControl" (focus)="mostrarSugestoesNiveis = true"
+                        (blur)="ocultarSugestoesComDelayNiveis()" />
+                    <ul *ngIf="mostrarSugestoesNiveis && niveisFiltrados.length > 0"
+                        class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                        <li *ngFor="let nivel of niveisFiltrados"
+                            class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                            (mousedown)="selecionarNivel(nivel)">
+                            {{ nivel.nomeNivel }} <i class="fas fa-user-plus text-muted"></i>
+                        </li>
+                    </ul>
+
+                    <div *ngIf="niveisSelecionados.length > 0" class="form-text text-success mt-2">
+                        <h6 class="card-subtitle text-muted">Nivel selecionados:</h6>
+                        <ul class="list-unstyled ps-0 lista-pequena">
+                            <li *ngFor="let n of grupoNiveis.controls; let i = index" class="px-2 py-1 mb-1">
+                                <span>{{ n.value.nomeNivel }}</span>
+                                <button type="button" class="border-0 bg-transparent"
+                                    (click)="removerNivel(i)">
+                                    <i class="fas fa-fw fa-trash-alt text-muted"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" (click)="fecharModalEAtualizarNivel()">
+                    Fechar
+                </button>
+                <button class="btn btn-primary" (click)="salvarNivel()">
+                    <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,191 @@
+<div class="container-fluid p-0">
+    <h1 class="h3 mb-3">
+        <i class="align-middle me-2 fas fa-fw fa-bullhorn"></i>
+        Cadastro de Usuários:
+    </h1>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+
+                <!-- Botão de PDF -->
+
+
+                <div class="card-body">
+                    <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..."
+                        class="d-inline-block"></app-spinner>
+
+                    <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                        [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+                    <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                        [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user">
+                        <div class="row">
+
+                            <!-- Reclamante (Pessoa Física) -->
+                            <div class="mb-4 col-md-4 position-relative">
+
+                                <label for="nomeUsuario" class="form-label">Nome*</label>
+                                <input type="text" id="nomeUsuario" class="form-control" formControlName="nomeUsuario"
+                                    placeholder="Digite o nome" />
+                                <div *ngIf="form.get('nome')?.touched && form.get('login')?.invalid"
+                                    class="text-danger">
+                                    <span *ngIf="form.get('nomeUsuario')?.hasError('required')">O Nome é de
+                                        preenchimento
+                                        obrigatório.</span>
+                                </div>
+                            </div>
+                            <div class="mb-4 col-md-4 position-relative">
+                                <label for="login" class="form-label">Login</label>
+                                <input type="text" id="login" class="form-control" formControlName="login"
+                                    placeholder="Digite o login" />
+                                <div *ngIf="form.get('login')?.touched && form.get('login')?.invalid"
+                                    class="text-danger">
+                                    <span *ngIf="form.get('login')?.hasError('required')">O Login é de
+                                        preenchimento
+                                        obrigatório.</span>
+                                </div>
+
+
+
+                            </div>
+                                   <div class="mb-4 col-md-4 position-relative">
+                                <label for="login" class="form-label">E-mail</label>
+                                <input type="text" id="email" class="form-control" formControlName="email"
+                                    placeholder="Digite o email" />
+                                <div *ngIf="form.get('email')?.touched && form.get('email')?.invalid"
+                                    class="text-danger">
+                                    <span *ngIf="form.get('email')?.hasError('required')">O e-mail é de
+                                        preenchimento
+                                        obrigatório.</span>
+                                </div>
+
+
+
+                            </div>
+
+                            <!-- setor -->
+                            <div class="mb-6 col-md-6 position-relative">
+                                <label for="setorInput" class="form-label">Setore(s)</label>
+                                <input id="setorInput" type="text" class="form-control"
+                                    placeholder="Digite o nome do setor" autocomplete="off" [formControl]="setorControl"
+                                    (focus)="mostrarSugestoesSetor = true" (blur)="ocultarSugestoesComDelaySetor()" />
+
+                                <!-- Sugestões -->
+                                <ul *ngIf="mostrarSugestoesSetor && setorFiltradas.length > 0"
+                                    class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                                    <li *ngFor="let setor of setorFiltradas"
+                                        class="list-group-item d-flex justify-content-between align-items-center hover-click"
+                                        (mousedown)="selecionarSetor(setor)">
+                                        {{ setor.nomeSetor }}
+                                        <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+                                    </li>
+                                </ul>
+
+                                <!-- Selecionadas -->
+                                <div *ngIf="setorSelecionadas.length > 0" class="form-text text-success mt-2">
+                                    <h6 class="card-subtitle text-muted">Setores selecionadas:</h6>
+                                    <ul class="lista-sem-bolinha">
+                                        <li *ngFor="let s of setorSelecionadas"
+                                            class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+                                            <span class="texto-maior">
+                                                <strong>{{ s.nomeSetor }}</strong><br />
+
+                                            </span>
+                                            <button type="button" class="border-0 bg-transparent p-0"
+                                                (click)="removerSetorSelecionada(s)">
+                                                <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- Setores (Pessoa Física) -->
+                            <div class="mb-6 col-md-6 position-relative">
+                                <label for="nivelInput" class="form-label">Nivel</label>
+                                <input id="nivelInput" type="text" class="form-control" placeholder="Digite o nivel"
+                                    autocomplete="off" [formControl]="niveisControl"
+                                    (focus)="mostrarSugestoesNiveis = true" (blur)="ocultarSugestoesComDelayNiveis()" />
+
+                                <!-- Sugestões -->
+                                <ul *ngIf="mostrarSugestoesNiveis && niveisFiltradas.length > 0"
+                                    class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                                    <li *ngFor="let nivel of niveisFiltradas"
+                                        class="list-group-item d-flex justify-content-between align-items-center hover-click"
+                                        (mousedown)="selecionarNivel(nivel)">
+                                        {{ nivel.nomeNivel }}
+                                        <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+                                    </li>
+                                </ul>
+
+                                <!-- Nivel -->
+                                <div *ngIf="niveisSelecionadas.length > 0" class="form-text text-success mt-2">
+                                    <h6 class="card-subtitle text-muted">Niveis selecionadas:</h6>
+                                    <ul class="lista-sem-bolinha">
+                                        <li *ngFor="let n of niveisSelecionadas"
+                                            class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+                                            <span class="texto-maior">
+                                                <strong>{{ n.nomeNivel }}</strong><br />
+
+                                            </span>
+                                            <button type="button" class="border-0 bg-transparent p-0"
+                                                (click)="removerNivelSelecionado(n)">
+                                                <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                            <!-- senha -->
+                           <div class="mb-4 col-md-4 position-relative">
+                                <label for="senha" class="form-label">Senha</label>
+                                <input type="password" id="senha" class="form-control" formControlName="senha"
+                                    placeholder="Digite a senha" />
+                                <div *ngIf="form.get('senha')?.touched && form.get('senha')?.invalid"
+                                    class="text-danger">
+                                    <span *ngIf="form.get('senha')?.hasError('required')">A senha é obrigatória.</span>
+                                    <span *ngIf="form.get('senha')?.hasError('senhaFraca')">{{
+                                        form.get('senha')?.getError('senhaFraca') }}</span>
+                                </div>
+                           
+</div>
+ <div class="mb-4 col-md-4 position-relative">
+                            <!-- Confirmar Senha -->
+                          
+                                <label for="confirmarSenha" class="form-label">Confirmar Senha</label>
+                                <input type="password" id="confirmarSenha" class="form-control"
+                                    formControlName="confirmarSenha" placeholder="Confirme a senha" />
+
+                                <div *ngIf="form.get('confirmarSenha')?.touched" class="text-danger">
+                                    <span *ngIf="form.get('confirmarSenha')?.hasError('required')">
+                                        A confirmação da senha é obrigatória.
+                                    </span>
+                                    <span *ngIf="form.hasError('senhasDiferentes')">
+                                        As senhas não coincidem.
+                                    </span>
+                                </div>
+                            </div>
+
+
+                            <!-- Fato (Editor Quill) -->
+
+
+                            <!-- Botão Salvar -->
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                                    <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

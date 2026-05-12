@@ -35,7 +35,7 @@ export class UsuarioService {
     //métodos para cadastrar reclamacao
     cadastrar(request: CriarUsuarioRequest): Observable<CriarUsuarioResponse> {
         return this.http.post<CriarUsuarioResponse>
-            (`${this.url}/api/usuario/cadastrar-usuario`, request)
+            (`${this.url}/api/v1/usuarios/cadastrar-usuario`, request)
     }
     consultarUsuarioResponsavel(): Observable<ConsultarUsuarioResponse[]> {
         return this.http.get<ConsultarUsuarioResponse[]>
@@ -61,7 +61,7 @@ export class UsuarioService {
 
     editarPorId(dto: EditarUsuarioRequest): Observable<EditarUsuarioResponse> {
         return this.http.put<EditarUsuarioResponse>(
-            `${this.url}/api/usuario/atualizar-usaurio${dto.idPessoa}`,
+            `${this.url}/api/usuario/atualizar-usaurio${dto.id}`,
             dto
         );
     }
@@ -92,9 +92,9 @@ export class UsuarioService {
         return this.http.post<{ fileUrl: string }>(`${this.url}/api/fotos/upload`, formData);
     }
 
-    cadastrarFoto(idUsuario: string, file: File) {
+    cadastrarFoto(id: string, file: File) {
         const formData = new FormData();
-        formData.append('IdUsuario', idUsuario);
+        formData.append('id', id);
         formData.append('Foto', file.name);
         formData.append('file', file);
 

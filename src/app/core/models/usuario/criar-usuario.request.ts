@@ -1,13 +1,14 @@
-//import { GrupoNiveisRequest } from "../grupo-niveis/grupo-niveis-request";
-//import { GrupoSetoresRequest } from "../grupo-setores/grupo-setores-request";
-//import { ConsultarPessoaRequest } from "../pessoa/consultar-pessoa-request";
-//import { PessoaSimplesRequest } from "../pessoa/Pessoa-simples-request";
+
+import { GrupoNiveisRequest } from "../grupo-niveis/grupo-niveis-request";
+import { GrupoSetoresRequest } from "../grupo-setores/grupo-setores-request";
 
 export interface CriarUsuarioRequest {
+    nomeUsuario?: string;
     login?: string;
+    email?: string;
     senha?: string;
     idPessoa?:string;
-    //grupoSetores?: GrupoSetoresRequest[];
-    //grupoNiveis?: GrupoNiveisRequest[];
+    grupoSetor?: GrupoSetoresRequest[];
+    grupoNivel?: GrupoNiveisRequest[];
     //pessoa?: ConsultarPessoaRequest[];
 }

@@ -38,6 +38,10 @@ import { ConsultarEvento } from "./components/evento/consultar-evento/consultar-
 import { Agenda } from "./components/gestao-atividades/agenda/agenda";
 import { Calendario } from "./components/calendario/calendario";
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import { CriarUsuario } from "./components/usuario/criar-usuario/criar-usuario";
+import { Perfil } from "./components/usuario/perfil/perfil";
+import { EditarUsuario } from "./components/usuario/editar-usuario/editar-usuario";
+import { ConsultarUsuarios } from "./components/usuario/consultar-usuarios/consultar-usuarios";
 
 
 
@@ -68,6 +72,10 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
         CadastrarEvento,
         EditarEvento,
         ConsultarEvento,
+        CriarUsuario,
+        EditarUsuario,
+        ConsultarUsuarios,
+        Perfil,
 
 
 

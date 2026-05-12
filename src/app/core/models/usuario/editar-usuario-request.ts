@@ -3,10 +3,10 @@
 
 
 export interface EditarUsuarioRequest {
-    idUsuario?: string;
+    id?: string;
     login?: string;
     senha?: string;
-    idPessoa?: string;
+   
   //  grupoSetores?: GrupoSetoresRequest[];
    // grupoNiveis?: GrupoNiveisRequest[];
     //pessoa?: ConsultarPessoaRequest[];
