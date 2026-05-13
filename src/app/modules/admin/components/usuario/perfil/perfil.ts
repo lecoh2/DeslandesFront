@@ -180,10 +180,10 @@ uploadFoto(): void {
      
     };
 
-    this.usuarioService.editarPorId(request).subscribe({
+    /*this.usuarioService.editarPorId(request).subscribe({
       next: response => this.mensagemSucesso.push(response.mensagem ?? 'Usuário atualizado com sucesso!'),
       error: e => this.tratarErro(e)
-    }).add(() => this.carregandoCadastro = false);
+    }).add(() => this.carregandoCadastro = false);*/
   }
 
   private tratarErro(e: any): void {

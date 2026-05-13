@@ -13,6 +13,7 @@ import { CriarUsuarioResponse } from "../models/usuario/criar-usuario.response";
 import { ConsultarUsuarioResponse } from "../models/usuario/consultar-usuarios.response";
 import { EditarUsuarioRequest } from "../models/usuario/editar-usuario-request";
 import { EditarUsuarioResponse } from "../models/usuario/editar-usuario-response";
+import { ApiResponse } from "../models/respostas/api-response";
 
 @Injectable({
     providedIn: 'root'
@@ -45,11 +46,11 @@ export class UsuarioService {
       consultarUsuariosPaginado(pageNumber: number, pageSize: number, searchTerm?: string) {
   const params: any = { pageNumber: pageNumber.toString(), pageSize: pageSize.toString() };
   if (searchTerm) params.searchTerm = searchTerm;
-  return this.http.get<any>(`${this.url}/api/usuario/consultar-usuarios-paginacao`, { params });
+  return this.http.get<any>(`${this.url}/api/v1/usuarios/consultar-usuarios-paginacao`, { params });
 }
     consultarUsuarioPorId(id: string): Observable<ConsultarUsuarioResponse[]> {
         return this.http.get<ConsultarUsuarioResponse[]>
-            (`${this.url}/api/usuario/consultar-usuarios-por-id/${id}`
+            (`${this.url}/api/v1/usuarios/consultar-usuarios-por-id/${id}`
             );
     }
     consultarPerfilUsuarioPorId(id: string): Observable<ConsultarUsuarioResponse[]> {
@@ -59,16 +60,19 @@ export class UsuarioService {
     }
 
 
-    editarPorId(dto: EditarUsuarioRequest): Observable<EditarUsuarioResponse> {
-        return this.http.put<EditarUsuarioResponse>(
-            `${this.url}/api/usuario/atualizar-usaurio${dto.id}`,
-            dto
-        );
-    }
+editarPorId(
+    dto: EditarUsuarioRequest
+): Observable<ApiResponse<EditarUsuarioResponse>> {
 
- desbloquearUsuarioPorId(idUsuario: string): Observable<void> {
+    return this.http.put<ApiResponse<EditarUsuarioResponse>>(
+        `${this.url}/api/v1/usuarios/atualizar-usuario/${dto.id}`,
+        dto
+    );
+}
+
+ desbloquearUsuarioPorId(id: string): Observable<void> {
     return this.http.put<void>(
-        `${this.url}/api/usuario/desbloquear-usuario/${idUsuario}`,
+        `${this.url}/api/v1/usuarios/desbloquear-usuario/${id}`,
         null
     );
 }

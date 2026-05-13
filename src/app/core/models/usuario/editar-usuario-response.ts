@@ -1,7 +1,7 @@
 export interface EditarUsuarioResponse {
-    mensagem: string;
-    dados: {
+        id?: string;
+        nomeUsuario?: string;
         login?: string;
-        senha?: string;
-    }
+        email?: string;
+   
 }

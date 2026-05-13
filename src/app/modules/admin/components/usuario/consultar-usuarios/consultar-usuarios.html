@@ -128,7 +128,7 @@
     *ngIf="user.status === 2"
     class="btn btn-sm btn-outline-success"
     title="Desbloquear usuário"
-    (click)="desbloquearUsuario(user.idUsuario)"
+    (click)="desbloquearUsuario(user.id)"
   >
     <i class="fas fa-unlock"></i>
   </button>
@@ -138,7 +138,7 @@
 </td>
 
                                 <td class="text-end align-middle">
-                                    <a [routerLink]="['/admin/editar-usuario', user.idUsuario]" title="Editar">
+                                    <a [routerLink]="['/admin/editar-usuario', user.id]" title="Editar">
                                         <i class="align-middle me-2 fas fa-fw fa-pencil-alt fa-lg"></i>
                                     </a>
 
